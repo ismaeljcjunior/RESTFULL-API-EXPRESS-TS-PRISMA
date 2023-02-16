@@ -1,0 +1,30 @@
+{
+  "name": "RESTFULL-API-EXPRESS-TS-PRISMA",
+  "version": "1.0.0",
+  "main": "index.js",
+  "license": "MIT",
+  "dependencies": {
+    "@prisma/client": "^4.10.1",
+    "body-parser": "^1.20.1",
+    "cors": "^2.8.5",
+    "dotenv": "^16.0.3",
+    "express": "^4.18.2",
+    "pino": "^8.10.0",
+    "pino-http": "^8.3.3",
+    "pino-pretty": "^9.2.0"
+  },
+  "devDependencies": {
+    "@types/cors": "^2.8.13",
+    "@types/express": "^4.17.17",
+    "@types/express-pino-logger": "^4.0.3",
+    "@types/node": "^18.13.0",
+    "nodemon": "^2.0.20",
+    "prisma": "^4.10.1",
+    "tsup": "^6.6.3",
+    "typescript": "^4.9.5"
+  },
+  "scripts": {
+    "build": "tsup src",
+    "start": "nodemon dist/server.js"
+  }
+}
