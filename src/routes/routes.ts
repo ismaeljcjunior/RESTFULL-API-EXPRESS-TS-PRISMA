@@ -13,8 +13,8 @@ app.use(express.urlencoded({ extended: true }))
 app.use((req, res, next) => {
     req.log = logger.child({
         requestId: Math.random().toString(36).substr(2, 9),
-    });
-    next();
+    })
+    next()
 })
 
 app.post('/usuarios', createUser)

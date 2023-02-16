@@ -47,15 +47,15 @@ var import_client = require("@prisma/client");
 var prisma = new import_client.PrismaClient();
 var createUser = async (req, res) => {
   try {
-    const { nome, email, photoUrl } = req.body;
+    const { nome, email, fotoBase64 } = req.body;
     const usuario = await prisma.testUser.create({
       data: {
         nome,
         email,
-        photoUrl
+        fotoBase64
       }
     });
-    res.status(200).json({ Ok: true });
+    res.status(200).json({ Message: "User successfully saved", Error: "False" });
   } catch (e) {
     logger.error(e);
     res.status(500).send(e);
@@ -63,9 +63,9 @@ var createUser = async (req, res) => {
 };
 var getUsers = async (req, res) => {
   try {
-    const usuarios = await prisma.testUser.findMany();
-    req.log.info(usuarios);
-    res.status(200).json({ Response: "Sucess", Error: "false" });
+    const getAllUsers = await prisma.testUser.findMany();
+    req.log.info({ Message: "Get all users", Error: "false" });
+    res.status(200).json({ getAllUsers });
   } catch (e) {
     req.log.error(e);
     res.status(500).send(e);
@@ -100,8 +100,8 @@ var import_body_parser2 = __toESM(require("body-parser"));
 import_dotenv.default.config();
 var app2 = (0, import_express2.default)();
 var port2 = process.env.PORT;
-app2.use("/", appRoutes);
 app2.use(import_body_parser2.default.json());
+app2.use("/", appRoutes);
 app2.listen(port2, () => {
   console.log(`\u26A1\uFE0F[${port2}]: Server is running at http://localhost:${port2}`);
   logger.info(`\u26A1\uFE0F[${port2}]: Server is running at http://localhost:${port2}`);
