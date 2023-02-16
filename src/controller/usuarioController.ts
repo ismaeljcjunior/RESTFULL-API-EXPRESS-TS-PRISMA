@@ -1,9 +1,9 @@
-import { Request, Response } from "express";
-import { PrismaClient } from "@prisma/client";
-import { IUsuarioProps } from "../interfaces/IuserInterface";
-import { logger } from '../logger/logger';
+import { Request, Response } from 'express'
+import { PrismaClient } from '@prisma/client'
+import { IUsuarioProps } from '../interfaces/IuserInterface'
+import { logger } from '../logger/logger'
 
-const prisma = new PrismaClient();
+const prisma = new PrismaClient()
 
 export const createUser = async (req: Request, res: Response) => {
     try {
@@ -14,21 +14,20 @@ export const createUser = async (req: Request, res: Response) => {
                 email,
                 photoUrl,
             },
-        });
-        res.send(usuario)
+        })
+        res.status(200).json({Ok:true})
     } catch (e) {
-        req.log.error(e)
+        logger.error(e)
         res.status(500).send(e)
     }
 }
 export const getUsers = async (req: Request, res: Response) => {
     try {
-        const usuarios = await prisma.testUser.findMany();
-        console.log(usuarios)
+        const usuarios = await prisma.testUser.findMany()
         req.log.info(usuarios)
-        res.status(200).json({ usuarios });
+        res.status(200).json({Response:'Sucess' ,Error: 'false' })
     } catch (e) {
-        req.log.error(e);
-        res.status(500).send(e);
+        req.log.error(e)
+        res.status(500).send(e)
     }
 }

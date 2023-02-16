@@ -5,6 +5,10 @@ var __getOwnPropDesc = Object.getOwnPropertyDescriptor;
 var __getOwnPropNames = Object.getOwnPropertyNames;
 var __getProtoOf = Object.getPrototypeOf;
 var __hasOwnProp = Object.prototype.hasOwnProperty;
+var __export = (target, all) => {
+  for (var name in all)
+    __defProp(target, name, { get: all[name], enumerable: true });
+};
 var __copyProps = (to, from, except, desc) => {
   if (from && typeof from === "object" || typeof from === "function") {
     for (let key of __getOwnPropNames(from))
@@ -21,10 +25,18 @@ var __toESM = (mod, isNodeMode, target) => (target = mod != null ? __create(__ge
   isNodeMode || !mod || !mod.__esModule ? __defProp(target, "default", { value: mod, enumerable: true }) : target,
   mod
 ));
+var __toCommonJS = (mod) => __copyProps(__defProp({}, "__esModule", { value: true }), mod);
 
-// src/server.ts
-var import_express2 = __toESM(require("express"));
-var import_dotenv = __toESM(require("dotenv"));
+// src/routes/routes.ts
+var routes_exports = {};
+__export(routes_exports, {
+  appRoutes: () => appRoutes
+});
+module.exports = __toCommonJS(routes_exports);
+var import_express = __toESM(require("express"));
+
+// src/controller/usuarioController.ts
+var import_client = require("@prisma/client");
 
 // src/logger/logger.ts
 var import_pino = __toESM(require("pino"));
@@ -39,11 +51,7 @@ var logger = (0, import_pino.default)({
   }
 }, (0, import_pino_pretty.default)());
 
-// src/routes/routes.ts
-var import_express = __toESM(require("express"));
-
 // src/controller/usuarioController.ts
-var import_client = require("@prisma/client");
 var prisma = new import_client.PrismaClient();
 var createUser = async (req, res) => {
   try {
@@ -94,15 +102,7 @@ app.get("/", (req, res) => {
   req.log.info("Server is running 1.0");
 });
 var appRoutes = app;
-
-// src/server.ts
-var import_body_parser2 = __toESM(require("body-parser"));
-import_dotenv.default.config();
-var app2 = (0, import_express2.default)();
-var port2 = process.env.PORT;
-app2.use("/", appRoutes);
-app2.use(import_body_parser2.default.json());
-app2.listen(port2, () => {
-  console.log(`\u26A1\uFE0F[${port2}]: Server is running at http://localhost:${port2}`);
-  logger.info(`\u26A1\uFE0F[${port2}]: Server is running at http://localhost:${port2}`);
+// Annotate the CommonJS export names for ESM import in node:
+0 && (module.exports = {
+  appRoutes
 });
