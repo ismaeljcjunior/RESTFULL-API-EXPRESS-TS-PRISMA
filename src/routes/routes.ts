@@ -31,6 +31,7 @@ app.use((req, res, next) => {
 
 
 app.post('/usuariosB64', createUserB64)
+
 app.put('/usuariosB64', updateUserB64)
 app.delete('/usuariosB64', deleteUserB64)
 app.get('/usuarios', getUsers)
