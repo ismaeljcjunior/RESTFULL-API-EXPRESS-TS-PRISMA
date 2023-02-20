@@ -112,15 +112,20 @@ var upload = (0, import_multer.default)({ storage });
 var userSchema = z.object({
   nome: z.string(),
   fotoBase64: z.string(),
-  email: z.string().email()
+  cpf: z.string().min(11).max(11),
+  email: z.string().email(),
+  fotoUrl: z.string()
 });
 var createUserB64 = async (req, res) => {
   try {
-    const { nome, email, fotoBase64 } = userSchema.parse(req.body);
+    const { nome, email, cpf, fotoUrl, fotoBase64 } = userSchema.parse(req.body);
+    console.log(nome, email, cpf, fotoUrl, fotoBase64);
     const usuario = await prisma.testUser.create({
       data: {
         nome,
         email,
+        cpf,
+        fotoUrl,
         fotoBase64
       }
     });
@@ -130,23 +135,35 @@ var createUserB64 = async (req, res) => {
     res.status(500).send(e);
   }
 };
-var createUser = async (req, res) => {
+var updateUserB64 = async (req, res) => {
   try {
-    const { nome, email, fotoBase64 } = req.body;
-    const photo = req.file ? req.file.path : "";
-    if (photo !== "" || nome == "" || email == "" || fotoBase64 == "") {
-      const usuario = await prisma.testUser.create({
-        data: {
-          nome,
-          email,
-          fotoBase64
-        }
-      });
-      res.status(200).json({ Message: "User successfully saved", Error: "False" });
-    } else {
-      console.log("pimba");
-      res.status(400).json({ message: "Erro ao salvar usu\xE1rio: foto n\xE3o enviada" });
-    }
+    const { nome, email, cpf, fotoUrl, fotoBase64 } = userSchema.parse(req.body);
+    const updateUser = await prisma.testUser.update({
+      where: {
+        cpf
+      },
+      data: {
+        nome,
+        email,
+        fotoUrl,
+        fotoBase64
+      }
+    });
+    res.status(200).json({ message: "Atualizado", data: updateUser });
+  } catch (e) {
+    logger.error(e);
+    res.status(500).send(e);
+  }
+};
+var deleteUserB64 = async (req, res) => {
+  try {
+    const { cpf } = req.body;
+    const deleteUser = await prisma.testUser.delete({
+      where: {
+        cpf
+      }
+    });
+    res.status(200).json({ message: "Usuario deletado", data: deleteUser });
   } catch (e) {
     logger.error(e);
     res.status(500).send(e);
@@ -155,7 +172,7 @@ var createUser = async (req, res) => {
 var getUsers = async (req, res) => {
   try {
     const getAllUsers = await prisma.testUser.findMany();
-    req.log.info({ Message: "Get all users", Error: "false" });
+    req.log.info({ Message: "Listar todos usu\xE1rios", Error: "falso" });
     res.status(200).json({ getAllUsers });
   } catch (e) {
     req.log.error(e);
@@ -187,8 +204,9 @@ app.use((req, res, next) => {
   });
   next();
 });
-app.post("/usuarios", upload2.single("photo"), createUser);
 app.post("/usuariosB64", createUserB64);
+app.put("/usuariosB64", updateUserB64);
+app.delete("/usuariosB64", deleteUserB64);
 app.get("/usuarios", getUsers);
 app.get("/", (req, res) => {
   res.send("Server is running 1.0");
@@ -198,12 +216,14 @@ var appRoutes = app;
 
 // src/server.ts
 var import_body_parser2 = __toESM(require("body-parser"));
+var import_cors2 = __toESM(require("cors"));
 import_dotenv.default.config();
 var app2 = (0, import_express2.default)();
 var port2 = process.env.PORT;
 app2.use(import_body_parser2.default.json());
 app2.use(import_express2.default.json());
 app2.use("/", appRoutes);
+app2.use((0, import_cors2.default)());
 app2.listen(port2, () => {
   console.log(`\u26A1\uFE0F[${port2}]: Server is running at http://localhost:${port2}`);
   logger.info(`\u26A1\uFE0F[${port2}]: Server is running at http://localhost:${port2}`);

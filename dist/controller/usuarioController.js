@@ -30,9 +30,10 @@ var __toCommonJS = (mod) => __copyProps(__defProp({}, "__esModule", { value: tru
 // src/controller/usuarioController.ts
 var usuarioController_exports = {};
 __export(usuarioController_exports, {
-  createUser: () => createUser,
   createUserB64: () => createUserB64,
-  getUsers: () => getUsers
+  deleteUserB64: () => deleteUserB64,
+  getUsers: () => getUsers,
+  updateUserB64: () => updateUserB64
 });
 module.exports = __toCommonJS(usuarioController_exports);
 var import_client = require("@prisma/client");
@@ -119,15 +120,20 @@ var upload = (0, import_multer.default)({ storage });
 var userSchema = z.object({
   nome: z.string(),
   fotoBase64: z.string(),
-  email: z.string().email()
+  cpf: z.string().min(11).max(11),
+  email: z.string().email(),
+  fotoUrl: z.string()
 });
 var createUserB64 = async (req, res) => {
   try {
-    const { nome, email, fotoBase64 } = userSchema.parse(req.body);
+    const { nome, email, cpf, fotoUrl, fotoBase64 } = userSchema.parse(req.body);
+    console.log(nome, email, cpf, fotoUrl, fotoBase64);
     const usuario = await prisma.testUser.create({
       data: {
         nome,
         email,
+        cpf,
+        fotoUrl,
         fotoBase64
       }
     });
@@ -137,23 +143,35 @@ var createUserB64 = async (req, res) => {
     res.status(500).send(e);
   }
 };
-var createUser = async (req, res) => {
+var updateUserB64 = async (req, res) => {
   try {
-    const { nome, email, fotoBase64 } = req.body;
-    const photo = req.file ? req.file.path : "";
-    if (photo !== "" || nome == "" || email == "" || fotoBase64 == "") {
-      const usuario = await prisma.testUser.create({
-        data: {
-          nome,
-          email,
-          fotoBase64
-        }
-      });
-      res.status(200).json({ Message: "User successfully saved", Error: "False" });
-    } else {
-      console.log("pimba");
-      res.status(400).json({ message: "Erro ao salvar usu\xE1rio: foto n\xE3o enviada" });
-    }
+    const { nome, email, cpf, fotoUrl, fotoBase64 } = userSchema.parse(req.body);
+    const updateUser = await prisma.testUser.update({
+      where: {
+        cpf
+      },
+      data: {
+        nome,
+        email,
+        fotoUrl,
+        fotoBase64
+      }
+    });
+    res.status(200).json({ message: "Atualizado", data: updateUser });
+  } catch (e) {
+    logger.error(e);
+    res.status(500).send(e);
+  }
+};
+var deleteUserB64 = async (req, res) => {
+  try {
+    const { cpf } = req.body;
+    const deleteUser = await prisma.testUser.delete({
+      where: {
+        cpf
+      }
+    });
+    res.status(200).json({ message: "Usuario deletado", data: deleteUser });
   } catch (e) {
     logger.error(e);
     res.status(500).send(e);
@@ -162,7 +180,7 @@ var createUser = async (req, res) => {
 var getUsers = async (req, res) => {
   try {
     const getAllUsers = await prisma.testUser.findMany();
-    req.log.info({ Message: "Get all users", Error: "false" });
+    req.log.info({ Message: "Listar todos usu\xE1rios", Error: "falso" });
     res.status(200).json({ getAllUsers });
   } catch (e) {
     req.log.error(e);
@@ -171,7 +189,8 @@ var getUsers = async (req, res) => {
 };
 // Annotate the CommonJS export names for ESM import in node:
 0 && (module.exports = {
-  createUser,
   createUserB64,
-  getUsers
+  deleteUserB64,
+  getUsers,
+  updateUserB64
 });
