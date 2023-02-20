@@ -10,16 +10,26 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-model User {
-  id               Int      @id @default(autoincrement())
-  email            String   @unique
-  cpf              String   @unique
-  nomeCompleto     String
-  matricula        String
-  dataExpiracao    DateTime
-  dataDeNascimento DateTime
-  created_at       DateTime @default(now())
-  updated_at       DateTime @updatedAt
+model usuariosSESTSENAT {
+  id             Int      @id @default(autoincrement())
+  criarUsuario   Boolean  @default(false)
+  nome           String   @db.VarChar(255)
+  sobrenome      String   @db.VarChar(255)
+  dataNascimento String   @db.VarChar(255)
+  sociedade      String   @db.VarChar(255)
+  tipoDocumento1 String   @db.VarChar(255)
+  documento1     String   @unique
+  tipoDocumento2 String   @db.VarChar(255)
+  documento2     String   @unique
+  email          String   @db.VarChar(255)
+  nomeTratemento String   @db.VarChar(255)
+  telefone       String   @db.VarChar(255)
+  telefone2      String   @db.VarChar(255)
+  profissao      String   @db.VarChar(255)
+  grupoPessoa    String   @default("Aluno")
+  fotoFacial     String   @db.LongText
+  created_at     DateTime @default(now())
+  updated_at     DateTime @updatedAt
 }
 
 model testUser {
@@ -27,7 +37,7 @@ model testUser {
   nome       String
   cpf        String   @unique
   email      String
-  fotoUrl    String @db.LongText
+  fotoUrl    String   @db.LongText
   fotoBase64 String   @db.LongText
   created_at DateTime @default(now())
   updated_at DateTime @updatedAt
