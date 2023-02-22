@@ -8,7 +8,9 @@ import path from 'path'
 import { v4 as uuidv4 } from 'uuid'
 import * as z from 'zod'
 
-const prisma = new PrismaClient()
+const prisma = new PrismaClient({
+    errorFormat: 'minimal',
+})
 
 const storage = multer.diskStorage({
     destination: 'uploads/',
@@ -40,11 +42,17 @@ export const createUserB64 = async (req: Request, res: Response) => {
             },
         })
         res.status(200).json({ Message: 'Usuario salvo!', Error: 'Falso', Status: '200 ok' })
-    } catch (e) {
-        logger.error(e)
-        res.status(500).send(e)
+        return
+    } catch (e: any) {
+        if (e instanceof z.ZodError) {
+            const errorMessages = e.issues.map((issue) => issue.message);
+            res.status(401).json({ e: errorMessages });
+            //console.log(e)
+            return
+        }
     }
 }
+
 export const updateUserB64 = async (req: Request, res: Response) => {
     try {
         const { nome, email, cpf, fotoUrl, fotoBase64 } = userSchema.parse(req.body as IUsuarioUPDATEProps)

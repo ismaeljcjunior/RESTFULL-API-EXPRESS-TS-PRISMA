@@ -109,7 +109,9 @@ var v4_default = v4;
 
 // src/controller/usuarioController.ts
 var z = __toESM(require("zod"));
-var prisma = new import_client.PrismaClient();
+var prisma = new import_client.PrismaClient({
+  errorFormat: "minimal"
+});
 var storage = import_multer.default.diskStorage({
   destination: "uploads/",
   filename: (req, file, cb) => {
@@ -138,9 +140,13 @@ var createUserB64 = async (req, res) => {
       }
     });
     res.status(200).json({ Message: "Usuario salvo!", Error: "Falso", Status: "200 ok" });
+    return;
   } catch (e) {
-    logger.error(e);
-    res.status(500).send(e);
+    if (e instanceof z.ZodError) {
+      const errorMessages = e.issues.map((issue) => issue.message);
+      res.status(401).json({ e: errorMessages });
+      return;
+    }
   }
 };
 var updateUserB64 = async (req, res) => {
