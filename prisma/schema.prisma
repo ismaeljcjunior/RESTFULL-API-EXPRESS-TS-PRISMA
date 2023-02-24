@@ -33,7 +33,7 @@ model usuariosSESTSENAT {
 }
 
 model testUser {
-  id         String    @id @default(uuid())
+  id         String   @id @default(uuid())
   nome       String
   cpf        String   @unique
   email      String
