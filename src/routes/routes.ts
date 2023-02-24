@@ -3,19 +3,9 @@ import { createUserB64, getUsers, updateUserB64 } from '../controller/usuarioCon
 import bodyParser from 'body-parser'
 import cors from 'cors'
 import { logger } from "../../src/logger/logger"
-import multer from 'multer';
-import path from 'path';
-import { v4 as uuidv4 } from 'uuid';
 import { deleteUserB64 } from './../controller/usuarioController';
 
-const port = process.env.PORT
-const storage = multer.diskStorage({
-    destination: 'uploads/',
-    filename: (req, file, cb) => {
-        cb(null, uuidv4() + path.extname(file.originalname));
-    },
-});
-const upload = multer({ storage });
+
 const app: Express = express()
 
 app.use(bodyParser.json())
