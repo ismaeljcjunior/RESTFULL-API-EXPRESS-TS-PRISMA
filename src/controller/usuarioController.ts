@@ -10,25 +10,45 @@ import * as z from 'zod'
 
 const prisma = new PrismaClient()
 const userSchema = z.object({
-    nome: z.string().min(1),
-    fotoBase64: z.string().min(1),
-    cpf: z.string().length(11),
-    email: z.string().min(1),
-    fotoUrl: z.string().min(1),
+    criarUsuario: z.boolean(),
+    nome: z.string().max(50).min(3),
+    sobrenome: z.string().max(255),
+    dataNascimento: z.string(),
+    sociedade: z.string().optional(),
+    tipoDocumento1: z.string(),
+    documento1: z.string(),
+    tipoDocumento2: z.string(),
+    documento2: z.string(),
+    email: z.string().email(),
+    nomeTratamento: z.string().max(255),
+    profissao: z.string(),
+    telefone: z.string(),
+    telefone2: z.string(),
+    grupo_pessoa: z.string(),
 }).required()
 
 export const createUserB64 = async (req: Request, res: Response) => {
     try {
         const users = userSchema.array().parse(req.body as IUsuarioProps[]);
-        for (const { nome, email, cpf, fotoUrl, fotoBase64 } of users) {
+        for (const { criarUsuario, nome, sobrenome, dataNascimento, sociedade, tipoDocumento1, documento1, tipoDocumento2, documento2, email, nomeTratamento, profissao, telefone, telefone2, grupo_pessoa} of users) {
             console.log('--->', users)
-            const usuario = await prisma.testUser.create({
+            const usuario = await prisma.usuariosSESTSENAT.create({
                 data: {
+                    criarUsuario,
                     nome,
+                    sobrenome,
+                    dataNascimento,
+                    sociedade,
+                    tipoDocumento1, 
+                    documento1, 
+                    tipoDocumento2, 
+                    documento2,
                     email,
-                    cpf,
-                    fotoUrl,
-                    fotoBase64,
+                    nomeTratamento,
+                    profissao,
+                    telefone,
+                    telefone2,
+                    grupo_pessoa
                 }
             })
         }

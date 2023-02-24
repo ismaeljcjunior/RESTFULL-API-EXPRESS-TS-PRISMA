@@ -23,11 +23,11 @@ model usuariosSESTSENAT {
   tipoDocumento2 String  @db.VarChar(255)
   documento2     String  @unique
   email          String  @db.VarChar(255)
-  nomeTratemento String  @db.VarChar(255)
+  nomeTratamento String  @db.VarChar(255)
   telefone       String  @db.VarChar(255)
   telefone2      String  @db.VarChar(255)
   profissao      String  @db.VarChar(255)
-  grupoPessoa    String  @default("Aluno")
+  grupo_pessoa    String  @default("Aluno")
   fotoFacial     String  @db.LongText
 
   situacao   String   @db.VarChar(255)
