@@ -30,6 +30,7 @@ var __toCommonJS = (mod) => __copyProps(__defProp({}, "__esModule", { value: tru
 // src/controller/usuarioController.ts
 var usuarioController_exports = {};
 __export(usuarioController_exports, {
+  createUser: () => createUser,
   createUserB64: () => createUserB64,
   deleteUserB64: () => deleteUserB64,
   getUsers: () => getUsers,
@@ -109,23 +110,21 @@ var v4_default = v4;
 
 // src/controller/usuarioController.ts
 var z = __toESM(require("zod"));
-var prisma = new import_client.PrismaClient({
-  errorFormat: "minimal"
-});
+var prisma = new import_client.PrismaClient();
 var storage = import_multer.default.diskStorage({
   destination: "uploads/",
   filename: (req, file, cb) => {
     cb(null, v4_default() + import_path.default.extname(file.originalname));
   }
 });
-var upload = (0, import_multer.default)({ storage });
 var userSchema = z.object({
-  nome: z.string(),
-  fotoBase64: z.string(),
-  cpf: z.string().min(11).max(11),
-  email: z.string().email(),
-  fotoUrl: z.string()
-});
+  nome: z.string().min(1),
+  fotoBase64: z.string().min(1),
+  cpf: z.string().length(11),
+  email: z.string().min(1),
+  fotoUrl: z.string().min(1)
+}).required();
+var upload = (0, import_multer.default)({ storage });
 var createUserB64 = async (req, res) => {
   try {
     const { nome, email, cpf, fotoUrl, fotoBase64 } = userSchema.parse(req.body);
@@ -144,8 +143,10 @@ var createUserB64 = async (req, res) => {
   } catch (e) {
     if (e instanceof z.ZodError) {
       const errorMessages = e.issues.map((issue) => issue.message);
-      res.status(401).json({ e: errorMessages });
-      return;
+      console.log(e.errors);
+      return res.status(401).json({ Message: "Usu\xE1rio nao salvo!", Error: "Verdadeiro", Status: "400", error: errorMessages });
+    } else if (e.code === "P2002") {
+      return res.status(401).json({ error: "Erro interno do banco de dados", e });
     }
   }
 };
@@ -193,8 +194,33 @@ var getUsers = async (req, res) => {
     res.status(500).send(e);
   }
 };
+var createUser = async (req, res) => {
+  try {
+    const { nome, email, cpf, fotoUrl, fotoBase64 } = userSchema.parse(req.body);
+    const photo = req.file ? req.file.path : "";
+    if (photo !== "" || nome == "" || email == "" || fotoBase64 == "") {
+      const usuario = await prisma.testUser.create({
+        data: {
+          nome,
+          email,
+          cpf,
+          fotoUrl,
+          fotoBase64
+        }
+      });
+      res.status(200).json({ Message: "User successfully saved", Error: "False" });
+    } else {
+      console.log("pimba");
+      res.status(400).json({ message: "Erro ao salvar usu\xE1rio: foto n\xE3o enviada" });
+    }
+  } catch (e) {
+    logger.error(e);
+    res.status(500).send(e);
+  }
+};
 // Annotate the CommonJS export names for ESM import in node:
 0 && (module.exports = {
+  createUser,
   createUserB64,
   deleteUserB64,
   getUsers,

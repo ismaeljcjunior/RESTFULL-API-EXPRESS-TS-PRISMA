@@ -8,30 +8,25 @@ import path from 'path'
 import { v4 as uuidv4 } from 'uuid'
 import * as z from 'zod'
 
-const prisma = new PrismaClient({
-    errorFormat: 'minimal',
-})
-
+const prisma = new PrismaClient()
 const storage = multer.diskStorage({
     destination: 'uploads/',
     filename: (req, file, cb) => {
         cb(null, uuidv4() + path.extname(file.originalname));
     },
 })
-const upload = multer({ storage });
 const userSchema = z.object({
-    nome: z.string(),
-    fotoBase64: z.string(),
-    cpf: z.string().min(11).max(11),
-    email: z.string().email(),
-    fotoUrl: z.string(),
-})
-
+    nome: z.string().min(1),
+    fotoBase64: z.string().min(1),
+    cpf: z.string().length(11),
+    email: z.string().min(1),
+    fotoUrl: z.string().min(1),
+}).required()
+const upload = multer({ storage });
 export const createUserB64 = async (req: Request, res: Response) => {
     try {
         const { nome, email, cpf, fotoUrl, fotoBase64 } = userSchema.parse(req.body as IUsuarioProps)
         console.log(nome, email, cpf, fotoUrl, fotoBase64);
-
         const usuario = await prisma.testUser.create({
             data: {
                 nome,
@@ -46,12 +41,15 @@ export const createUserB64 = async (req: Request, res: Response) => {
     } catch (e: any) {
         if (e instanceof z.ZodError) {
             const errorMessages = e.issues.map((issue) => issue.message);
-            res.status(401).json({ e: errorMessages });
-            //console.log(e)
-            return
+            console.log(e.errors);
+            return res.status(401).json({ Message: 'Usuário nao salvo!', Error: 'Verdadeiro', Status: '400', error: errorMessages });
+        } else if (e.code === 'P2002') {
+            // console.log(e);
+            return res.status(401).json({ error: 'Erro interno do banco de dados', e });
         }
     }
 }
+
 
 export const updateUserB64 = async (req: Request, res: Response) => {
     try {
@@ -101,29 +99,29 @@ export const getUsers = async (req: Request, res: Response) => {
 
 
 
-// export const createUser = async (req: Request, res: Response) => {
+export const createUser = async (req: Request, res: Response) => {
+    try {
+        const { nome, email, cpf, fotoUrl, fotoBase64 } = userSchema.parse(req.body as IUsuarioProps)
+        const photo: string = req.file ? req.file.path : '';
 
-//     try {
-//         const { nome, email, fotoBase64 } = req.body as IUsuarioProps
-//         // const { nome, email, fotoBase64 } = userSchema.parse(req.body as IUsuarioProps)
-//         const photo: string = req.file ? req.file.path : '';
-
-//         if (photo !== '' || nome == '' || email == '' || fotoBase64 == '') {
-//             const usuario = await prisma.testUser.create({
-//                 data: {
-//                     nome,
-//                     email,
-//                     fotoBase64,
-//                 },
-//             })
-//             res.status(200).json({ Message: 'User successfully saved', Error: 'False' })
-//         } else {
-//             console.log('pimba')
-//             // console.log(req.body)
-//             res.status(400).json({ message: 'Erro ao salvar usuário: foto não enviada' });
-//         }
-//     } catch (e) {
-//         logger.error(e)
-//         res.status(500).send(e)
-//     }
-// }
+        if (photo !== '' || nome == '' || email == '' || fotoBase64 == '') {
+            const usuario = await prisma.testUser.create({
+                data: {
+                    nome,
+                    email,
+                    cpf,
+                    fotoUrl,
+                    fotoBase64,
+                },
+            })
+            res.status(200).json({ Message: 'User successfully saved', Error: 'False' })
+        } else {
+            console.log('pimba')
+            // console.log(req.body)
+            res.status(400).json({ message: 'Erro ao salvar usuário: foto não enviada' });
+        }
+    } catch (e) {
+        logger.error(e)
+        res.status(500).send(e)
+    }
+}
