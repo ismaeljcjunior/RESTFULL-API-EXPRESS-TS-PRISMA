@@ -12,7 +12,7 @@ datasource db {
 
 model usuariosSESTSENAT {
   id Int @id @default(autoincrement())
-  
+
   criarUsuario   Boolean @default(false)
   nome           String  @db.VarChar(255)
   sobrenome      String  @db.VarChar(255)
@@ -31,27 +31,6 @@ model usuariosSESTSENAT {
   fotoFacial     String  @db.LongText
 
   situacao   String   @db.VarChar(255)
-  created_at DateTime @default(now())
-  updated_at DateTime @updatedAt
-}
-
-model testUser {
-  id         String   @id @default(uuid())
-  nome       String
-  cpf        String   @unique
-  email      String
-  fotoUrl    String   @db.LongText
-  fotoBase64 String   @db.LongText
-  created_at DateTime @default(now())
-  updated_at DateTime @updatedAt
-}
-
-model User {
-  id         String   @id @default(uuid())
-  nome       String
-  email      String
-  idade      String
-  foto       String?  @db.LongText
   created_at DateTime @default(now())
   updated_at DateTime @updatedAt
 }

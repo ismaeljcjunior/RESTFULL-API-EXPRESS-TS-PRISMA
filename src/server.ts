@@ -1,4 +1,4 @@
-import express, { Express, Request, Response } from 'express'
+import express, { Express } from 'express'
 import dotenv from 'dotenv'
 import { logger } from '../src/logger/logger'
 import { appRoutes } from './routes/routes'
