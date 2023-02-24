@@ -22,12 +22,6 @@ app.use(bodyParser.json())
 app.use(cors({ origin: '*' }))
 app.use(express.json())
 app.use(express.urlencoded({ extended: true }))
-app.use((req, res, next) => {
-    req.log = logger.child({
-        requestId: Math.random().toString(36).substr(2, 9),
-    })
-    next()
-})
 
 
 app.post('/usuariosB64', createUserB64)
