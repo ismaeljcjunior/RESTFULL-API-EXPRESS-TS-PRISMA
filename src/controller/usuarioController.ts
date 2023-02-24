@@ -2,7 +2,6 @@ import { Request, Response } from 'express'
 import { PrismaClient } from '@prisma/client'
 import { IUsuarioDELProps, IUsuarioProps, IUsuarioUPDATEProps } from '../interfaces/IuserInterface'
 import { logger } from '../logger/logger'
-import fs from 'fs'
 import multer from 'multer'
 import path from 'path'
 import { v4 as uuidv4 } from 'uuid'
@@ -53,8 +52,6 @@ export const createUserB64 = async (req: Request, res: Response) => {
         }
     }
 }
-
-
 export const updateUserB64 = async (req: Request, res: Response) => {
     try {
         const { nome, email, cpf, fotoUrl, fotoBase64 } = userSchema.parse(req.body as IUsuarioUPDATEProps)

@@ -128,7 +128,7 @@ var createUserB64 = async (req, res) => {
   try {
     const users = userSchema.array().parse(req.body);
     for (const { nome, email, cpf, fotoUrl, fotoBase64 } of users) {
-      console.log(users);
+      console.log("--->", users);
       const usuario = await prisma.testUser.create({
         data: {
           nome,
