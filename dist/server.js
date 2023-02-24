@@ -118,24 +118,26 @@ var userSchema = z.object({
 var upload = (0, import_multer.default)({ storage });
 var createUserB64 = async (req, res) => {
   try {
-    const { nome, email, cpf, fotoUrl, fotoBase64 } = userSchema.parse(req.body);
-    console.log(nome, email, cpf, fotoUrl, fotoBase64);
-    const usuario = await prisma.testUser.create({
-      data: {
-        nome,
-        email,
-        cpf,
-        fotoUrl,
-        fotoBase64
-      }
-    });
-    res.status(200).json({ Message: "Usuario salvo!", Error: "Falso", Status: "200 ok" });
+    const users = userSchema.array().parse(req.body);
+    for (const { nome, email, cpf, fotoUrl, fotoBase64 } of users) {
+      console.log(users);
+      const usuario = await prisma.testUser.create({
+        data: {
+          nome,
+          email,
+          cpf,
+          fotoUrl,
+          fotoBase64
+        }
+      });
+    }
+    res.status(200).json({ Message: "Usu\xE1rios salvos!", Error: "Falso", Status: "200 ok" });
     return;
   } catch (e) {
     if (e instanceof z.ZodError) {
       const errorMessages = e.issues.map((issue) => issue.message);
       console.log(e.errors);
-      return res.status(401).json({ Message: "Usu\xE1rio nao salvo!", Error: "Verdadeiro", Status: "400", error: errorMessages });
+      return res.status(401).json({ Message: "Usu\xE1rios n\xE3o salvos!", Error: "Verdadeiro", Status: "400", error: errorMessages });
     } else if (e.code === "P2002") {
       return res.status(401).json({ error: "Erro interno do banco de dados", e });
     }
