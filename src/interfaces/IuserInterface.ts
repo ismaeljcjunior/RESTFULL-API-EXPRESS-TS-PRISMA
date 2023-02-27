@@ -1,8 +1,10 @@
+import { AxiosResponse } from "axios";
+
 export interface IUsuarioProps {
     criarUsuario: boolean,
     nome: string,
     sobrenome: string,
-    dataNascimento:string,
+    dataNascimento: string,
     sociedade: string,
     tipoDocumento1: string,
     documento1: string,
@@ -21,7 +23,7 @@ export interface IUsuarioUPDATEProps {
     criarUsuario?: boolean,
     nome?: string,
     sobrenome?: string,
-    dataNascimento?:string,
+    dataNascimento?: string,
     sociedade?: string,
     tipoDocumento1?: string,
     documento1: string,
@@ -37,4 +39,24 @@ export interface IUsuarioUPDATEProps {
 }
 export interface IUsuarioDELProps {
     email: string
+}
+
+export interface DocumentoDTO {
+    tipoDocumento: string;
+    documento: string;
+}
+
+export interface Data {
+    criarUsuario: boolean;
+    nome: string;
+    sobrenome: string;
+    dataNascimento: string;
+    sociedade: string;
+    documentosDTO: DocumentoDTO[];
+    email: string;
+    nomeTratamento: string;
+    telefone: string;
+    telefone2: string;
+    profissao: string;
+    grupoPessoa: string;
 }

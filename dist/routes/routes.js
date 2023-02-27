@@ -155,7 +155,7 @@ var getUsers = async (req, res) => {
   }
 };
 var sendUser = async (req, res) => {
-  const options = {
+  const optionsLogin = {
     headers: {
       // "content-type": "multipart/form-data",
       // "Accept": "*/*",
@@ -164,23 +164,73 @@ var sendUser = async (req, res) => {
       "Authorization": "Basic Y2VudGVyLWFwaTphcGktc2VjcmV0"
     }
   };
-  const formData = new import_form_data.default();
-  let access_token;
-  let refresh_token;
-  let token_type;
-  formData.append("username", process.env.USER_LOGIN);
-  formData.append("password", process.env.USER_PASSWORD);
-  formData.append("grant_type", process.env.USER_GRANT_TYPE);
-  const loginApi = async () => {
-    const data = import_axios.default.post(process.env.API_URL_LOGIN, formData, options).then(function(res2) {
-      access_token = res2.data.access_token;
-      refresh_token = res2.data.refresh_token;
-      return console.log(access_token, refresh_token);
-    }).catch(function(res2) {
-      console.log("fail login", res2.data);
-    });
+  const optionsRefreshLogin = {
+    headers: {
+      // "content-type": "multipart/form-data",
+      // "Accept": "*/*",
+      // "Accept-Encoding": "gzip, deflate, br",
+      // "Connection": "keep-alive",
+      "Authorization": "Basic Y2VudGVyLWFwaTphcGktc2VjcmV0",
+      "tenant": "newline_sistemas_de_seguranca_103147"
+    }
   };
-  loginApi();
+  const formDataLogin = new import_form_data.default();
+  const formDataRefresh = new import_form_data.default();
+  const formDataGet = new import_form_data.default();
+  let objDataLogin = {
+    access_token: "",
+    refresh_token: "",
+    token_type: ""
+  };
+  let objDataRefresh = {
+    grant_type: "refresh_token",
+    access_token: "",
+    refresh_token: ""
+  };
+  let data = {
+    "criarUsuario": true,
+    "nome": "integrador teste",
+    "sobrenome": "integrador teste",
+    "dataNascimento": "09/02/2000",
+    "sociedade": "PESSOA_FISICA",
+    "documentosDTO": [
+      {
+        "tipoDocumento": "CPF",
+        "documento": "185.836.320-90"
+      },
+      {
+        "tipoDocumento": "RG",
+        "documento": "500000"
+      }
+    ],
+    "email": "teste7@scond.com.br",
+    "nomeTratamento": "String 255",
+    "telefone": "+55 99 99999-9999",
+    "telefone2": "+55 99 99999-9999",
+    "profissao": "Aluno",
+    "grupoPessoa": "Aluno"
+  };
+  formDataLogin.append("username", process.env.USER_LOGIN);
+  formDataLogin.append("password", process.env.USER_PASSWORD);
+  formDataLogin.append("grant_type", process.env.USER_GRANT_TYPE);
+  try {
+    await import_axios.default.post(process.env.API_URL_LOGIN, formDataLogin, optionsLogin).then(async function(res2) {
+      objDataLogin.access_token = res2.data.access_token;
+      objDataLogin.refresh_token = res2.data.refresh_token;
+      objDataLogin.token_type = res2.data.token_type;
+      formDataRefresh.append("refresh_token", objDataLogin.refresh_token);
+      formDataRefresh.append("grant_type", "refresh_token");
+      await import_axios.default.post(process.env.API_URL_REFRESH, formDataRefresh, optionsRefreshLogin).then(async function(res3) {
+        objDataRefresh.refresh_token = res3.data.refresh_token;
+        formDataGet.append("Authorization", `bearer ${objDataRefresh.refresh_token}`);
+        formDataGet.append("tenant", "newline_sistemas_de_seguranca_103147");
+      });
+    });
+    res.status(200).json({ Message: "Sucess Login", Data: objDataLogin });
+  } catch (e) {
+    console.log("Fail Login", e);
+    res.status(400).json({ Error: e });
+  }
 };
 
 // src/routes/routes.ts

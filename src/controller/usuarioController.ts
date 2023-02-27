@@ -2,7 +2,7 @@ import * as dotenv from 'dotenv'
 dotenv.config()
 import { Request, Response } from 'express'
 import { PrismaClient } from '@prisma/client'
-import { IUsuarioDELProps, IUsuarioProps, IUsuarioUPDATEProps } from '../interfaces/IuserInterface'
+import { Data, IUsuarioDELProps, IUsuarioProps, IUsuarioUPDATEProps } from '../interfaces/IuserInterface'
 import { logger } from '../logger/logger'
 import { v4 as uuidv4 } from 'uuid'
 import * as z from 'zod'
@@ -28,8 +28,6 @@ const userSchema = z.object({
     grupoPessoa: z.string(),
     fotoFacial: z.string(),
 }).required()
-
-
 
 export const createUserB64 = async (req: Request, res: Response) => {
     try {
@@ -138,7 +136,7 @@ export const getUsers = async (req: Request, res: Response) => {
 }
 
 export const sendUser = async (req: Request, res: Response) => {
-    const options = {
+    const optionsLogin = {
         headers: {
             // "content-type": "multipart/form-data",
             // "Accept": "*/*",
@@ -147,27 +145,97 @@ export const sendUser = async (req: Request, res: Response) => {
             "Authorization": "Basic Y2VudGVyLWFwaTphcGktc2VjcmV0",
         }
     }
-    const formData = new FormData();
-    let access_token
-    let refresh_token
-    let token_type
-    formData.append('username', process.env.USER_LOGIN as string)
-    formData.append('password', process.env.USER_PASSWORD as string)
-    formData.append('grant_type', process.env.USER_GRANT_TYPE as string)
+    const optionsRefreshLogin = {
+        headers: {
+            // "content-type": "multipart/form-data",
+            // "Accept": "*/*",
+            // "Accept-Encoding": "gzip, deflate, br",
+            // "Connection": "keep-alive",
+            "Authorization": "Basic Y2VudGVyLWFwaTphcGktc2VjcmV0",
+            "tenant": "newline_sistemas_de_seguranca_103147"
+        }
+    }
+    const formDataLogin = new FormData();
+    const formDataRefresh = new FormData();
+    const formDataGet = new FormData();
 
-    const loginApi = async () => {
-    
-        const data = axios.post(process.env.API_URL_LOGIN as string, formData, options)
-            .then(function (res) {
-               // console.log('sucess login',res.data)
-                access_token = res.data.access_token
-                refresh_token = res.data.refresh_token
-                
-                return console.log(access_token,refresh_token)
-            }).catch(function (res) {
-                console.log('fail login',res.data)
+    let objDataLogin = {
+        access_token: "",
+        refresh_token: "",
+        token_type: "",
+    }
+    let objDataRefresh = {
+        grant_type: "refresh_token",
+        access_token: "",
+        refresh_token: "",
+    }
+    let data: Data = {
+        "criarUsuario": true,
+        "nome": "integrador teste",
+        "sobrenome": "integrador teste",
+        "dataNascimento": "09/02/2000",
+        "sociedade": "PESSOA_FISICA",
+        "documentosDTO": [
+            {
+                "tipoDocumento": "CPF",
+                "documento": "185.836.320-90"
+            },
+            {
+                "tipoDocumento": "RG",
+                "documento": "500000"
+            }
+        ],
+        "email": "teste7@scond.com.br",
+        "nomeTratamento": "String 255",
+        "telefone": "+55 99 99999-9999",
+        "telefone2": "+55 99 99999-9999",
+        "profissao": "Aluno",
+        "grupoPessoa": "Aluno",
+
+
+    }
+    formDataLogin.append('username', process.env.USER_LOGIN as string)
+    formDataLogin.append('password', process.env.USER_PASSWORD as string)
+    formDataLogin.append('grant_type', process.env.USER_GRANT_TYPE as string)
+    try {
+        await axios.post(process.env.API_URL_LOGIN as string, formDataLogin, optionsLogin)
+            .then(async function (res) {
+                // console.log('sucess login', res.data)
+                objDataLogin.access_token = res.data.access_token
+                objDataLogin.refresh_token = res.data.refresh_token
+                objDataLogin.token_type = res.data.token_type
+
+                formDataRefresh.append('refresh_token', objDataLogin.refresh_token)
+                formDataRefresh.append("grant_type", "refresh_token")
+
+                await axios.post(process.env.API_URL_REFRESH as string, formDataRefresh, optionsRefreshLogin)
+                    .then(async function (res) {
+                        objDataRefresh.refresh_token = res.data.refresh_token
+
+                        formDataGet.append('Authorization', `bearer ${objDataRefresh.refresh_token}`)
+                        formDataGet.append('tenant', 'newline_sistemas_de_seguranca_103147')
+
+
+                        // console.log(objDataRefresh);
+
+                        // await axios.post(process.env.API_URL_GET as string, data, {
+                        //     headers: { 
+                        //     'Authorization': `bearer ${objDataRefresh.access_token}`,
+                        //     'Content-Type': 'application/json',
+                        //     'tenant': 'newline_sistemas_de_seguranca_103147'
+                        // }
+                        // })
+                        //     .then(async function (res) {
+                        //         console.log('_______> PIMBALIZATION SUCCESS',res);
+
+                        //     })
+
+
+                    })
             })
-    }; loginApi()
-
+        res.status(200).json({ Message: 'Sucess Login', Data: objDataLogin })
+    } catch (e) {
+        console.log('Fail Login', e)
+        res.status(400).json({ Error: e })
+    }
 }
-
