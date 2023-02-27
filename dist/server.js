@@ -179,7 +179,7 @@ var sendUser = async (req, res) => {
   };
   let data = {
     "criarUsuario": true,
-    "nome": "integrador teste",
+    "nome": "integrador teste api ",
     "sobrenome": "integrador teste",
     "dataNascimento": "09/02/2000",
     "sociedade": "PESSOA_FISICA",
@@ -211,20 +211,22 @@ var sendUser = async (req, res) => {
       console.log("debug axios 1", objData);
       formDataRefresh.append("grant_type", objData.grant_type);
       formDataRefresh.append("refresh_token", objData.refresh_token);
+      console.log(formDataRefresh);
       await import_axios.default.post(process.env.API_URL_REFRESH, formDataRefresh, {
         headers: {
           Authorization: objData.Authorization,
           tenant: objData.tenant
         }
       }).then(async function(res3) {
-        await import_axios.default.post(process.env.API_URL_GET, data, {
+        await import_axios.default.post(process.env.API_URL_GET, {
           headers: {
-            "Authorization": `bearer ${objData.access_token}`,
+            "Authorization": `bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjE2Nzc2MTQ5NjIsInVzZXJfbmFtZSI6ImNvbnRyb2xlLnRlY25pY29AbmV3bGluZXNlZ3VyYW5jYS5jb20uYnIiLCJhdXRob3JpdGllcyI6WyIxMDlfQ1JVRCIsIjEwNl9DUlVEIiwiMTI5X0NSVUQiLCIxMDBfQ1JVRCIsIjExMV9DUlVEIiwiMTAxX0NSVUQiLCIxMzBfQyIsIjEyM19DUlVEIiwiMTI2X0NSVUQiLCIxMzFfQyIsIjEyMF9DUlVEIiwiMTEyX0NSVUQiLCIxMzRfQyIsIjEzM19DIiwiMTEwX0NSVUQiLCIxMjdfQ1JVRCIsIjEyMV9DUlVEIiwiMTEzX0NSVUQiLCIxMDVfQ1JVRCIsIjEzNV9DUlVEIiwiMTMyX0NSVUQiLCIxMTlfQ1JVRCIsIjEyNF9DUlVEIiwiMTIyX0NSVUQiLCIxMjVfQ1JVRCIsIi04MzU1MjExMCIsIjEyOF9DUlVEIl0sImp0aSI6IjAwZDM2MjkwLTAyNzItNDY0MS04NTI2LTFhN2Q0ZDhhYzcwNyIsImNsaWVudF9pZCI6ImNlbnRlci1hcGkiLCJzY29wZSI6WyJvcGVuaWQiXX0.06BVvxOcnuKtOG_IgnGzLxnw45x5V6g7yoodE_Wxvt`,
             "tenant": objData.tenant,
             "Content-Type": "application/json"
-          }
+          },
+          data
         }).then(async function(res4) {
-          console.log("pimbalization");
+          console.log("pimbalization", res4.data);
         });
       });
     });

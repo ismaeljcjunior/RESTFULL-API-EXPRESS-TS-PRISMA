@@ -169,30 +169,28 @@ export const sendUser = async (req: Request, res: Response) => {
     }
 
     let data: Data = {
-        
-            "criarUsuario": true, 
-            "nome": "integrador teste",
-            "sobrenome": "integrador teste",
-            "dataNascimento": "09/02/2000", 
-            "sociedade": "PESSOA_FISICA",
-            "documentosDTO": [
+
+        "criarUsuario": true,
+        "nome": "integrador teste api ",
+        "sobrenome": "integrador teste",
+        "dataNascimento": "09/02/2000",
+        "sociedade": "PESSOA_FISICA",
+        "documentosDTO": [
             {
-            "tipoDocumento": "CPF",
-            "documento": "784.362.900-97"
+                "tipoDocumento": "CPF",
+                "documento": "784.362.900-97"
             },
             {
-            "tipoDocumento": "RG",
-            "documento": "500000"
+                "tipoDocumento": "RG",
+                "documento": "500000"
             }
-            ],
-            "email": "teste4@scond.com.br",
-            "nomeTratamento": "String 255",
-            "telefone": "+55 99 99999-9999",
-            "telefone2": "+55 99 99999-9999",
-            "profissao": "Aluno",
-            "grupoPessoa": "Aluno"
-
-
+        ],
+        "email": "teste4@scond.com.br",
+        "nomeTratamento": "String 255",
+        "telefone": "+55 99 99999-9999",
+        "telefone2": "+55 99 99999-9999",
+        "profissao": "Aluno",
+        "grupoPessoa": "Aluno"
     }
     formDataLogin.append('username', process.env.USER_LOGIN as string)
     formDataLogin.append('password', process.env.USER_PASSWORD as string)
@@ -206,7 +204,7 @@ export const sendUser = async (req: Request, res: Response) => {
                 console.log('debug axios 1', objData)
                 formDataRefresh.append('grant_type', objData.grant_type)
                 formDataRefresh.append('refresh_token', objData.refresh_token)
-                // console.log(formDataRefresh);
+                console.log(formDataRefresh);
 
                 await axios.post(process.env.API_URL_REFRESH as string, formDataRefresh, {
                     headers: {
@@ -215,14 +213,14 @@ export const sendUser = async (req: Request, res: Response) => {
                     }
                 }).then(async function (res) {
 
-                    await axios.post(process.env.API_URL_GET as string, data, {
+                    await axios.post(process.env.API_URL_GET as string, {
                         headers: {
                             "Authorization": `bearer ${objData.access_token}`,
                             "tenant": objData.tenant,
                             "Content-Type": 'application/json'
-                        }
+                        }, data
                     }).then(async function (res) {
-                        console.log('pimbalization');
+                        console.log('pimbalization', res.data);
 
                     })
 
