@@ -159,7 +159,6 @@ app.delete("/usuariosB64", deleteUserB64);
 app.get("/usuarios", getUsers);
 app.get("/", (req, res) => {
   res.send("Server is running 1.0");
-  req.log.info("Server is running 1.0");
 });
 var appRoutes = app;
 
@@ -169,7 +168,14 @@ var import_cors2 = __toESM(require("cors"));
 import_dotenv.default.config();
 var app2 = (0, import_express2.default)();
 var port = process.env.PORT;
-app2.use(import_body_parser2.default.json());
+app2.use(import_body_parser2.default.json({
+  limit: "50mb"
+}));
+app2.use(import_body_parser2.default.urlencoded({
+  limit: "50mb",
+  parameterLimit: 1e5,
+  extended: true
+}));
 app2.use(import_express2.default.json());
 app2.use("/", appRoutes);
 app2.use((0, import_cors2.default)());

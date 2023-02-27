@@ -23,7 +23,7 @@ app.get('/usuarios', getUsers)
 
 app.get('/', (req: Request, res: Response) => {
     res.send('Server is running 1.0')
-    req.log.info('Server is running 1.0')
+
 })
 
 export const appRoutes = app

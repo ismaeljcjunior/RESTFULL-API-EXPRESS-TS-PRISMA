@@ -167,7 +167,6 @@ app.delete("/usuariosB64", deleteUserB64);
 app.get("/usuarios", getUsers);
 app.get("/", (req, res) => {
   res.send("Server is running 1.0");
-  req.log.info("Server is running 1.0");
 });
 var appRoutes = app;
 // Annotate the CommonJS export names for ESM import in node:
