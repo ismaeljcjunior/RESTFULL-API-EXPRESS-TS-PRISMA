@@ -115,7 +115,7 @@ var updateUserB64 = async (req, res) => {
     const { criarUsuario, nome, sobrenome, dataNascimento, sociedade, tipoDocumento1, documento1, tipoDocumento2, documento2, email, nomeTratamento, profissao, telefone, telefone2, grupoPessoa, fotoFacial } = userSchema.parse(req.body);
     const updateUser = await prisma.usuariosSESTSENAT.update({
       where: {
-        email
+        documento1
       },
       data: {
         nome,

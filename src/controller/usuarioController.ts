@@ -69,7 +69,7 @@ export const updateUserB64 = async (req: Request, res: Response) => {
         const { criarUsuario, nome, sobrenome, dataNascimento, sociedade, tipoDocumento1, documento1, tipoDocumento2, documento2, email, nomeTratamento, profissao, telefone, telefone2, grupoPessoa, fotoFacial } = userSchema.parse(req.body as IUsuarioUPDATEProps)
         const updateUser = await prisma.usuariosSESTSENAT.update({
             where: {
-                tipoDocumento1:tipoDocumento1
+                documento1: documento1
             },
             data: {
                 nome: nome,
@@ -88,7 +88,7 @@ export const deleteUserB64 = async (req: Request, res: Response) => {
         const { email } = req.body as IUsuarioDELProps
         const deleteUser = await prisma.usuariosSESTSENAT.delete({
             where: {
-                email
+                email : email
             },
         })
         res.status(200).json({ message: 'Usuario deletado', data: deleteUser })
