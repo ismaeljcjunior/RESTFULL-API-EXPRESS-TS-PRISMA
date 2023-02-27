@@ -2,9 +2,6 @@ import { Request, Response } from 'express'
 import { PrismaClient } from '@prisma/client'
 import { IUsuarioDELProps, IUsuarioProps, IUsuarioUPDATEProps } from '../interfaces/IuserInterface'
 import { logger } from '../logger/logger'
-import multer from 'multer'
-import path from 'path'
-import fs from 'fs'
 import { v4 as uuidv4 } from 'uuid'
 import * as z from 'zod'
 
@@ -24,13 +21,14 @@ const userSchema = z.object({
     profissao: z.string(),
     telefone: z.string(),
     telefone2: z.string(),
-    grupo_pessoa: z.string(),
+    grupoPessoa: z.string(),
+    fotoFacial: z.string(),
 }).required()
 
 export const createUserB64 = async (req: Request, res: Response) => {
     try {
         const users = userSchema.array().parse(req.body as IUsuarioProps[]);
-        for (const { criarUsuario, nome, sobrenome, dataNascimento, sociedade, tipoDocumento1, documento1, tipoDocumento2, documento2, email, nomeTratamento, profissao, telefone, telefone2, grupo_pessoa} of users) {
+        for (const { criarUsuario, nome, sobrenome, dataNascimento, sociedade, tipoDocumento1, documento1, tipoDocumento2, documento2, email, nomeTratamento, profissao, telefone, telefone2, grupoPessoa, fotoFacial } of users) {
             console.log('--->', users)
             const usuario = await prisma.usuariosSESTSENAT.create({
                 data: {
@@ -39,16 +37,17 @@ export const createUserB64 = async (req: Request, res: Response) => {
                     sobrenome,
                     dataNascimento,
                     sociedade,
-                    tipoDocumento1, 
-                    documento1, 
-                    tipoDocumento2, 
+                    tipoDocumento1,
+                    documento1,
+                    tipoDocumento2,
                     documento2,
                     email,
                     nomeTratamento,
-                    profissao,
                     telefone,
                     telefone2,
-                    grupo_pessoa
+                    profissao,
+                    grupoPessoa,
+                    fotoFacial
                 }
             })
         }
@@ -67,16 +66,15 @@ export const createUserB64 = async (req: Request, res: Response) => {
 }
 export const updateUserB64 = async (req: Request, res: Response) => {
     try {
-        const { nome, email, cpf, fotoUrl, fotoBase64 } = userSchema.parse(req.body as IUsuarioUPDATEProps)
-        const updateUser = await prisma.testUser.update({
+        const { criarUsuario, nome, sobrenome, dataNascimento, sociedade, tipoDocumento1, documento1, tipoDocumento2, documento2, email, nomeTratamento, profissao, telefone, telefone2, grupoPessoa, fotoFacial } = userSchema.parse(req.body as IUsuarioUPDATEProps)
+        const updateUser = await prisma.usuariosSESTSENAT.update({
             where: {
-                cpf
+                tipoDocumento1:tipoDocumento1
             },
             data: {
                 nome: nome,
                 email: email,
-                fotoUrl: fotoUrl,
-                fotoBase64: fotoBase64
+
             },
         })
         res.status(200).json({ message: 'Atualizado', data: updateUser })
@@ -87,10 +85,10 @@ export const updateUserB64 = async (req: Request, res: Response) => {
 }
 export const deleteUserB64 = async (req: Request, res: Response) => {
     try {
-        const { cpf } = req.body as IUsuarioDELProps
-        const deleteUser = await prisma.testUser.delete({
+        const { email } = req.body as IUsuarioDELProps
+        const deleteUser = await prisma.usuariosSESTSENAT.delete({
             where: {
-                cpf: cpf
+                email
             },
         })
         res.status(200).json({ message: 'Usuario deletado', data: deleteUser })
@@ -101,7 +99,7 @@ export const deleteUserB64 = async (req: Request, res: Response) => {
 }
 export const getUsers = async (req: Request, res: Response) => {
     try {
-        const getAllUsers = await prisma.testUser.findMany()
+        const getAllUsers = await prisma.usuariosSESTSENAT.findMany()
         req.log.info({ Message: 'Listar todos usuários', Error: 'falso' })
         // res.status(200).json({Message:'Get all users' ,Error: 'false'  })
         res.status(200).json({ getAllUsers })

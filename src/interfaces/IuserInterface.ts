@@ -14,7 +14,8 @@ export interface IUsuarioProps {
     profissao: string,
     telefone: string,
     telefone2: string,
-    grupo_pessoa: string,
+    grupoPessoa: string,
+    fotoFacial: string,
 }
 export interface IUsuarioUPDATEProps {
     criarUsuario?: boolean,
@@ -31,8 +32,9 @@ export interface IUsuarioUPDATEProps {
     profissao?: string,
     telefone?: string,
     telefone2?: string,
-    grupo_pessoa?: string,
+    grupoPessoa?: string,
+    fotoFacial: string,
 }
 export interface IUsuarioDELProps {
-    cpf: string
+    email: string
 }

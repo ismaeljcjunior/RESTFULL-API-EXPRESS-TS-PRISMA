@@ -27,10 +27,10 @@ model usuariosSESTSENAT {
   telefone       String  @db.VarChar(255)
   telefone2      String  @db.VarChar(255)
   profissao      String  @db.VarChar(255)
-  grupo_pessoa    String  @default("Aluno")
+  grupoPessoa    String  @default("Aluno")
   fotoFacial     String  @db.LongText
 
-  situacao   String   @db.VarChar(255)
+  situacao   String?   @db.VarChar(255)
   created_at DateTime @default(now())
   updated_at DateTime @updatedAt
 }

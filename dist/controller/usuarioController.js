@@ -55,24 +55,46 @@ var logger = (0, import_pino.default)({
 var z = __toESM(require("zod"));
 var prisma = new import_client.PrismaClient();
 var userSchema = z.object({
-  nome: z.string().min(1),
-  fotoBase64: z.string().min(1),
-  cpf: z.string().length(11),
-  email: z.string().min(1),
-  fotoUrl: z.string().min(1)
+  criarUsuario: z.boolean(),
+  nome: z.string().max(50).min(3),
+  sobrenome: z.string().max(255),
+  dataNascimento: z.string(),
+  sociedade: z.string().optional(),
+  tipoDocumento1: z.string(),
+  documento1: z.string(),
+  tipoDocumento2: z.string(),
+  documento2: z.string(),
+  email: z.string().email(),
+  nomeTratamento: z.string().max(255),
+  profissao: z.string(),
+  telefone: z.string(),
+  telefone2: z.string(),
+  grupoPessoa: z.string(),
+  fotoFacial: z.string()
 }).required();
 var createUserB64 = async (req, res) => {
   try {
     const users = userSchema.array().parse(req.body);
-    for (const { nome, email, cpf, fotoUrl, fotoBase64 } of users) {
+    for (const { criarUsuario, nome, sobrenome, dataNascimento, sociedade, tipoDocumento1, documento1, tipoDocumento2, documento2, email, nomeTratamento, profissao, telefone, telefone2, grupoPessoa, fotoFacial } of users) {
       console.log("--->", users);
-      const usuario = await prisma.testUser.create({
+      const usuario = await prisma.usuariosSESTSENAT.create({
         data: {
+          criarUsuario,
           nome,
+          sobrenome,
+          dataNascimento,
+          sociedade,
+          tipoDocumento1,
+          documento1,
+          tipoDocumento2,
+          documento2,
           email,
-          cpf,
-          fotoUrl,
-          fotoBase64
+          nomeTratamento,
+          telefone,
+          telefone2,
+          profissao,
+          grupoPessoa,
+          fotoFacial
         }
       });
     }
@@ -90,16 +112,14 @@ var createUserB64 = async (req, res) => {
 };
 var updateUserB64 = async (req, res) => {
   try {
-    const { nome, email, cpf, fotoUrl, fotoBase64 } = userSchema.parse(req.body);
-    const updateUser = await prisma.testUser.update({
+    const { criarUsuario, nome, sobrenome, dataNascimento, sociedade, tipoDocumento1, documento1, tipoDocumento2, documento2, email, nomeTratamento, profissao, telefone, telefone2, grupoPessoa, fotoFacial } = userSchema.parse(req.body);
+    const updateUser = await prisma.usuariosSESTSENAT.update({
       where: {
-        cpf
+        email
       },
       data: {
         nome,
-        email,
-        fotoUrl,
-        fotoBase64
+        email
       }
     });
     res.status(200).json({ message: "Atualizado", data: updateUser });
@@ -110,10 +130,10 @@ var updateUserB64 = async (req, res) => {
 };
 var deleteUserB64 = async (req, res) => {
   try {
-    const { cpf } = req.body;
-    const deleteUser = await prisma.testUser.delete({
+    const { email } = req.body;
+    const deleteUser = await prisma.usuariosSESTSENAT.delete({
       where: {
-        cpf
+        email
       }
     });
     res.status(200).json({ message: "Usuario deletado", data: deleteUser });
@@ -124,7 +144,7 @@ var deleteUserB64 = async (req, res) => {
 };
 var getUsers = async (req, res) => {
   try {
-    const getAllUsers = await prisma.testUser.findMany();
+    const getAllUsers = await prisma.usuariosSESTSENAT.findMany();
     req.log.info({ Message: "Listar todos usu\xE1rios", Error: "falso" });
     res.status(200).json({ getAllUsers });
   } catch (e) {
