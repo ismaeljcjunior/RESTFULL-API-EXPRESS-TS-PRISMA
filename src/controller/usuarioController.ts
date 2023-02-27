@@ -147,24 +147,25 @@ export const sendUser = async (req: Request, res: Response) => {
             "Authorization": "Basic Y2VudGVyLWFwaTphcGktc2VjcmV0",
         }
     }
-    const datLogin = {
-        username: process.env.USER_USERNAME as string,
-        password: process.env.USER_PASSWORD as string,
-        grant_type: 'password',
-    }
     const formData = new FormData();
-
-    formData.append('username', process.env.USER_LOGIN as string);
-    formData.append('password', process.env.USER_PASSWORD)
-    formData.append('grant_type', process.env.USER_GRANT_TYPE);
+    let access_token
+    let refresh_token
+    let token_type
+    formData.append('username', process.env.USER_LOGIN as string)
+    formData.append('password', process.env.USER_PASSWORD as string)
+    formData.append('grant_type', process.env.USER_GRANT_TYPE as string)
 
     const loginApi = async () => {
-        console.log(formData)
+    
         const data = axios.post(process.env.API_URL_LOGIN as string, formData, options)
             .then(function (res) {
-                console.log(res)
+               // console.log('sucess login',res.data)
+                access_token = res.data.access_token
+                refresh_token = res.data.refresh_token
+                
+                return console.log(access_token,refresh_token)
             }).catch(function (res) {
-                console.log(res)
+                console.log('fail login',res.data)
             })
     }; loginApi()
 

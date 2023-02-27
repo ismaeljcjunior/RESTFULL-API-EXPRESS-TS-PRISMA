@@ -165,21 +165,20 @@ var sendUser = async (req, res) => {
       "Authorization": "Basic Y2VudGVyLWFwaTphcGktc2VjcmV0"
     }
   };
-  const datLogin = {
-    username: process.env.USER_USERNAME,
-    password: process.env.USER_PASSWORD,
-    grant_type: "password"
-  };
   const formData = new import_form_data.default();
+  let access_token;
+  let refresh_token;
+  let token_type;
   formData.append("username", process.env.USER_LOGIN);
   formData.append("password", process.env.USER_PASSWORD);
   formData.append("grant_type", process.env.USER_GRANT_TYPE);
   const loginApi = async () => {
-    console.log(formData);
     const data = import_axios.default.post(process.env.API_URL_LOGIN, formData, options).then(function(res2) {
-      console.log(res2);
+      access_token = res2.data.access_token;
+      refresh_token = res2.data.refresh_token;
+      return console.log(access_token, refresh_token);
     }).catch(function(res2) {
-      console.log(res2);
+      console.log("fail login", res2.data);
     });
   };
   loginApi();
