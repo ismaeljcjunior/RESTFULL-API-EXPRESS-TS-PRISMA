@@ -43,8 +43,12 @@ var logger = (0, import_pino.default)({
 var import_express = __toESM(require("express"));
 
 // src/controller/usuarioController.ts
+var dotenv = __toESM(require("dotenv"));
 var import_client = require("@prisma/client");
 var z = __toESM(require("zod"));
+var import_axios = __toESM(require("axios"));
+var import_form_data = __toESM(require("form-data"));
+dotenv.config();
 var prisma = new import_client.PrismaClient();
 var userSchema = z.object({
   criarUsuario: z.boolean(),
@@ -66,30 +70,28 @@ var userSchema = z.object({
 }).required();
 var createUserB64 = async (req, res) => {
   try {
-    const users = userSchema.array().parse(req.body);
-    for (const { criarUsuario, nome, sobrenome, dataNascimento, sociedade, tipoDocumento1, documento1, tipoDocumento2, documento2, email, nomeTratamento, profissao, telefone, telefone2, grupoPessoa, fotoFacial } of users) {
-      console.log("--->", users);
-      const usuario = await prisma.usuariosSESTSENAT.create({
-        data: {
-          criarUsuario,
-          nome,
-          sobrenome,
-          dataNascimento,
-          sociedade,
-          tipoDocumento1,
-          documento1,
-          tipoDocumento2,
-          documento2,
-          email,
-          nomeTratamento,
-          telefone,
-          telefone2,
-          profissao,
-          grupoPessoa,
-          fotoFacial
-        }
-      });
-    }
+    const { criarUsuario, nome, sobrenome, dataNascimento, sociedade, tipoDocumento1, documento1, tipoDocumento2, documento2, email, nomeTratamento, profissao, telefone, telefone2, grupoPessoa, fotoFacial } = userSchema.parse(req.body);
+    const usuario = await prisma.usuariosSESTSENAT.create({
+      data: {
+        criarUsuario,
+        nome,
+        sobrenome,
+        dataNascimento,
+        sociedade,
+        tipoDocumento1,
+        documento1,
+        tipoDocumento2,
+        documento2,
+        email,
+        nomeTratamento,
+        telefone,
+        telefone2,
+        profissao,
+        grupoPessoa,
+        fotoFacial
+      }
+    });
+    console.log(usuario);
     res.status(200).json({ Message: "Usu\xE1rios salvos!", Error: "Falso", Status: "200 ok" });
     return;
   } catch (e) {
@@ -144,6 +146,35 @@ var getUsers = async (req, res) => {
     res.status(500).send(e);
   }
 };
+var sendUser = async (req, res) => {
+  const options = {
+    headers: {
+      // "content-type": "multipart/form-data",
+      // "Accept": "*/*",
+      // "Accept-Encoding": "gzip, deflate, br",
+      // "Connection": "keep-alive",
+      "Authorization": "Basic Y2VudGVyLWFwaTphcGktc2VjcmV0"
+    }
+  };
+  const datLogin = {
+    username: process.env.USER_USERNAME,
+    password: process.env.USER_PASSWORD,
+    grant_type: "password"
+  };
+  const formData = new import_form_data.default();
+  formData.append("username", process.env.USER_LOGIN);
+  formData.append("password", process.env.USER_PASSWORD);
+  formData.append("grant_type", process.env.USER_GRANT_TYPE);
+  const loginApi = async () => {
+    console.log(formData);
+    const data = import_axios.default.post(process.env.API_URL_LOGIN, formData, options).then(function(res2) {
+      console.log(res2);
+    }).catch(function(res2) {
+      console.log(res2);
+    });
+  };
+  loginApi();
+};
 
 // src/routes/routes.ts
 var import_body_parser = __toESM(require("body-parser"));
@@ -157,6 +188,7 @@ app.post("/usuariosB64", createUserB64);
 app.put("/usuariosB64", updateUserB64);
 app.delete("/usuariosB64", deleteUserB64);
 app.get("/usuarios", getUsers);
+app.post("/api", sendUser);
 app.get("/", (req, res) => {
   res.send("Server is running 1.0");
 });

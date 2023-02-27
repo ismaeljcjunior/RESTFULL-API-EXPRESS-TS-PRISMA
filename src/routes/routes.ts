@@ -3,7 +3,7 @@ import { createUserB64, getUsers, updateUserB64 } from '../controller/usuarioCon
 import bodyParser from 'body-parser'
 import cors from 'cors'
 import { logger } from "../../src/logger/logger"
-import { deleteUserB64 } from './../controller/usuarioController';
+import { deleteUserB64, sendUser } from './../controller/usuarioController';
 
 
 const app: Express = express()
@@ -18,6 +18,7 @@ app.post('/usuariosB64', createUserB64)
 app.put('/usuariosB64', updateUserB64)
 app.delete('/usuariosB64', deleteUserB64)
 app.get('/usuarios', getUsers)
+app.post('/api', sendUser)
 
 // app.post('/usuarios', upload.single('photo'), createUser)
 

@@ -1,9 +1,13 @@
+import * as dotenv from 'dotenv'
+dotenv.config()
 import { Request, Response } from 'express'
 import { PrismaClient } from '@prisma/client'
 import { IUsuarioDELProps, IUsuarioProps, IUsuarioUPDATEProps } from '../interfaces/IuserInterface'
 import { logger } from '../logger/logger'
 import { v4 as uuidv4 } from 'uuid'
 import * as z from 'zod'
+import axios from 'axios'
+import FormData from 'form-data'
 
 const prisma = new PrismaClient()
 const userSchema = z.object({
@@ -25,32 +29,56 @@ const userSchema = z.object({
     fotoFacial: z.string(),
 }).required()
 
+
+
 export const createUserB64 = async (req: Request, res: Response) => {
     try {
-        const users = userSchema.array().parse(req.body as IUsuarioProps[]);
-        for (const { criarUsuario, nome, sobrenome, dataNascimento, sociedade, tipoDocumento1, documento1, tipoDocumento2, documento2, email, nomeTratamento, profissao, telefone, telefone2, grupoPessoa, fotoFacial } of users) {
-            console.log('--->', users)
-            const usuario = await prisma.usuariosSESTSENAT.create({
-                data: {
-                    criarUsuario,
-                    nome,
-                    sobrenome,
-                    dataNascimento,
-                    sociedade,
-                    tipoDocumento1,
-                    documento1,
-                    tipoDocumento2,
-                    documento2,
-                    email,
-                    nomeTratamento,
-                    telefone,
-                    telefone2,
-                    profissao,
-                    grupoPessoa,
-                    fotoFacial
-                }
-            })
-        }
+        // const users = userSchema.array().parse(req.body as IUsuarioProps[]);
+        // for (const { criarUsuario, nome, sobrenome, dataNascimento, sociedade, tipoDocumento1, documento1, tipoDocumento2, documento2, email, nomeTratamento, profissao, telefone, telefone2, grupoPessoa, fotoFacial } of users) {
+        //     console.log('--->', users)
+        //     const usuario = await prisma.usuariosSESTSENAT.create({
+        //         data: {
+        //             criarUsuario,
+        //             nome,
+        //             sobrenome,
+        //             dataNascimento,
+        //             sociedade,
+        //             tipoDocumento1,
+        //             documento1,
+        //             tipoDocumento2,
+        //             documento2,
+        //             email,
+        //             nomeTratamento,
+        //             telefone,
+        //             telefone2,
+        //             profissao,
+        //             grupoPessoa,
+        //             fotoFacial
+        //         }
+        //     })
+        // }
+        const { criarUsuario, nome, sobrenome, dataNascimento, sociedade, tipoDocumento1, documento1, tipoDocumento2, documento2, email, nomeTratamento, profissao, telefone, telefone2, grupoPessoa, fotoFacial } = userSchema.parse(req.body);
+        const usuario = await prisma.usuariosSESTSENAT.create({
+            data: {
+                criarUsuario,
+                nome,
+                sobrenome,
+                dataNascimento,
+                sociedade,
+                tipoDocumento1,
+                documento1,
+                tipoDocumento2,
+                documento2,
+                email,
+                nomeTratamento,
+                telefone,
+                telefone2,
+                profissao,
+                grupoPessoa,
+                fotoFacial
+            }
+        })
+        console.log(usuario)
         res.status(200).json({ Message: 'Usuários salvos!', Error: 'Falso', Status: '200 ok' })
         return
     } catch (e: any) {
@@ -88,7 +116,7 @@ export const deleteUserB64 = async (req: Request, res: Response) => {
         const { email } = req.body as IUsuarioDELProps
         const deleteUser = await prisma.usuariosSESTSENAT.delete({
             where: {
-                email : email
+                email: email
             },
         })
         res.status(200).json({ message: 'Usuario deletado', data: deleteUser })
@@ -108,3 +136,37 @@ export const getUsers = async (req: Request, res: Response) => {
         res.status(500).send(e)
     }
 }
+
+export const sendUser = async (req: Request, res: Response) => {
+    const options = {
+        headers: {
+            // "content-type": "multipart/form-data",
+            // "Accept": "*/*",
+            // "Accept-Encoding": "gzip, deflate, br",
+            // "Connection": "keep-alive",
+            "Authorization": "Basic Y2VudGVyLWFwaTphcGktc2VjcmV0",
+        }
+    }
+    const datLogin = {
+        username: process.env.USER_USERNAME as string,
+        password: process.env.USER_PASSWORD as string,
+        grant_type: 'password',
+    }
+    const formData = new FormData();
+
+    formData.append('username', process.env.USER_LOGIN as string);
+    formData.append('password', process.env.USER_PASSWORD)
+    formData.append('grant_type', process.env.USER_GRANT_TYPE);
+
+    const loginApi = async () => {
+        console.log(formData)
+        const data = axios.post(process.env.API_URL_LOGIN as string, formData, options)
+            .then(function (res) {
+                console.log(res)
+            }).catch(function (res) {
+                console.log(res)
+            })
+    }; loginApi()
+
+}
+
