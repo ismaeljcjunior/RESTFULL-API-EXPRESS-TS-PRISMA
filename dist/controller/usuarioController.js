@@ -178,15 +178,13 @@ var sendUser = async (req, res) => {
   const formDataLogin = new import_form_data.default();
   const formDataRefresh = new import_form_data.default();
   const formDataGet = new import_form_data.default();
-  let objDataLogin = {
+  let objData = {
     access_token: "",
     refresh_token: "",
-    token_type: ""
-  };
-  let objDataRefresh = {
     grant_type: "refresh_token",
-    access_token: "",
-    refresh_token: ""
+    token_type: "",
+    Authorization: "Basic Y2VudGVyLWFwaTphcGktc2VjcmV0",
+    tenant: "newline_sistemas_de_seguranca_103147"
   };
   let data = {
     "criarUsuario": true,
@@ -197,14 +195,14 @@ var sendUser = async (req, res) => {
     "documentosDTO": [
       {
         "tipoDocumento": "CPF",
-        "documento": "185.836.320-90"
+        "documento": "784.362.900-97"
       },
       {
         "tipoDocumento": "RG",
         "documento": "500000"
       }
     ],
-    "email": "teste7@scond.com.br",
+    "email": "teste4@scond.com.br",
     "nomeTratamento": "String 255",
     "telefone": "+55 99 99999-9999",
     "telefone2": "+55 99 99999-9999",
@@ -216,18 +214,29 @@ var sendUser = async (req, res) => {
   formDataLogin.append("grant_type", process.env.USER_GRANT_TYPE);
   try {
     await import_axios.default.post(process.env.API_URL_LOGIN, formDataLogin, optionsLogin).then(async function(res2) {
-      objDataLogin.access_token = res2.data.access_token;
-      objDataLogin.refresh_token = res2.data.refresh_token;
-      objDataLogin.token_type = res2.data.token_type;
-      formDataRefresh.append("refresh_token", objDataLogin.refresh_token);
-      formDataRefresh.append("grant_type", "refresh_token");
-      await import_axios.default.post(process.env.API_URL_REFRESH, formDataRefresh, optionsRefreshLogin).then(async function(res3) {
-        objDataRefresh.refresh_token = res3.data.refresh_token;
-        formDataGet.append("Authorization", `bearer ${objDataRefresh.refresh_token}`);
-        formDataGet.append("tenant", "newline_sistemas_de_seguranca_103147");
+      objData.access_token = res2.data.access_token;
+      objData.refresh_token = res2.data.refresh_token;
+      objData.token_type = res2.data.token_type;
+      console.log("debug axios 1", objData);
+      formDataRefresh.append("grant_type", objData.grant_type);
+      formDataRefresh.append("refresh_token", objData.refresh_token);
+      await import_axios.default.post(process.env.API_URL_REFRESH, formDataRefresh, {
+        headers: {
+          Authorization: objData.Authorization,
+          tenant: objData.tenant
+        }
+      }).then(async function(res3) {
+        await import_axios.default.post(process.env.API_URL_GET, data, {
+          headers: {
+            "Authorization": `bearer ${objData.access_token}`,
+            "tenant": objData.tenant,
+            "Content-Type": "application/json"
+          }
+        }).then(async function(res4) {
+          console.log("pimbalization");
+        });
       });
     });
-    res.status(200).json({ Message: "Sucess Login", Data: objDataLogin });
   } catch (e) {
     console.log("Fail Login", e);
     res.status(400).json({ Error: e });

@@ -159,38 +159,38 @@ export const sendUser = async (req: Request, res: Response) => {
     const formDataRefresh = new FormData();
     const formDataGet = new FormData();
 
-    let objDataLogin = {
-        access_token: "",
-        refresh_token: "",
-        token_type: "",
+    let objData = {
+        access_token: '',
+        refresh_token: '',
+        grant_type: 'refresh_token',
+        token_type: '',
+        Authorization: 'Basic Y2VudGVyLWFwaTphcGktc2VjcmV0',
+        tenant: 'newline_sistemas_de_seguranca_103147'
     }
-    let objDataRefresh = {
-        grant_type: "refresh_token",
-        access_token: "",
-        refresh_token: "",
-    }
+
     let data: Data = {
-        "criarUsuario": true,
-        "nome": "integrador teste",
-        "sobrenome": "integrador teste",
-        "dataNascimento": "09/02/2000",
-        "sociedade": "PESSOA_FISICA",
-        "documentosDTO": [
+        
+            "criarUsuario": true, 
+            "nome": "integrador teste",
+            "sobrenome": "integrador teste",
+            "dataNascimento": "09/02/2000", 
+            "sociedade": "PESSOA_FISICA",
+            "documentosDTO": [
             {
-                "tipoDocumento": "CPF",
-                "documento": "185.836.320-90"
+            "tipoDocumento": "CPF",
+            "documento": "784.362.900-97"
             },
             {
-                "tipoDocumento": "RG",
-                "documento": "500000"
+            "tipoDocumento": "RG",
+            "documento": "500000"
             }
-        ],
-        "email": "teste7@scond.com.br",
-        "nomeTratamento": "String 255",
-        "telefone": "+55 99 99999-9999",
-        "telefone2": "+55 99 99999-9999",
-        "profissao": "Aluno",
-        "grupoPessoa": "Aluno",
+            ],
+            "email": "teste4@scond.com.br",
+            "nomeTratamento": "String 255",
+            "telefone": "+55 99 99999-9999",
+            "telefone2": "+55 99 99999-9999",
+            "profissao": "Aluno",
+            "grupoPessoa": "Aluno"
 
 
     }
@@ -200,40 +200,37 @@ export const sendUser = async (req: Request, res: Response) => {
     try {
         await axios.post(process.env.API_URL_LOGIN as string, formDataLogin, optionsLogin)
             .then(async function (res) {
-                // console.log('sucess login', res.data)
-                objDataLogin.access_token = res.data.access_token
-                objDataLogin.refresh_token = res.data.refresh_token
-                objDataLogin.token_type = res.data.token_type
+                objData.access_token = res.data.access_token
+                objData.refresh_token = res.data.refresh_token
+                objData.token_type = res.data.token_type
+                console.log('debug axios 1', objData)
+                formDataRefresh.append('grant_type', objData.grant_type)
+                formDataRefresh.append('refresh_token', objData.refresh_token)
+                // console.log(formDataRefresh);
 
-                formDataRefresh.append('refresh_token', objDataLogin.refresh_token)
-                formDataRefresh.append("grant_type", "refresh_token")
+                await axios.post(process.env.API_URL_REFRESH as string, formDataRefresh, {
+                    headers: {
+                        Authorization: objData.Authorization,
+                        tenant: objData.tenant
+                    }
+                }).then(async function (res) {
 
-                await axios.post(process.env.API_URL_REFRESH as string, formDataRefresh, optionsRefreshLogin)
-                    .then(async function (res) {
-                        objDataRefresh.refresh_token = res.data.refresh_token
-
-                        formDataGet.append('Authorization', `bearer ${objDataRefresh.refresh_token}`)
-                        formDataGet.append('tenant', 'newline_sistemas_de_seguranca_103147')
-
-
-                        // console.log(objDataRefresh);
-
-                        // await axios.post(process.env.API_URL_GET as string, data, {
-                        //     headers: { 
-                        //     'Authorization': `bearer ${objDataRefresh.access_token}`,
-                        //     'Content-Type': 'application/json',
-                        //     'tenant': 'newline_sistemas_de_seguranca_103147'
-                        // }
-                        // })
-                        //     .then(async function (res) {
-                        //         console.log('_______> PIMBALIZATION SUCCESS',res);
-
-                        //     })
-
+                    await axios.post(process.env.API_URL_GET as string, data, {
+                        headers: {
+                            "Authorization": `bearer ${objData.access_token}`,
+                            "tenant": objData.tenant,
+                            "Content-Type": 'application/json'
+                        }
+                    }).then(async function (res) {
+                        console.log('pimbalization');
 
                     })
+
+                })
+
+
+
             })
-        res.status(200).json({ Message: 'Sucess Login', Data: objDataLogin })
     } catch (e) {
         console.log('Fail Login', e)
         res.status(400).json({ Error: e })
