@@ -161,21 +161,14 @@ var sendUser = async (req, res) => {
       // "Accept": "*/*",
       // "Accept-Encoding": "gzip, deflate, br",
       // "Connection": "keep-alive",
-      "Authorization": "Basic Y2VudGVyLWFwaTphcGktc2VjcmV0"
+      "Authorization": process.env.LOGIN_AUTHORIZATION
     }
   };
   const optionsRefreshLogin = {
     headers: {
       "content-type": "multipart/form-data",
-      "Authorization": "Basic Y2VudGVyLWFwaTphcGktc2VjcmV0",
-      "tenant": "newline_sistemas_de_seguranca_103147"
-    }
-  };
-  const optionsFinal = {
-    headers: {
-      "content-type": "application/json",
-      "Authorization": "",
-      "tenant": "newline_sistemas_de_seguranca_103147"
+      "Authorization": process.env.LOGIN_AUTHORIZATION,
+      "tenant": process.env.LOGIN_TENANT
     }
   };
   let objData = {
@@ -190,21 +183,21 @@ var sendUser = async (req, res) => {
   };
   let data = {
     "criarUsuario": true,
-    "nome": "integrador teste api ",
-    "sobrenome": "integrador teste",
+    "nome": "ISMAEL",
+    "sobrenome": "JUNIOR",
     "dataNascimento": "09/02/2000",
     "sociedade": "PESSOA_FISICA",
     "documentosDTO": [
       {
         "tipoDocumento": "CPF",
-        "documento": "784.362.900-97"
+        "documento": "236.538.440-45"
       },
       {
         "tipoDocumento": "RG",
-        "documento": "500000"
+        "documento": "5865857"
       }
     ],
-    "email": "teste4@scond.com.br",
+    "email": "ismaeljunior@email.com.br",
     "nomeTratamento": "String 255",
     "telefone": "+55 99 99999-9999",
     "telefone2": "+55 99 99999-9999",
@@ -217,10 +210,9 @@ var sendUser = async (req, res) => {
     grant_type: "password"
   };
   let dataRefresh = {
-    grant_type: "refresh_token",
+    grant_type: process.env.LOGIN_GRANT_TYPE,
     refresh_token: ""
   };
-  let dataFinal = {};
   try {
     await import_axios.default.post(process.env.API_URL_LOGIN, dataLogin, optionsLogin).then(async function(res2) {
       objData.access_token = res2.data.access_token;
@@ -238,7 +230,7 @@ var sendUser = async (req, res) => {
             "Authorization": `bearer ${objData.newAccess_token}`,
             "tenant": "newline_sistemas_de_seguranca_103147"
           }
-        });
+        }).then();
       });
     });
   } catch (e) {

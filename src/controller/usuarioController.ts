@@ -7,7 +7,7 @@ import { logger } from '../logger/logger'
 import { v4 as uuidv4 } from 'uuid'
 import * as z from 'zod'
 import axios from 'axios'
-import FormData from 'form-data'
+
 
 const prisma = new PrismaClient()
 const userSchema = z.object({
@@ -141,14 +141,14 @@ export const sendUser = async (req: Request, res: Response) => {
             // "Accept": "*/*",
             // "Accept-Encoding": "gzip, deflate, br",
             // "Connection": "keep-alive",
-            "Authorization": "Basic Y2VudGVyLWFwaTphcGktc2VjcmV0",
+            "Authorization": process.env.LOGIN_AUTHORIZATION as string
         }
     }
     const optionsRefreshLogin = {
         headers: {
             "content-type": "multipart/form-data",
-            "Authorization": "Basic Y2VudGVyLWFwaTphcGktc2VjcmV0",
-            "tenant": "newline_sistemas_de_seguranca_103147"
+            "Authorization": process.env.LOGIN_AUTHORIZATION,
+            "tenant": process.env.LOGIN_TENANT as string
         }
     }
     let objData = {
@@ -164,26 +164,27 @@ export const sendUser = async (req: Request, res: Response) => {
     let data: Data = {
 
         "criarUsuario": true,
-        "nome": "integrador teste api ",
-        "sobrenome": "integrador teste",
+        "nome": "ISMAEL",
+        "sobrenome": "JUNIOR",
         "dataNascimento": "09/02/2000",
         "sociedade": "PESSOA_FISICA",
         "documentosDTO": [
             {
                 "tipoDocumento": "CPF",
-                "documento": "784.362.900-97"
+                "documento": "236.538.440-45"
             },
             {
                 "tipoDocumento": "RG",
-                "documento": "500000"
+                "documento": "5865857"
             }
         ],
-        "email": "teste4@scond.com.br",
+        "email": "ismaeljunior@email.com.br",
         "nomeTratamento": "String 255",
         "telefone": "+55 99 99999-9999",
         "telefone2": "+55 99 99999-9999",
         "profissao": "Aluno",
-        "grupoPessoa": "Aluno"
+        "grupoPessoa": "Aluno",
+
     }
     let dataLogin = {
         username: process.env.USER_LOGIN,
@@ -191,7 +192,7 @@ export const sendUser = async (req: Request, res: Response) => {
         grant_type: "password"
     }
     let dataRefresh = {
-        grant_type: "refresh_token",
+        grant_type: process.env.LOGIN_GRANT_TYPE,
         refresh_token: ''
     }
 
@@ -217,7 +218,9 @@ export const sendUser = async (req: Request, res: Response) => {
                                 "Authorization": `bearer ${objData.newAccess_token}`,
                                 "tenant": "newline_sistemas_de_seguranca_103147"
                             }
-                        })
+
+                        }).then()
+
                     })
             })
     } catch (e) {
