@@ -40,18 +40,40 @@ module.exports = __toCommonJS(usuarioController_exports);
 var dotenv = __toESM(require("dotenv"));
 var import_client = require("@prisma/client");
 
-// src/logger/logger.ts
-var import_pino = __toESM(require("pino"));
-var import_pino_pretty = __toESM(require("pino-pretty"));
-var logger = (0, import_pino.default)({
-  level: "info",
-  transport: {
-    target: "pino-pretty",
-    options: {
-      colorize: true
-    }
-  }
-}, (0, import_pino_pretty.default)());
+// src/utils/logger.ts
+var import_winston = require("winston");
+var { combine, timestamp, json, errors } = import_winston.format;
+var logger = (0, import_winston.createLogger)({
+  format: combine(
+    errors({ stack: true }),
+    import_winston.format.splat(),
+    import_winston.format.json(),
+    import_winston.format.simple(),
+    import_winston.format.timestamp({ format: "HH:mm:ss - DD-MM-YYYY" }),
+    import_winston.format.printf((info) => `[${info.timestamp}] ${info.level} ${info.message}`),
+    import_winston.format.printf((error) => `[${error.timestamp}] ${error.level} ${error.message}`)
+  ),
+  transports: [
+    new import_winston.transports.File({
+      filename: `logger/error.log`,
+      level: "error",
+      maxsize: 5e7,
+      // 50MB
+      maxFiles: 5,
+      tailable: true
+      // Sobrescrever o primeiro arquivo
+    }),
+    new import_winston.transports.File({
+      filename: `logger/info.log`,
+      level: "info",
+      maxsize: 5e7,
+      // 50MB
+      maxFiles: 5,
+      tailable: true
+      // Sobrescrever o primeiro arquivo
+    })
+  ]
+});
 
 // src/controller/usuarioController.ts
 var z = __toESM(require("zod"));
@@ -126,7 +148,6 @@ var updateUserB64 = async (req, res) => {
     });
     res.status(200).json({ message: "Atualizado", data: updateUser });
   } catch (e) {
-    logger.error(e);
     res.status(500).send(e);
   }
 };
@@ -140,17 +161,16 @@ var deleteUserB64 = async (req, res) => {
     });
     res.status(200).json({ message: "Usuario deletado", data: deleteUser });
   } catch (e) {
-    logger.error(e);
     res.status(500).send(e);
   }
 };
 var getUsers = async (req, res) => {
   try {
     const getAllUsers = await prisma.usuariosSESTSENAT.findMany();
-    req.log.info({ Message: "Listar todos usu\xE1rios", Error: "falso" });
+    logger.info({ Message: "Get all users", Error: "false" });
     res.status(200).json({ getAllUsers });
   } catch (e) {
-    req.log.error(e);
+    logger.info(e);
     res.status(500).send(e);
   }
 };
@@ -190,14 +210,14 @@ var sendUser = async (req, res) => {
     "documentosDTO": [
       {
         "tipoDocumento": "CPF",
-        "documento": "236.538.440-45"
+        "documento": "674.780.260-87"
       },
       {
         "tipoDocumento": "RG",
         "documento": "5865857"
       }
     ],
-    "email": "ismaeljunior@email.com.br",
+    "email": "ismaeljunioar@email.com.br",
     "nomeTratamento": "String 255",
     "telefone": "+55 99 99999-9999",
     "telefone2": "+55 99 99999-9999",
@@ -218,19 +238,19 @@ var sendUser = async (req, res) => {
       objData.access_token = res2.data.access_token;
       objData.refresh_token = res2.data.refresh_token;
       objData.token_type = res2.data.token_type;
-      console.log("debug axios 1", objData);
       dataRefresh.refresh_token = res2.data.refresh_token;
       await import_axios.default.post(process.env.API_URL_REFRESH, dataRefresh, optionsRefreshLogin).then(async function(res3) {
         objData.newAccess_token = res3.data.access_token;
         objData.newRefresh_token = res3.data.refresh_token;
-        console.log("debug axios 2", objData);
         await import_axios.default.post(process.env.API_URL_GET, data, {
           headers: {
             "content-type": "application/json",
             "Authorization": `bearer ${objData.newAccess_token}`,
             "tenant": "newline_sistemas_de_seguranca_103147"
           }
-        }).then();
+        }).then(async function(res4) {
+          console.log("debug axios 3 ", res4.data);
+        });
       });
     });
   } catch (e) {

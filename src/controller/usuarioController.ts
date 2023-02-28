@@ -3,11 +3,9 @@ dotenv.config()
 import { Request, Response } from 'express'
 import { PrismaClient } from '@prisma/client'
 import { Data, IUsuarioDELProps, IUsuarioProps, IUsuarioUPDATEProps } from '../interfaces/IuserInterface'
-import { logger } from '../logger/logger'
-import { v4 as uuidv4 } from 'uuid'
+import { logger } from '../utils/logger'
 import * as z from 'zod'
 import axios from 'axios'
-
 
 const prisma = new PrismaClient()
 const userSchema = z.object({
@@ -55,7 +53,7 @@ export const createUserB64 = async (req: Request, res: Response) => {
         //         }
         //     })
         // }
-        const { criarUsuario, nome, sobrenome, dataNascimento, sociedade, tipoDocumento1, documento1, tipoDocumento2, documento2, email, nomeTratamento, profissao, telefone, telefone2, grupoPessoa, fotoFacial } = userSchema.parse(req.body);
+        const { criarUsuario, nome, sobrenome, dataNascimento, sociedade, tipoDocumento1, documento1, tipoDocumento2, documento2, email, nomeTratamento, profissao, telefone, telefone2, grupoPessoa, fotoFacial } = userSchema.parse(req.body as IUsuarioProps);
         const usuario = await prisma.usuariosSESTSENAT.create({
             data: {
                 criarUsuario,
@@ -105,7 +103,7 @@ export const updateUserB64 = async (req: Request, res: Response) => {
         })
         res.status(200).json({ message: 'Atualizado', data: updateUser })
     } catch (e) {
-        logger.error(e)
+       
         res.status(500).send(e)
     }
 }
@@ -119,18 +117,18 @@ export const deleteUserB64 = async (req: Request, res: Response) => {
         })
         res.status(200).json({ message: 'Usuario deletado', data: deleteUser })
     } catch (e) {
-        logger.error(e)
+       
         res.status(500).send(e)
     }
 }
 export const getUsers = async (req: Request, res: Response) => {
     try {
         const getAllUsers = await prisma.usuariosSESTSENAT.findMany()
-        req.log.info({ Message: 'Listar todos usuários', Error: 'falso' })
+        logger.info({Message:'Get all users' ,Error: 'false'  })
         // res.status(200).json({Message:'Get all users' ,Error: 'false'  })
         res.status(200).json({ getAllUsers })
     } catch (e) {
-        req.log.error(e)
+        logger.info(e)
         res.status(500).send(e)
     }
 }
@@ -171,14 +169,14 @@ export const sendUser = async (req: Request, res: Response) => {
         "documentosDTO": [
             {
                 "tipoDocumento": "CPF",
-                "documento": "236.538.440-45"
+                "documento": "674.780.260-87"
             },
             {
                 "tipoDocumento": "RG",
                 "documento": "5865857"
             }
         ],
-        "email": "ismaeljunior@email.com.br",
+        "email": "ismaeljunioar@email.com.br",
         "nomeTratamento": "String 255",
         "telefone": "+55 99 99999-9999",
         "telefone2": "+55 99 99999-9999",
@@ -202,7 +200,7 @@ export const sendUser = async (req: Request, res: Response) => {
                 objData.access_token = res.data.access_token
                 objData.refresh_token = res.data.refresh_token
                 objData.token_type = res.data.token_type
-                console.log('debug axios 1', objData)
+                
                 dataRefresh.refresh_token = res.data.refresh_token
 
 
@@ -211,7 +209,7 @@ export const sendUser = async (req: Request, res: Response) => {
                         objData.newAccess_token = res.data.access_token
                         objData.newRefresh_token = res.data.refresh_token
 
-                        console.log('debug axios 2', objData)
+                      
                         await axios.post(process.env.API_URL_GET as string, data, {
                             headers: {
                                 "content-type": "application/json",
@@ -219,7 +217,9 @@ export const sendUser = async (req: Request, res: Response) => {
                                 "tenant": "newline_sistemas_de_seguranca_103147"
                             }
 
-                        }).then()
+                        }).then(async function (res) {
+                            console.log('debug axios 3 ', res.data)
+                        })
 
                     })
             })

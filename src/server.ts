@@ -1,6 +1,6 @@
 import express, { Express } from 'express'
 import dotenv from 'dotenv'
-import { logger } from '../src/logger/logger'
+import { logger } from './utils/logger'
 import { appRoutes } from './routes/routes'
 import bodyParser from 'body-parser'
 import cors from 'cors'

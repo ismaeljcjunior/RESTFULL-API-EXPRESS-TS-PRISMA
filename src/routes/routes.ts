@@ -2,7 +2,7 @@ import express, { Express, Request, Response } from 'express'
 import { createUserB64, getUsers, updateUserB64 } from '../controller/usuarioController'
 import bodyParser from 'body-parser'
 import cors from 'cors'
-import { logger } from "../../src/logger/logger"
+import { logger } from "../utils/logger"
 import { deleteUserB64, sendUser } from './../controller/usuarioController';
 
 
@@ -20,11 +20,9 @@ app.delete('/usuariosB64', deleteUserB64)
 app.get('/usuarios', getUsers)
 app.post('/api', sendUser)
 
-// app.post('/usuarios', upload.single('photo'), createUser)
-
 app.get('/', (req: Request, res: Response) => {
     res.send('Server is running 1.0')
-
+    logger.info('Server is running 1.0')
 })
 
 export const appRoutes = app
