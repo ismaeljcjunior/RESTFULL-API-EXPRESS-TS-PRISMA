@@ -55,7 +55,6 @@ var logger = (0, import_pino.default)({
 // src/controller/usuarioController.ts
 var z = __toESM(require("zod"));
 var import_axios = __toESM(require("axios"));
-var import_form_data = __toESM(require("form-data"));
 dotenv.config();
 var prisma = new import_client.PrismaClient();
 var userSchema = z.object({
@@ -157,7 +156,7 @@ var getUsers = async (req, res) => {
 var sendUser = async (req, res) => {
   const optionsLogin = {
     headers: {
-      // "content-type": "multipart/form-data",
+      "content-type": "multipart/form-data",
       // "Accept": "*/*",
       // "Accept-Encoding": "gzip, deflate, br",
       // "Connection": "keep-alive",
@@ -166,24 +165,27 @@ var sendUser = async (req, res) => {
   };
   const optionsRefreshLogin = {
     headers: {
-      // "content-type": "multipart/form-data",
-      // "Accept": "*/*",
-      // "Accept-Encoding": "gzip, deflate, br",
-      // "Connection": "keep-alive",
+      "content-type": "multipart/form-data",
       "Authorization": "Basic Y2VudGVyLWFwaTphcGktc2VjcmV0",
       "tenant": "newline_sistemas_de_seguranca_103147"
     }
   };
-  const formDataLogin = new import_form_data.default();
-  const formDataRefresh = new import_form_data.default();
-  const formDataGet = new import_form_data.default();
+  const optionsFinal = {
+    headers: {
+      "content-type": "application/json",
+      "Authorization": "",
+      "tenant": "newline_sistemas_de_seguranca_103147"
+    }
+  };
   let objData = {
     access_token: "",
     refresh_token: "",
     grant_type: "refresh_token",
     token_type: "",
     Authorization: "Basic Y2VudGVyLWFwaTphcGktc2VjcmV0",
-    tenant: "newline_sistemas_de_seguranca_103147"
+    tenant: "newline_sistemas_de_seguranca_103147",
+    newAccess_token: "",
+    newRefresh_token: ""
   };
   let data = {
     "criarUsuario": true,
@@ -208,33 +210,33 @@ var sendUser = async (req, res) => {
     "profissao": "Aluno",
     "grupoPessoa": "Aluno"
   };
-  formDataLogin.append("username", process.env.USER_LOGIN);
-  formDataLogin.append("password", process.env.USER_PASSWORD);
-  formDataLogin.append("grant_type", process.env.USER_GRANT_TYPE);
+  let dataLogin = {
+    username: process.env.USER_LOGIN,
+    password: process.env.USER_PASSWORD,
+    grant_type: "password"
+  };
+  let dataRefresh = {
+    grant_type: "refresh_token",
+    refresh_token: ""
+  };
+  let dataFinal = {};
   try {
-    await import_axios.default.post(process.env.API_URL_LOGIN, formDataLogin, optionsLogin).then(async function(res2) {
+    await import_axios.default.post(process.env.API_URL_LOGIN, dataLogin, optionsLogin).then(async function(res2) {
       objData.access_token = res2.data.access_token;
       objData.refresh_token = res2.data.refresh_token;
       objData.token_type = res2.data.token_type;
       console.log("debug axios 1", objData);
-      formDataRefresh.append("grant_type", objData.grant_type);
-      formDataRefresh.append("refresh_token", objData.refresh_token);
-      console.log(formDataRefresh);
-      await import_axios.default.post(process.env.API_URL_REFRESH, formDataRefresh, {
-        headers: {
-          Authorization: objData.Authorization,
-          tenant: objData.tenant
-        }
-      }).then(async function(res3) {
-        await import_axios.default.post(process.env.API_URL_GET, {
+      dataRefresh.refresh_token = res2.data.refresh_token;
+      await import_axios.default.post(process.env.API_URL_REFRESH, dataRefresh, optionsRefreshLogin).then(async function(res3) {
+        objData.newAccess_token = res3.data.access_token;
+        objData.newRefresh_token = res3.data.refresh_token;
+        console.log("debug axios 2", objData);
+        await import_axios.default.post(process.env.API_URL_GET, data, {
           headers: {
-            "Authorization": `bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjE2Nzc2MTQ5NjIsInVzZXJfbmFtZSI6ImNvbnRyb2xlLnRlY25pY29AbmV3bGluZXNlZ3VyYW5jYS5jb20uYnIiLCJhdXRob3JpdGllcyI6WyIxMDlfQ1JVRCIsIjEwNl9DUlVEIiwiMTI5X0NSVUQiLCIxMDBfQ1JVRCIsIjExMV9DUlVEIiwiMTAxX0NSVUQiLCIxMzBfQyIsIjEyM19DUlVEIiwiMTI2X0NSVUQiLCIxMzFfQyIsIjEyMF9DUlVEIiwiMTEyX0NSVUQiLCIxMzRfQyIsIjEzM19DIiwiMTEwX0NSVUQiLCIxMjdfQ1JVRCIsIjEyMV9DUlVEIiwiMTEzX0NSVUQiLCIxMDVfQ1JVRCIsIjEzNV9DUlVEIiwiMTMyX0NSVUQiLCIxMTlfQ1JVRCIsIjEyNF9DUlVEIiwiMTIyX0NSVUQiLCIxMjVfQ1JVRCIsIi04MzU1MjExMCIsIjEyOF9DUlVEIl0sImp0aSI6IjAwZDM2MjkwLTAyNzItNDY0MS04NTI2LTFhN2Q0ZDhhYzcwNyIsImNsaWVudF9pZCI6ImNlbnRlci1hcGkiLCJzY29wZSI6WyJvcGVuaWQiXX0.06BVvxOcnuKtOG_IgnGzLxnw45x5V6g7yoodE_Wxvt`,
-            "tenant": objData.tenant,
-            "Content-Type": "application/json"
-          },
-          data
-        }).then(async function(res4) {
-          console.log("pimbalization", res4.data);
+            "content-type": "application/json",
+            "Authorization": `bearer ${objData.newAccess_token}`,
+            "tenant": "newline_sistemas_de_seguranca_103147"
+          }
         });
       });
     });

@@ -134,11 +134,10 @@ export const getUsers = async (req: Request, res: Response) => {
         res.status(500).send(e)
     }
 }
-
 export const sendUser = async (req: Request, res: Response) => {
     const optionsLogin = {
         headers: {
-            // "content-type": "multipart/form-data",
+            "content-type": "multipart/form-data",
             // "Accept": "*/*",
             // "Accept-Encoding": "gzip, deflate, br",
             // "Connection": "keep-alive",
@@ -147,27 +146,21 @@ export const sendUser = async (req: Request, res: Response) => {
     }
     const optionsRefreshLogin = {
         headers: {
-            // "content-type": "multipart/form-data",
-            // "Accept": "*/*",
-            // "Accept-Encoding": "gzip, deflate, br",
-            // "Connection": "keep-alive",
+            "content-type": "multipart/form-data",
             "Authorization": "Basic Y2VudGVyLWFwaTphcGktc2VjcmV0",
             "tenant": "newline_sistemas_de_seguranca_103147"
         }
     }
-    const formDataLogin = new FormData();
-    const formDataRefresh = new FormData();
-    const formDataGet = new FormData();
-
     let objData = {
         access_token: '',
         refresh_token: '',
         grant_type: 'refresh_token',
         token_type: '',
         Authorization: 'Basic Y2VudGVyLWFwaTphcGktc2VjcmV0',
-        tenant: 'newline_sistemas_de_seguranca_103147'
+        tenant: 'newline_sistemas_de_seguranca_103147',
+        newAccess_token: '',
+        newRefresh_token: '',
     }
-
     let data: Data = {
 
         "criarUsuario": true,
@@ -192,42 +185,40 @@ export const sendUser = async (req: Request, res: Response) => {
         "profissao": "Aluno",
         "grupoPessoa": "Aluno"
     }
-    formDataLogin.append('username', process.env.USER_LOGIN as string)
-    formDataLogin.append('password', process.env.USER_PASSWORD as string)
-    formDataLogin.append('grant_type', process.env.USER_GRANT_TYPE as string)
+    let dataLogin = {
+        username: process.env.USER_LOGIN,
+        password: process.env.USER_PASSWORD,
+        grant_type: "password"
+    }
+    let dataRefresh = {
+        grant_type: "refresh_token",
+        refresh_token: ''
+    }
+
     try {
-        await axios.post(process.env.API_URL_LOGIN as string, formDataLogin, optionsLogin)
+        await axios.post(process.env.API_URL_LOGIN as string, dataLogin, optionsLogin)
             .then(async function (res) {
                 objData.access_token = res.data.access_token
                 objData.refresh_token = res.data.refresh_token
                 objData.token_type = res.data.token_type
                 console.log('debug axios 1', objData)
-                formDataRefresh.append('grant_type', objData.grant_type)
-                formDataRefresh.append('refresh_token', objData.refresh_token)
-                console.log(formDataRefresh);
+                dataRefresh.refresh_token = res.data.refresh_token
 
-                await axios.post(process.env.API_URL_REFRESH as string, formDataRefresh, {
-                    headers: {
-                        Authorization: objData.Authorization,
-                        tenant: objData.tenant
-                    }
-                }).then(async function (res) {
 
-                    await axios.post(process.env.API_URL_GET as string, {
-                        headers: {
-                            "Authorization": `bearer ${objData.access_token}`,
-                            "tenant": objData.tenant,
-                            "Content-Type": 'application/json'
-                        }, data
-                    }).then(async function (res) {
-                        console.log('pimbalization', res.data);
+                await axios.post(process.env.API_URL_REFRESH as string, dataRefresh, optionsRefreshLogin)
+                    .then(async function (res) {
+                        objData.newAccess_token = res.data.access_token
+                        objData.newRefresh_token = res.data.refresh_token
 
+                        console.log('debug axios 2', objData)
+                        await axios.post(process.env.API_URL_GET as string, data, {
+                            headers: {
+                                "content-type": "application/json",
+                                "Authorization": `bearer ${objData.newAccess_token}`,
+                                "tenant": "newline_sistemas_de_seguranca_103147"
+                            }
+                        })
                     })
-
-                })
-
-
-
             })
     } catch (e) {
         console.log('Fail Login', e)
