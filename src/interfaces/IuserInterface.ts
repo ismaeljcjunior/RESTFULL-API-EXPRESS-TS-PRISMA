@@ -59,5 +59,5 @@ export interface Data {
     telefone2: string;
     profissao: string;
     grupoPessoa: string;
-    
+    fotoFacial: string;
 }

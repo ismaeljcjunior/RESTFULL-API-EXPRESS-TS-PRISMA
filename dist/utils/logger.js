@@ -32,8 +32,18 @@ var logger = (0, import_winston.createLogger)({
     import_winston.format.json(),
     import_winston.format.simple(),
     import_winston.format.timestamp({ format: "HH:mm:ss - DD-MM-YYYY" }),
-    import_winston.format.printf((info) => `[${info.timestamp}] ${info.level} ${info.message}`),
-    import_winston.format.printf((error) => `[${error.timestamp}] ${error.level} ${error.message}`)
+    import_winston.format.printf((info) => {
+      if (info.stack) {
+        return `[${info.timestamp}] ${info.level} ${info.stack}`;
+      }
+      return `[${info.timestamp}] ${info.level} ${info.message}`;
+    }),
+    import_winston.format.printf((error) => {
+      if (error.stack) {
+        return `[${error.timestamp}] ${error.level} ${error.stack}`;
+      }
+      return `[${error.timestamp}] ${error.level} ${error.message}`;
+    })
   ),
   transports: [
     new import_winston.transports.File({
