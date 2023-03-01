@@ -17,12 +17,12 @@ var __copyProps = (to, from, except, desc) => {
 };
 var __toCommonJS = (mod) => __copyProps(__defProp({}, "__esModule", { value: true }), mod);
 
-// src/utils/logger.ts
-var logger_exports = {};
-__export(logger_exports, {
+// src/utils/logger copy.ts
+var logger_copy_exports = {};
+__export(logger_copy_exports, {
   logger: () => logger
 });
-module.exports = __toCommonJS(logger_exports);
+module.exports = __toCommonJS(logger_copy_exports);
 var import_winston = require("winston");
 var { combine, timestamp, json, errors } = import_winston.format;
 var logger = (0, import_winston.createLogger)({
@@ -45,14 +45,26 @@ var logger = (0, import_winston.createLogger)({
       return `[${error.timestamp}] ${error.level} ${error.message}`;
     })
   ),
-  transports: new import_winston.transports.File({
-    filename: "logger/server.log",
-    format: import_winston.format.combine(
-      import_winston.format.timestamp({ format: "MMM-DD-YYYY HH:mm:ss" }),
-      import_winston.format.align(),
-      import_winston.format.printf((info) => `${info.level}: ${[info.timestamp]}: ${info.message}`)
-    )
-  })
+  transports: [
+    new import_winston.transports.File({
+      filename: `logger/error.log`,
+      level: "error",
+      maxsize: 5e7,
+      // 50MB
+      maxFiles: 5,
+      tailable: true
+      // Sobrescrever o primeiro arquivo
+    }),
+    new import_winston.transports.File({
+      filename: `logger/info.log`,
+      level: "info",
+      maxsize: 5e7,
+      // 50MB
+      maxFiles: 5,
+      tailable: true
+      // Sobrescrever o primeiro arquivo
+    })
+  ]
 });
 // Annotate the CommonJS export names for ESM import in node:
 0 && (module.exports = {

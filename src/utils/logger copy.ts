@@ -21,16 +21,23 @@ export const logger = createLogger({
             return `[${error.timestamp}] ${error.level} ${error.message}`;
         }),
     ),
-    transports:
+    transports: [
         new transports.File({
-            filename: 'logger/server.log',
-            format: format.combine(
-                format.timestamp({ format: 'MMM-DD-YYYY HH:mm:ss' }),
-                format.align(),
-                format.printf(info => `${info.level}: ${[info.timestamp]}: ${info.message}`),
-            )
+            filename: `logger/error.log`,
+            level: 'error',
+            maxsize: 50000000, // 50MB
+            maxFiles: 5,
+            tailable: true, // Sobrescrever o primeiro arquivo
+            
         }),
-
+        new transports.File({
+            filename: `logger/info.log`,
+            level: 'info',
+            maxsize: 50000000, // 50MB
+            maxFiles: 5,
+            tailable: true, // Sobrescrever o primeiro arquivo
+        })
+    ]
 })
 
 
