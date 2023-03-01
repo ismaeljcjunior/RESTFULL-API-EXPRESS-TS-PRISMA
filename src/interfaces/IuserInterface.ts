@@ -1,4 +1,3 @@
-import { AxiosResponse } from "axios";
 
 export interface IUsuarioProps {
     criarUsuario: boolean,
@@ -40,12 +39,10 @@ export interface IUsuarioUPDATEProps {
 export interface IUsuarioDELProps {
     email: string
 }
-
 export interface DocumentoDTO {
     tipoDocumento: string;
     documento: string;
 }
-
 export interface Data {
     criarUsuario: boolean;
     nome: string;
@@ -59,5 +56,5 @@ export interface Data {
     telefone2: string;
     profissao: string;
     grupoPessoa: string;
-    fotoFacial: string;
+    fotoFacial?: string;
 }

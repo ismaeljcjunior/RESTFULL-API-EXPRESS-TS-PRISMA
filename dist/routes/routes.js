@@ -175,6 +175,7 @@ var deleteUserB64 = async (req, res) => {
 };
 var getUsers = async (req, res) => {
   try {
+    test();
     const getAllUsers = await prisma.usuariosSESTSENAT.findMany();
     logger.info(JSON.stringify({ Message: "Get all users", Error: "false" }));
     res.status(200).json({ getAllUsers });
@@ -183,7 +184,7 @@ var getUsers = async (req, res) => {
     res.status(500).send(e);
   }
 };
-var sendUser = async (req, res) => {
+var sendUserScond = async (req, res) => {
   const optionsLogin = {
     headers: {
       "content-type": "multipart/form-data",
@@ -212,21 +213,21 @@ var sendUser = async (req, res) => {
   };
   let data = {
     "criarUsuario": true,
-    "nome": "ISMAEL teste call",
-    "sobrenome": "JUNIOR",
+    "nome": "integrador teste 1",
+    "sobrenome": "Dougao",
     "dataNascimento": "09/02/2000",
     "sociedade": "PESSOA_FISICA",
     "documentosDTO": [
       {
         "tipoDocumento": "CPF",
-        "documento": "473.316.310-04"
+        "documento": "968.606.980-12"
       },
       {
         "tipoDocumento": "RG",
         "documento": "5865857"
       }
     ],
-    "email": "ismaeljunior2@email.com.br",
+    "email": "teste2@email.com.br",
     "nomeTratamento": "String 255",
     "telefone": "+55 99 99999-9999",
     "telefone2": "+55 99 99999-9999",
@@ -256,18 +257,18 @@ var sendUser = async (req, res) => {
           headers: {
             "content-type": "application/json",
             "Authorization": `bearer ${objData.newAccess_token}`,
-            "tenant": "newline_sistemas_de_seguranca_103147"
+            "tenant": process.env.LOGIN_TENANT
           }
         }).then(async function(res4) {
-          console.log("Sucess ", res4.data.data);
-          logger.info("Sucess ", res4.data.data);
+          console.log("Sucess ", res4.data);
+          logger.info("Sucess ", JSON.stringify(res4.data), null, 2);
         }).catch(async function(err) {
           console.log("Error", err);
-          logger.error(err.message);
+          logger.error(JSON.stringify(err.message), null, 2);
         });
       }).catch(async function(err) {
         console.log("Error", err);
-        logger.error(err.message);
+        logger.error(JSON.stringify(err.message));
       });
     });
   } catch (e) {
@@ -275,6 +276,9 @@ var sendUser = async (req, res) => {
     logger.error(JSON.stringify({ Error: e }));
     res.status(400).json({ Error: e });
   }
+};
+var test = () => {
+  console.log("Test");
 };
 
 // src/routes/routes.ts
@@ -289,7 +293,7 @@ app.post("/usuariosB64", createUserB64);
 app.put("/usuariosB64", updateUserB64);
 app.delete("/usuariosB64", deleteUserB64);
 app.get("/usuarios", getUsers);
-app.post("/api", sendUser);
+app.post("/api", sendUserScond);
 app.get("/", (req, res) => {
   res.send("Server is running 1.0");
   logger.info("Server is running 1.0");
