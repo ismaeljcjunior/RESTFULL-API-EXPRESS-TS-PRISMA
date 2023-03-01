@@ -2,27 +2,27 @@ import * as dotenv from 'dotenv'
 dotenv.config()
 import { Request, Response } from 'express'
 import { PrismaClient } from '@prisma/client'
-import { Data, IUsuarioDELProps, IUsuarioProps, IUsuarioUPDATEProps } from '../interfaces/IuserInterface'
+import { Data, ISendUsuarioProps, DocumentoDTO } from '../interfaces/IuserInterface'
 import { logger } from '../utils/logger'
 import * as z from 'zod'
 import axios from 'axios'
 
 
-
 const prisma = new PrismaClient()
+const documentoSchema = z.object({
+    tipoDocumento: z.string(),
+    documento: z.string(),
+  }).required()
 const userSchema = z.object({
     criarUsuario: z.boolean(),
-    nome: z.string().max(50).min(3),
-    sobrenome: z.string().max(255),
+    nome: z.string(),
+    sobrenome: z.string(),
     dataNascimento: z.string(),
     sociedade: z.string().optional(),
-    tipoDocumento1: z.string(),
-    documento1: z.string(),
-    tipoDocumento2: z.string(),
-    documento2: z.string(),
     email: z.string().email(),
-    nomeTratamento: z.string().max(255),
+    nomeTratamento: z.string(),
     profissao: z.string(),
+    documentosDTO:z.array(documentoSchema).min(1),
     telefone: z.string(),
     telefone2: z.string(),
     grupoPessoa: z.string(),
@@ -31,14 +31,81 @@ const userSchema = z.object({
 
 
 export const createUserB64 = async (req: Request, res: Response) => {
-
-
-    
     try {
-        const data = await req.body;
-        console.log(data);
-        res.status(200).json({ data })
+        const dataJson = userSchema.parse(await req.body)
+        let jsonUsuario: ISendUsuarioProps = {
+            criarUsuario: true,
+            nome: '',
+            sobrenome: '',
+            dataNascimento: '',
+            sociedade: "PESSOA_FISICA",
+            documentosDTO: [],
+            email: '',
+            nomeTratamento: '',
+            telefone: '',
+            telefone2: '',
+            profissao: 'Aluno',
+            grupoPessoa: 'Aluno',
+            fotoFacial: '/9j/4AAQSkZJRgABAQAAAQABAAD/'
+        }
+        jsonUsuario.nome = dataJson.nome
+        jsonUsuario.sobrenome = dataJson.sobrenome
+        jsonUsuario.dataNascimento = dataJson.dataNascimento
+        // jsonUsuario.sociedade = dataJson.sociedade
+        // jsonUsuario.documentosDTO.at(0)?.tipoDocumento
+        for (let doc of dataJson.documentosDTO) {
+            jsonUsuario.documentosDTO.push(doc);
+        }
+        jsonUsuario.email = dataJson.email
+        jsonUsuario.nomeTratamento = dataJson.nomeTratamento
+        jsonUsuario.telefone = dataJson.telefone
+        jsonUsuario.telefone2 = dataJson.telefone2
+        // jsonUsuario.profissao = dataJson.profissao
+        // jsonUsuario.grupoPessoa = dataJson.grupoPessoa
+        jsonUsuario.fotoFacial = dataJson.fotoFacial
 
+
+
+        const optionsLogin = {
+            headers: {
+                "content-type": "multipart/form-data",
+                // "Accept": "*/*",
+                // "Accept-Encoding": "gzip, deflate, br",
+                // "Connection": "keep-alive",
+                "Authorization": process.env.LOGIN_AUTHORIZATION as string
+            }
+        }
+        const optionsRefreshLogin = {
+            headers: {
+                "content-type": "multipart/form-data",
+                "Authorization": process.env.LOGIN_AUTHORIZATION as string,
+                "tenant": process.env.LOGIN_TENANT as string
+            }
+        }
+        const objData = {
+            access_token: '',
+            refresh_token: '',
+            grant_type: 'refresh_token',
+            token_type: '',
+            Authorization: process.env.LOGIN_AUTHORIZATION as string,
+            tenant: process.env.LOGIN_TENANT as string,
+            newAccess_token: '',
+            newRefresh_token: '',
+        }
+        const dataLogin = {
+            username: process.env.USER_LOGIN,
+            password: process.env.USER_PASSWORD,
+            grant_type: "password"
+        }
+        const dataRefresh = {
+            grant_type: process.env.LOGIN_GRANT_TYPE,
+            refresh_token: ''
+        }
+
+
+
+
+        res.status(200).json({ dataJson })
     } catch (e) {
         console.log('Fail Login', e)
         logger.error(JSON.stringify({ Error: e, Status: '404' }))
@@ -105,39 +172,39 @@ export const createUserB64 = async (req: Request, res: Response) => {
     //     }
     // }
 }
-export const updateUserB64 = async (req: Request, res: Response) => {
-    try {
-        const { criarUsuario, nome, sobrenome, dataNascimento, sociedade, tipoDocumento1, documento1, tipoDocumento2, documento2, email, nomeTratamento, profissao, telefone, telefone2, grupoPessoa, fotoFacial } = userSchema.parse(req.body as IUsuarioUPDATEProps)
-        const updateUser = await prisma.usuariosSESTSENAT.update({
-            where: {
-                documento1: documento1
-            },
-            data: {
-                nome: nome,
-                email: email,
+// export const updateUserB64 = async (req: Request, res: Response) => {
+//     try {
+//         const { criarUsuario, nome, sobrenome, dataNascimento, sociedade, tipoDocumento1, documento1, tipoDocumento2, documento2, email, nomeTratamento, profissao, telefone, telefone2, grupoPessoa, fotoFacial } = userSchema.parse(req.body as IUsuarioUPDATEProps)
+//         const updateUser = await prisma.usuariosSESTSENAT.update({
+//             where: {
+//                 documento1: documento1
+//             },
+//             data: {
+//                 nome: nome,
+//                 email: email,
 
-            },
-        })
-        res.status(200).json({ message: 'Atualizado', data: updateUser })
-    } catch (e) {
+//             },
+//         })
+//         res.status(200).json({ message: 'Atualizado', data: updateUser })
+//     } catch (e) {
 
-        res.status(500).send(e)
-    }
-}
-export const deleteUserB64 = async (req: Request, res: Response) => {
-    try {
-        const { email } = req.body as IUsuarioDELProps
-        const deleteUser = await prisma.usuariosSESTSENAT.delete({
-            where: {
-                email: email
-            },
-        })
-        res.status(200).json({ message: 'Usuario deletado', data: deleteUser })
-    } catch (e) {
+//         res.status(500).send(e)
+//     }
+// }
+// export const deleteUserB64 = async (req: Request, res: Response) => {
+//     try {
+//         const { email } = req.body as IUsuarioDELProps
+//         const deleteUser = await prisma.usuariosSESTSENAT.delete({
+//             where: {
+//                 email: email
+//             },
+//         })
+//         res.status(200).json({ message: 'Usuario deletado', data: deleteUser })
+//     } catch (e) {
 
-        res.status(500).send(e)
-    }
-}
+//         res.status(500).send(e)
+//     }
+// }
 export const getUsers = async (req: Request, res: Response) => {
     try {
 
@@ -252,4 +319,58 @@ export const sendUserScond = async (req: Request, res: Response) => {
         logger.error(JSON.stringify({ Error: e, Status: '404' }))
         res.status(400).json({ Error: e })
     }
+}
+
+export const populaJson = async (dataJson: any) => {
+    let jsonUsuario: ISendUsuarioProps = {
+        criarUsuario: true,
+        nome: '',
+        sobrenome: '',
+        dataNascimento: '',
+        sociedade: "PESSOA_FISICA",
+        documentosDTO: [
+            {
+                tipoDocumento: '',
+                documento: ''
+            },
+            {
+                tipoDocumento: '',
+                documento: ''
+            }
+        ],
+        email: '',
+        nomeTratamento: '',
+        telefone: '',
+        telefone2: '',
+        profissao: 'Aluno',
+        grupoPessoa: 'Aluno',
+        fotoFacial: '/9j/4AAQSkZJRgABAQAAAQABAAD/'
+    }
+    try {
+        jsonUsuario.nome = dataJson.nome
+        jsonUsuario.sobrenome = dataJson.sobrenome
+        jsonUsuario.dataNascimento = dataJson.dataNascimento
+        // jsonUsuario.sociedade = dataJson.sociedade
+        // jsonUsuario.documentosDTO.at(0)?.tipoDocumento
+
+        for (let doc of dataJson.documentosDTO) {
+            jsonUsuario.documentosDTO.push(doc);
+        }
+
+        jsonUsuario.email = dataJson.email
+        jsonUsuario.nomeTratamento = dataJson.nomeTratamento
+        jsonUsuario.telefone = dataJson.telefone
+        jsonUsuario.telefone2 = dataJson.telefone2
+        // jsonUsuario.profissao = dataJson.profissao
+        // jsonUsuario.grupoPessoa = dataJson.grupoPessoa
+        jsonUsuario.fotoFacial = dataJson.fotoFacial
+
+        console.log('aki embaixo', jsonUsuario)
+        return jsonUsuario
+
+
+    } catch (e) {
+
+    }
+
 }

@@ -18,6 +18,25 @@ export interface IUsuarioProps {
     grupoPessoa: string,
     fotoFacial: string,
 }
+export interface IUsuarioProps {
+    criarUsuario: boolean,
+    nome: string,
+    sobrenome: string,
+    dataNascimento: string,
+    sociedade: string,
+    tipoDocumento1: string,
+    documento1: string,
+    tipoDocumento2: string,
+    documento2: string,
+    documentosDTO: string,
+    email: string,
+    nomeTratamento: string,
+    profissao: string,
+    telefone: string,
+    telefone2: string,
+    grupoPessoa: string,
+    fotoFacial: string,
+}
 export interface IUsuarioUPDATEProps {
     criarUsuario?: boolean,
     nome?: string,
@@ -57,4 +76,19 @@ export interface Data {
     profissao: string;
     grupoPessoa: string;
     fotoFacial?: string;
+}
+export interface ISendUsuarioProps {
+    "criarUsuario": true,
+    "nome": string,
+    "sobrenome": string,
+    "dataNascimento": string,
+    "sociedade": "PESSOA_FISICA",
+    "documentosDTO" : DocumentoDTO[],
+    "email": string,
+    "nomeTratamento": string,
+    "telefone": string,
+    "telefone2": string,
+    "profissao": string,
+    "grupoPessoa": string,
+    "fotoFacial": string
 }

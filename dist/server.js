@@ -69,19 +69,20 @@ var z = __toESM(require("zod"));
 var import_axios = __toESM(require("axios"));
 dotenv.config();
 var prisma = new import_client.PrismaClient();
+var documentoSchema = z.object({
+  tipoDocumento: z.string(),
+  documento: z.string()
+}).required();
 var userSchema = z.object({
   criarUsuario: z.boolean(),
-  nome: z.string().max(50).min(3),
-  sobrenome: z.string().max(255),
+  nome: z.string(),
+  sobrenome: z.string(),
   dataNascimento: z.string(),
   sociedade: z.string().optional(),
-  tipoDocumento1: z.string(),
-  documento1: z.string(),
-  tipoDocumento2: z.string(),
-  documento2: z.string(),
   email: z.string().email(),
-  nomeTratamento: z.string().max(255),
+  nomeTratamento: z.string(),
   profissao: z.string(),
+  documentosDTO: z.array(documentoSchema).min(1),
   telefone: z.string(),
   telefone2: z.string(),
   grupoPessoa: z.string(),
@@ -89,43 +90,74 @@ var userSchema = z.object({
 }).required();
 var createUserB64 = async (req, res) => {
   try {
-    const data = await req.body;
-    console.log(data);
-    res.status(200).json({ data });
+    const dataJson = userSchema.parse(await req.body);
+    let jsonUsuario = {
+      criarUsuario: true,
+      nome: "",
+      sobrenome: "",
+      dataNascimento: "",
+      sociedade: "PESSOA_FISICA",
+      documentosDTO: [],
+      email: "",
+      nomeTratamento: "",
+      telefone: "",
+      telefone2: "",
+      profissao: "Aluno",
+      grupoPessoa: "Aluno",
+      fotoFacial: "/9j/4AAQSkZJRgABAQAAAQABAAD/"
+    };
+    jsonUsuario.nome = dataJson.nome;
+    jsonUsuario.sobrenome = dataJson.sobrenome;
+    jsonUsuario.dataNascimento = dataJson.dataNascimento;
+    for (let doc of dataJson.documentosDTO) {
+      jsonUsuario.documentosDTO.push(doc);
+    }
+    jsonUsuario.email = dataJson.email;
+    jsonUsuario.nomeTratamento = dataJson.nomeTratamento;
+    jsonUsuario.telefone = dataJson.telefone;
+    jsonUsuario.telefone2 = dataJson.telefone2;
+    jsonUsuario.fotoFacial = dataJson.fotoFacial;
+    console.log("--------DEBUG---------", jsonUsuario);
+    const optionsLogin = {
+      headers: {
+        "content-type": "multipart/form-data",
+        // "Accept": "*/*",
+        // "Accept-Encoding": "gzip, deflate, br",
+        // "Connection": "keep-alive",
+        "Authorization": process.env.LOGIN_AUTHORIZATION
+      }
+    };
+    const optionsRefreshLogin = {
+      headers: {
+        "content-type": "multipart/form-data",
+        "Authorization": process.env.LOGIN_AUTHORIZATION,
+        "tenant": process.env.LOGIN_TENANT
+      }
+    };
+    let objData = {
+      access_token: "",
+      refresh_token: "",
+      grant_type: "refresh_token",
+      token_type: "",
+      Authorization: process.env.LOGIN_AUTHORIZATION,
+      tenant: process.env.LOGIN_TENANT,
+      newAccess_token: "",
+      newRefresh_token: ""
+    };
+    let dataLogin = {
+      username: process.env.USER_LOGIN,
+      password: process.env.USER_PASSWORD,
+      grant_type: "password"
+    };
+    let dataRefresh = {
+      grant_type: process.env.LOGIN_GRANT_TYPE,
+      refresh_token: ""
+    };
+    res.status(200).json({ dataJson });
   } catch (e) {
     console.log("Fail Login", e);
     logger.error(JSON.stringify({ Error: e, Status: "404" }));
     res.status(400).json({ Error: e });
-  }
-};
-var updateUserB64 = async (req, res) => {
-  try {
-    const { criarUsuario, nome, sobrenome, dataNascimento, sociedade, tipoDocumento1, documento1, tipoDocumento2, documento2, email, nomeTratamento, profissao, telefone, telefone2, grupoPessoa, fotoFacial } = userSchema.parse(req.body);
-    const updateUser = await prisma.usuariosSESTSENAT.update({
-      where: {
-        documento1
-      },
-      data: {
-        nome,
-        email
-      }
-    });
-    res.status(200).json({ message: "Atualizado", data: updateUser });
-  } catch (e) {
-    res.status(500).send(e);
-  }
-};
-var deleteUserB64 = async (req, res) => {
-  try {
-    const { email } = req.body;
-    const deleteUser = await prisma.usuariosSESTSENAT.delete({
-      where: {
-        email
-      }
-    });
-    res.status(200).json({ message: "Usuario deletado", data: deleteUser });
-  } catch (e) {
-    res.status(500).send(e);
   }
 };
 var getUsers = async (req, res) => {
@@ -253,8 +285,6 @@ app.use(import_express.default.urlencoded({ extended: true }));
   stream: log
 });
 app.post("/usuariosB64", createUserB64);
-app.put("/usuariosB64", updateUserB64);
-app.delete("/usuariosB64", deleteUserB64);
 app.get("/usuarios", getUsers);
 app.post("/api", sendUserScond);
 app.get("/", (req, res) => {
