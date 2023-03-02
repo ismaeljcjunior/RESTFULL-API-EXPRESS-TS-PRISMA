@@ -78,6 +78,7 @@ export interface Data {
     fotoFacial?: string;
 }
 export interface ISendUsuarioProps {
+    
     "criarUsuario": true,
     "nome": string,
     "sobrenome": string,

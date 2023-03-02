@@ -32,7 +32,6 @@ var usuarioController_exports = {};
 __export(usuarioController_exports, {
   createUserB64: () => createUserB64,
   getUsers: () => getUsers,
-  populaJson: () => populaJson,
   sendUserScond: () => sendUserScond
 });
 module.exports = __toCommonJS(usuarioController_exports);
@@ -125,43 +124,22 @@ var createUserB64 = async (req, res) => {
     jsonUsuario.telefone = dataJson.telefone;
     jsonUsuario.telefone2 = dataJson.telefone2;
     jsonUsuario.fotoFacial = dataJson.fotoFacial;
-    console.log("--------DEBUG---------", jsonUsuario);
-    const optionsLogin = {
-      headers: {
-        "content-type": "multipart/form-data",
-        // "Accept": "*/*",
-        // "Accept-Encoding": "gzip, deflate, br",
-        // "Connection": "keep-alive",
-        "Authorization": process.env.LOGIN_AUTHORIZATION
+    const user = await prisma.usuariosSESTSENAT.create({
+      data: {
+        criarUsuario: jsonUsuario.criarUsuario,
+        nome: jsonUsuario.nome,
+        sobrenome: jsonUsuario.sobrenome,
+        dataNascimento: jsonUsuario.dataNascimento,
+        sociedade: jsonUsuario.sociedade,
+        email: jsonUsuario.email,
+        nomeTratamento: jsonUsuario.nomeTratamento,
+        telefone: jsonUsuario.telefone,
+        telefone2: jsonUsuario.telefone2,
+        fotoFacial: jsonUsuario.fotoFacial
       }
-    };
-    const optionsRefreshLogin = {
-      headers: {
-        "content-type": "multipart/form-data",
-        "Authorization": process.env.LOGIN_AUTHORIZATION,
-        "tenant": process.env.LOGIN_TENANT
-      }
-    };
-    let objData = {
-      access_token: "",
-      refresh_token: "",
-      grant_type: "refresh_token",
-      token_type: "",
-      Authorization: process.env.LOGIN_AUTHORIZATION,
-      tenant: process.env.LOGIN_TENANT,
-      newAccess_token: "",
-      newRefresh_token: ""
-    };
-    let dataLogin = {
-      username: process.env.USER_LOGIN,
-      password: process.env.USER_PASSWORD,
-      grant_type: "password"
-    };
-    let dataRefresh = {
-      grant_type: process.env.LOGIN_GRANT_TYPE,
-      refresh_token: ""
-    };
-    res.status(200).json({ dataJson });
+    });
+    console.log(jsonUsuario);
+    res.status(200).json({ jsonUsuario });
   } catch (e) {
     console.log("Fail Login", e);
     logger.error(JSON.stringify({ Error: e, Status: "404" }));
@@ -274,52 +252,9 @@ var sendUserScond = async (req, res) => {
     res.status(400).json({ Error: e });
   }
 };
-var populaJson = async (dataJson) => {
-  let jsonUsuario = {
-    criarUsuario: true,
-    nome: "",
-    sobrenome: "",
-    dataNascimento: "",
-    sociedade: "PESSOA_FISICA",
-    documentosDTO: [
-      {
-        tipoDocumento: "",
-        documento: ""
-      },
-      {
-        tipoDocumento: "",
-        documento: ""
-      }
-    ],
-    email: "",
-    nomeTratamento: "",
-    telefone: "",
-    telefone2: "",
-    profissao: "Aluno",
-    grupoPessoa: "Aluno",
-    fotoFacial: "/9j/4AAQSkZJRgABAQAAAQABAAD/"
-  };
-  try {
-    jsonUsuario.nome = dataJson.nome;
-    jsonUsuario.sobrenome = dataJson.sobrenome;
-    jsonUsuario.dataNascimento = dataJson.dataNascimento;
-    for (let doc of dataJson.documentosDTO) {
-      jsonUsuario.documentosDTO.push(doc);
-    }
-    jsonUsuario.email = dataJson.email;
-    jsonUsuario.nomeTratamento = dataJson.nomeTratamento;
-    jsonUsuario.telefone = dataJson.telefone;
-    jsonUsuario.telefone2 = dataJson.telefone2;
-    jsonUsuario.fotoFacial = dataJson.fotoFacial;
-    console.log("aki embaixo", jsonUsuario);
-    return jsonUsuario;
-  } catch (e) {
-  }
-};
 // Annotate the CommonJS export names for ESM import in node:
 0 && (module.exports = {
   createUserB64,
   getUsers,
-  populaJson,
   sendUserScond
 });
