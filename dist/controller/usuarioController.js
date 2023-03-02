@@ -100,6 +100,41 @@ var userSchema = z.object({
 dotenv.config();
 var prisma = new import_client.PrismaClient();
 var createUserB64 = async (req, res) => {
+  const optionsLogin = {
+    headers: {
+      "content-type": "multipart/form-data",
+      // "Accept": "*/*",
+      // "Accept-Encoding": "gzip, deflate, br",
+      // "Connection": "keep-alive",
+      "Authorization": process.env.LOGIN_AUTHORIZATION
+    }
+  };
+  const optionsRefreshLogin = {
+    headers: {
+      "content-type": "multipart/form-data",
+      "Authorization": process.env.LOGIN_AUTHORIZATION,
+      "tenant": process.env.LOGIN_TENANT
+    }
+  };
+  let objData = {
+    access_token: "",
+    refresh_token: "",
+    grant_type: "refresh_token",
+    token_type: "",
+    Authorization: process.env.LOGIN_AUTHORIZATION,
+    tenant: process.env.LOGIN_TENANT,
+    newAccess_token: "",
+    newRefresh_token: ""
+  };
+  let dataLogin = {
+    username: process.env.USER_LOGIN,
+    password: process.env.USER_PASSWORD,
+    grant_type: "password"
+  };
+  let dataRefresh = {
+    grant_type: process.env.LOGIN_GRANT_TYPE,
+    refresh_token: ""
+  };
   try {
     const dataJson = userSchema.parse(await req.body);
     let jsonUsuario = {
@@ -115,7 +150,7 @@ var createUserB64 = async (req, res) => {
       telefone2: "",
       profissao: "Aluno",
       grupoPessoa: "Aluno",
-      fotoFacial: "/9j/4AAQSkZJRgABAQAAAQABAAD/"
+      fotoFacial: ""
     };
     jsonUsuario.nome = dataJson.nome;
     jsonUsuario.sobrenome = dataJson.sobrenome;
@@ -148,7 +183,35 @@ var createUserB64 = async (req, res) => {
       },
       include: { documentosDTO: true }
     });
-    console.log(jsonUsuario);
+    await import_axios.default.post(process.env.API_URL_LOGIN, dataLogin, optionsLogin).then(async function(res2) {
+      objData.access_token = res2.data.access_token;
+      objData.refresh_token = res2.data.refresh_token;
+      objData.token_type = res2.data.token_type;
+      dataRefresh.refresh_token = res2.data.refresh_token;
+      await import_axios.default.post(process.env.API_URL_REFRESH, dataRefresh, optionsRefreshLogin).then(async function(res3) {
+        objData.newAccess_token = res3.data.access_token;
+        objData.newRefresh_token = res3.data.refresh_token;
+        await import_axios.default.post(process.env.API_URL_GET, jsonUsuario, {
+          headers: {
+            "content-type": "application/json",
+            "Authorization": `bearer ${objData.newAccess_token}`,
+            "tenant": process.env.LOGIN_TENANT
+          }
+        }).then(async function(res4) {
+          console.log("Sucess ", res4.data);
+          logger.info("Sucess ", JSON.stringify(res4.data), null, 2);
+        }).catch(async function(err) {
+          console.log("Error", err);
+          logger.error(JSON.stringify(err.message), null, 2);
+        });
+      }).catch(async function(err) {
+        console.log("Error", err);
+        logger.error(JSON.stringify(err.message));
+      });
+    }).catch(async function(err) {
+      console.log("Error", err);
+      logger.error(JSON.stringify(err.message));
+    });
     res.status(200).json({ jsonUsuario });
   } catch (e) {
     console.log("Fail Login", e);

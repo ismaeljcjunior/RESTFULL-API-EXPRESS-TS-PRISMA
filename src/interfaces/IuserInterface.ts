@@ -79,19 +79,19 @@ export interface Data {
     fotoFacial?: string;
 }
 export interface ISendUsuarioProps {
-    "criarUsuario": true,
-    "nome": string,
-    "sobrenome": string,
-    "dataNascimento": string,
-    "sociedade": "PESSOA_FISICA",
-    "documentosDTO": DocumentoDTO[],
-    "email": string,
-    "nomeTratamento": string,
-    "telefone": string,
-    "telefone2": string,
-    "profissao": string,
-    "grupoPessoa": string,
-    "fotoFacial": string
+    criarUsuario: true,
+    nome: string,
+    sobrenome: string,
+    dataNascimento: string,
+    sociedade: "PESSOA_FISICA",
+    documentosDTO: DocumentoDTO[],
+    email: string,
+    nomeTratamento: string,
+    telefone: string,
+    telefone2: string,
+    profissao: string,
+    grupoPessoa: string,
+    fotoFacial: string
 }
 export const documentoSchema = z.object({
     tipoDocumento: z.string(),

@@ -10,6 +10,41 @@ import { userSchema } from './../interfaces/IuserInterface';
 const prisma = new PrismaClient()
 
 export const createUserB64 = async (req: Request, res: Response) => {
+    const optionsLogin = {
+        headers: {
+            "content-type": "multipart/form-data",
+            // "Accept": "*/*",
+            // "Accept-Encoding": "gzip, deflate, br",
+            // "Connection": "keep-alive",
+            "Authorization": process.env.LOGIN_AUTHORIZATION as string
+        }
+    }
+    const optionsRefreshLogin = {
+        headers: {
+            "content-type": "multipart/form-data",
+            "Authorization": process.env.LOGIN_AUTHORIZATION,
+            "tenant": process.env.LOGIN_TENANT as string
+        }
+    }
+    let objData = {
+        access_token: '',
+        refresh_token: '',
+        grant_type: 'refresh_token',
+        token_type: '',
+        Authorization: process.env.LOGIN_AUTHORIZATION,
+        tenant: process.env.LOGIN_TENANT,
+        newAccess_token: '',
+        newRefresh_token: '',
+    }
+    let dataLogin = {
+        username: process.env.USER_LOGIN,
+        password: process.env.USER_PASSWORD,
+        grant_type: "password"
+    }
+    let dataRefresh = {
+        grant_type: process.env.LOGIN_GRANT_TYPE,
+        refresh_token: ''
+    }
     try {
         const dataJson = userSchema.parse(await req.body)
         let jsonUsuario: ISendUsuarioProps = {
@@ -25,7 +60,7 @@ export const createUserB64 = async (req: Request, res: Response) => {
             telefone2: '',
             profissao: 'Aluno',
             grupoPessoa: 'Aluno',
-            fotoFacial: '/9j/4AAQSkZJRgABAQAAAQABAAD/'
+            fotoFacial: ''
         }
         jsonUsuario.nome = dataJson.nome
         jsonUsuario.sobrenome = dataJson.sobrenome
@@ -33,6 +68,7 @@ export const createUserB64 = async (req: Request, res: Response) => {
         for (let doc of dataJson.documentosDTO) {
             jsonUsuario.documentosDTO.push(doc);
         }
+    
         jsonUsuario.email = dataJson.email
         jsonUsuario.nomeTratamento = dataJson.nomeTratamento
         jsonUsuario.telefone = dataJson.telefone
@@ -45,7 +81,7 @@ export const createUserB64 = async (req: Request, res: Response) => {
                 sobrenome: jsonUsuario.sobrenome,
                 dataNascimento: jsonUsuario.dataNascimento,
                 documentosDTO: {
-                    createMany:{
+                    createMany: {
                         data: jsonUsuario.documentosDTO
                     },
                 },
@@ -55,111 +91,52 @@ export const createUserB64 = async (req: Request, res: Response) => {
                 telefone: jsonUsuario.telefone,
                 telefone2: jsonUsuario.telefone2,
                 fotoFacial: jsonUsuario.fotoFacial,
-                
+
             },
             include: { documentosDTO: true },
         })
-        console.log((jsonUsuario))
+        await axios.post(process.env.API_URL_LOGIN as string, dataLogin, optionsLogin)
+            .then(async function (res) {
+                objData.access_token = res.data.access_token
+                objData.refresh_token = res.data.refresh_token
+                objData.token_type = res.data.token_type
+                dataRefresh.refresh_token = res.data.refresh_token
+
+                await axios.post(process.env.API_URL_REFRESH as string, dataRefresh, optionsRefreshLogin)
+                    .then(async function (res) {
+                        objData.newAccess_token = res.data.access_token
+                        objData.newRefresh_token = res.data.refresh_token
+
+                        await axios.post(process.env.API_URL_GET as string, jsonUsuario, {
+                            headers: {
+                                "content-type": "application/json",
+                                "Authorization": `bearer ${objData.newAccess_token}`,
+                                "tenant": process.env.LOGIN_TENANT
+                            }
+
+                        }).then(async function (res) {
+                            console.log('Sucess ', res.data)
+                            logger.info('Sucess ', JSON.stringify(res.data), null, 2)
+                        }).catch(async function (err) {
+                            console.log('Error', err)
+                            logger.error(JSON.stringify(err.message), null, 2)
+                        })
+                    }).catch(async function (err) {
+                        console.log('Error', err)
+                        logger.error(JSON.stringify(err.message))
+                    })
+            }).catch(async function (err) {
+                console.log('Error', err)
+                logger.error(JSON.stringify(err.message))
+            })
+
         res.status(200).json({ jsonUsuario })
     } catch (e) {
         console.log('Fail Login', e)
         logger.error(JSON.stringify({ Error: e, Status: '404' }))
         res.status(400).json({ Error: e })
     }
-
-    // try {
-    //     // const users = userSchema.array().parse(req.body as IUsuarioProps[]);
-    //     // for (const { criarUsuario, nome, sobrenome, dataNascimento, sociedade, tipoDocumento1, documento1, tipoDocumento2, documento2, email, nomeTratamento, profissao, telefone, telefone2, grupoPessoa, fotoFacial } of users) {
-    //     //     console.log('--->', users)
-    //     //     const usuario = await prisma.usuariosSESTSENAT.create({
-    //     //         data: {
-    //     //             criarUsuario,
-    //     //             nome,
-    //     //             sobrenome,
-    //     //             dataNascimento,
-    //     //             sociedade,
-    //     //             tipoDocumento1,
-    //     //             documento1,
-    //     //             tipoDocumento2,
-    //     //             documento2,
-    //     //             email,
-    //     //             nomeTratamento,
-    //     //             telefone,
-    //     //             telefone2,
-    //     //             profissao,
-    //     //             grupoPessoa,
-    //     //             fotoFacial
-    //     //         }
-    //     //     })
-    //     // }
-    //     const { criarUsuario, nome, sobrenome, dataNascimento, sociedade, tipoDocumento1, documento1, tipoDocumento2, documento2, email, nomeTratamento, profissao, telefone, telefone2, grupoPessoa, fotoFacial } = userSchema.parse(req.body as IUsuarioProps);
-    //     const usuario = await prisma.usuariosSESTSENAT.create({
-    //         data: {
-    //             criarUsuario,
-    //             nome,
-    //             sobrenome,
-    //             dataNascimento,
-    //             sociedade,
-    //             tipoDocumento1,
-    //             documento1,
-    //             tipoDocumento2,
-    //             documento2,
-    //             email,
-    //             nomeTratamento,
-    //             telefone,
-    //             telefone2,
-    //             profissao,
-    //             grupoPessoa,
-    //             fotoFacial
-    //         }
-    //     })
-    //     console.log(usuario)
-    //     res.status(200).json({ Message: 'Usuários salvos!', Error: 'Falso', Status: '200 ok' })
-    //     return
-    // } catch (e: any) {
-    //     if (e instanceof z.ZodError) {
-    //         const errorMessages = e.issues.map((issue) => issue.message)
-    //         console.log(e.errors)
-    //         return res.status(401).json({ Message: 'Usuários não salvos!', Error: 'Verdadeiro', Status: '400', error: errorMessages });
-    //     } else if (e.code === 'P2002') {
-    //         // console.log(e)
-    //         return res.status(401).json({ error: 'Erro interno do banco de dados', e })
-    //     }
-    // }
 }
-// export const updateUserB64 = async (req: Request, res: Response) => {
-//     try {
-//         const { criarUsuario, nome, sobrenome, dataNascimento, sociedade, tipoDocumento1, documento1, tipoDocumento2, documento2, email, nomeTratamento, profissao, telefone, telefone2, grupoPessoa, fotoFacial } = userSchema.parse(req.body as IUsuarioUPDATEProps)
-//         const updateUser = await prisma.usuariosSESTSENAT.update({
-//             where: {
-//                 documento1: documento1
-//             },
-//             data: {
-//                 nome: nome,
-//                 email: email,
-
-//             },
-//         })
-//         res.status(200).json({ message: 'Atualizado', data: updateUser })
-//     } catch (e) {
-
-//         res.status(500).send(e)
-//     }
-// }
-// export const deleteUserB64 = async (req: Request, res: Response) => {
-//     try {
-//         const { email } = req.body as IUsuarioDELProps
-//         const deleteUser = await prisma.usuariosSESTSENAT.delete({
-//             where: {
-//                 email: email
-//             },
-//         })
-//         res.status(200).json({ message: 'Usuario deletado', data: deleteUser })
-//     } catch (e) {
-
-//         res.status(500).send(e)
-//     }
-// }
 export const getUsers = async (req: Request, res: Response) => {
     try {
 
