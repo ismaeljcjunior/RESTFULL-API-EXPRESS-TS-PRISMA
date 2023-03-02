@@ -1,3 +1,4 @@
+import * as z from 'zod'
 
 export interface IUsuarioProps {
     criarUsuario: boolean,
@@ -78,13 +79,12 @@ export interface Data {
     fotoFacial?: string;
 }
 export interface ISendUsuarioProps {
-    
     "criarUsuario": true,
     "nome": string,
     "sobrenome": string,
     "dataNascimento": string,
     "sociedade": "PESSOA_FISICA",
-    "documentosDTO" : DocumentoDTO[],
+    "documentosDTO": DocumentoDTO[],
     "email": string,
     "nomeTratamento": string,
     "telefone": string,
@@ -93,3 +93,22 @@ export interface ISendUsuarioProps {
     "grupoPessoa": string,
     "fotoFacial": string
 }
+export const documentoSchema = z.object({
+    tipoDocumento: z.string(),
+    documento: z.string(),
+}).required()
+export const userSchema = z.object({
+    criarUsuario: z.boolean(),
+    nome: z.string(),
+    sobrenome: z.string(),
+    dataNascimento: z.string(),
+    sociedade: z.string().optional(),
+    email: z.string().email(),
+    nomeTratamento: z.string(),
+    profissao: z.string(),
+    documentosDTO: z.array(documentoSchema).min(1),
+    telefone: z.string(),
+    telefone2: z.string(),
+    grupoPessoa: z.string(),
+    fotoFacial: z.string(),
+}).required()

@@ -73,10 +73,10 @@ var logger = (0, import_winston.createLogger)({
 });
 
 // src/controller/usuarioController.ts
-var z = __toESM(require("zod"));
 var import_axios = __toESM(require("axios"));
-dotenv.config();
-var prisma = new import_client.PrismaClient();
+
+// src/interfaces/IuserInterface.ts
+var z = __toESM(require("zod"));
 var documentoSchema = z.object({
   tipoDocumento: z.string(),
   documento: z.string()
@@ -96,6 +96,10 @@ var userSchema = z.object({
   grupoPessoa: z.string(),
   fotoFacial: z.string()
 }).required();
+
+// src/controller/usuarioController.ts
+dotenv.config();
+var prisma = new import_client.PrismaClient();
 var createUserB64 = async (req, res) => {
   try {
     const dataJson = userSchema.parse(await req.body);
@@ -131,13 +135,19 @@ var createUserB64 = async (req, res) => {
         nome: jsonUsuario.nome,
         sobrenome: jsonUsuario.sobrenome,
         dataNascimento: jsonUsuario.dataNascimento,
+        documentosDTO: {
+          createMany: {
+            data: jsonUsuario.documentosDTO
+          }
+        },
         sociedade: jsonUsuario.sociedade,
         email: jsonUsuario.email,
         nomeTratamento: jsonUsuario.nomeTratamento,
         telefone: jsonUsuario.telefone,
         telefone2: jsonUsuario.telefone2,
         fotoFacial: jsonUsuario.fotoFacial
-      }
+      },
+      include: { documentosDTO: true }
     });
     console.log(jsonUsuario);
     res.status(200).json({ jsonUsuario });

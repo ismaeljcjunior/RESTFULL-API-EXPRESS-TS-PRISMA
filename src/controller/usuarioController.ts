@@ -4,30 +4,10 @@ import { Request, Response } from 'express'
 import { PrismaClient } from '@prisma/client'
 import { Data, ISendUsuarioProps, DocumentoDTO } from '../interfaces/IuserInterface'
 import { logger } from '../utils/logger'
-import * as z from 'zod'
 import axios from 'axios'
+import { userSchema } from './../interfaces/IuserInterface';
 
 const prisma = new PrismaClient()
-const documentoSchema = z.object({
-    tipoDocumento: z.string(),
-    documento: z.string(),
-}).required()
-const userSchema = z.object({
-    criarUsuario: z.boolean(),
-    nome: z.string(),
-    sobrenome: z.string(),
-    dataNascimento: z.string(),
-    sociedade: z.string().optional(),
-    email: z.string().email(),
-    nomeTratamento: z.string(),
-    profissao: z.string(),
-    documentosDTO: z.array(documentoSchema).min(1),
-    telefone: z.string(),
-    telefone2: z.string(),
-    grupoPessoa: z.string(),
-    fotoFacial: z.string(),
-}).required()
-
 
 export const createUserB64 = async (req: Request, res: Response) => {
     try {
@@ -58,7 +38,6 @@ export const createUserB64 = async (req: Request, res: Response) => {
         jsonUsuario.telefone = dataJson.telefone
         jsonUsuario.telefone2 = dataJson.telefone2
         jsonUsuario.fotoFacial = dataJson.fotoFacial
-
         const user = await prisma.usuariosSESTSENAT.create({
             data: {
                 criarUsuario: jsonUsuario.criarUsuario,
@@ -66,18 +45,20 @@ export const createUserB64 = async (req: Request, res: Response) => {
                 sobrenome: jsonUsuario.sobrenome,
                 dataNascimento: jsonUsuario.dataNascimento,
                 documentosDTO: {
-                    documentosDTO.tipoDocumento: jsonUsuario.tipoDocumento,
-                    documentosDTO.documento: jsonUsuario.Documento,
+                    createMany:{
+                        data: jsonUsuario.documentosDTO
+                    },
                 },
                 sociedade: jsonUsuario.sociedade,
                 email: jsonUsuario.email,
                 nomeTratamento: jsonUsuario.nomeTratamento,
                 telefone: jsonUsuario.telefone,
                 telefone2: jsonUsuario.telefone2,
-                fotoFacial: jsonUsuario.fotoFacial
+                fotoFacial: jsonUsuario.fotoFacial,
+                
             },
+            include: { documentosDTO: true },
         })
-
         console.log((jsonUsuario))
         res.status(200).json({ jsonUsuario })
     } catch (e) {
