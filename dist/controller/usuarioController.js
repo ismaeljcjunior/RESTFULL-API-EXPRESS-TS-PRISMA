@@ -198,11 +198,15 @@ var createUserB64 = async (req, res) => {
             "tenant": process.env.LOGIN_TENANT
           }
         }).then(async function(res4) {
-          console.log("Sucess ", res4.data);
-          logger.info("Sucess ", JSON.stringify(res4.data), null, 2);
+          console.log("Success", res4.data);
+          logger.info("Success", JSON.stringify(res4.data), null, 2);
+          res4.status = 200;
+          JSON.stringify(res4.data);
         }).catch(async function(err) {
-          console.log("Error", err);
+          console.log("Error DEBUG", err);
           logger.error(JSON.stringify(err.message), null, 2);
+          res3.status = 400;
+          JSON.stringify(res3.data);
         });
       }).catch(async function(err) {
         console.log("Error", err);
@@ -212,7 +216,6 @@ var createUserB64 = async (req, res) => {
       console.log("Error", err);
       logger.error(JSON.stringify(err.message));
     });
-    res.status(200).json({ jsonUsuario });
   } catch (e) {
     console.log("Fail Login", e);
     logger.error(JSON.stringify({ Error: e, Status: "404" }));

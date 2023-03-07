@@ -68,7 +68,7 @@ export const createUserB64 = async (req: Request, res: Response) => {
         for (let doc of dataJson.documentosDTO) {
             jsonUsuario.documentosDTO.push(doc);
         }
-    
+
         jsonUsuario.email = dataJson.email
         jsonUsuario.nomeTratamento = dataJson.nomeTratamento
         jsonUsuario.telefone = dataJson.telefone
@@ -115,11 +115,15 @@ export const createUserB64 = async (req: Request, res: Response) => {
                             }
 
                         }).then(async function (res) {
-                            console.log('Sucess ', res.data)
-                            logger.info('Sucess ', JSON.stringify(res.data), null, 2)
+                            console.log('Success', res.data)
+                            logger.info('Success', JSON.stringify(res.data), null,2)
+
+                            return res.status(200).json(res.data)
                         }).catch(async function (err) {
-                            console.log('Error', err)
+                            console.log('Error DEBUG', err)
                             logger.error(JSON.stringify(err.message), null, 2)
+
+                            return res.status(400).json(err.res.data)
                         })
                     }).catch(async function (err) {
                         console.log('Error', err)
@@ -130,7 +134,7 @@ export const createUserB64 = async (req: Request, res: Response) => {
                 logger.error(JSON.stringify(err.message))
             })
 
-        res.status(200).json({ jsonUsuario })
+
     } catch (e) {
         console.log('Fail Login', e)
         logger.error(JSON.stringify({ Error: e, Status: '404' }))
