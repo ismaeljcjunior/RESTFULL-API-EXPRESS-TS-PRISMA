@@ -183,39 +183,30 @@ var createUserB64 = async (req, res) => {
       },
       include: { documentosDTO: true }
     });
-    await import_axios.default.post(process.env.API_URL_LOGIN, dataLogin, optionsLogin).then(async function(res2) {
-      objData.access_token = res2.data.access_token;
-      objData.refresh_token = res2.data.refresh_token;
-      objData.token_type = res2.data.token_type;
-      dataRefresh.refresh_token = res2.data.refresh_token;
-      await import_axios.default.post(process.env.API_URL_REFRESH, dataRefresh, optionsRefreshLogin).then(async function(res3) {
-        objData.newAccess_token = res3.data.access_token;
-        objData.newRefresh_token = res3.data.refresh_token;
-        await import_axios.default.post(process.env.API_URL_GET, jsonUsuario, {
-          headers: {
-            "content-type": "application/json",
-            "Authorization": `bearer ${objData.newAccess_token}`,
-            "tenant": process.env.LOGIN_TENANT
-          }
-        }).then(async function(res4) {
-          console.log("Success", res4.data);
-          logger.info("Success", JSON.stringify(res4.data), null, 2);
-          res4.status = 200;
-          JSON.stringify(res4.data);
-        }).catch(async function(err) {
-          console.log("Error DEBUG", err);
-          logger.error(JSON.stringify(err.message), null, 2);
-          res3.status = 400;
-          JSON.stringify(res3.data);
-        });
-      }).catch(async function(err) {
-        console.log("Error", err);
-        logger.error(JSON.stringify(err.message));
+    try {
+      const resLogin = await import_axios.default.post(process.env.API_URL_LOGIN, dataLogin, optionsLogin);
+      objData.access_token = resLogin.data.access_token;
+      objData.refresh_token = resLogin.data.refresh_token;
+      objData.token_type = resLogin.data.token_type;
+      dataRefresh.refresh_token = resLogin.data.refresh_token;
+      const resRefresh = await import_axios.default.post(process.env.API_URL_REFRESH, dataRefresh, optionsRefreshLogin);
+      objData.newAccess_token = resRefresh.data.access_token;
+      objData.newRefresh_token = resRefresh.data.refresh_token;
+      const resGet = await import_axios.default.post(process.env.API_URL_GET, jsonUsuario, {
+        headers: {
+          "content-type": "application/json",
+          "Authorization": `bearer ${objData.newAccess_token}`,
+          "tenant": process.env.LOGIN_TENANT
+        }
       });
-    }).catch(async function(err) {
-      console.log("Error", err);
-      logger.error(JSON.stringify(err.message));
-    });
+      console.log("Success", resGet.data);
+      logger.info("Success", JSON.stringify(resGet.data), null, 2);
+      res.status(999).json(resGet.data);
+    } catch (e) {
+      console.log("Error", e);
+      logger.error(JSON.stringify(e.message));
+      res.status(400).json({ Error: e });
+    }
   } catch (e) {
     console.log("Fail Login", e);
     logger.error(JSON.stringify({ Error: e, Status: "404" }));

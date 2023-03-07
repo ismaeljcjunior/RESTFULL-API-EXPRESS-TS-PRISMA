@@ -95,44 +95,32 @@ export const createUserB64 = async (req: Request, res: Response) => {
             },
             include: { documentosDTO: true },
         })
-        await axios.post(process.env.API_URL_LOGIN as string, dataLogin, optionsLogin)
-            .then(async function (res) {
-                objData.access_token = res.data.access_token
-                objData.refresh_token = res.data.refresh_token
-                objData.token_type = res.data.token_type
-                dataRefresh.refresh_token = res.data.refresh_token
-
-                await axios.post(process.env.API_URL_REFRESH as string, dataRefresh, optionsRefreshLogin)
-                    .then(async function (res) {
-                        objData.newAccess_token = res.data.access_token
-                        objData.newRefresh_token = res.data.refresh_token
-
-                        await axios.post(process.env.API_URL_GET as string, jsonUsuario, {
-                            headers: {
-                                "content-type": "application/json",
-                                "Authorization": `bearer ${objData.newAccess_token}`,
-                                "tenant": process.env.LOGIN_TENANT
-                            }
-
-                        }).then(async function (res) {
-                            console.log('Success', res.data)
-                            logger.info('Success', JSON.stringify(res.data), null,2)
-
-                            return res.status(200).json(res.data)
-                        }).catch(async function (err) {
-                            console.log('Error DEBUG', err)
-                            logger.error(JSON.stringify(err.message), null, 2)
-
-                            return res.status(400).json(err.res.data)
-                        })
-                    }).catch(async function (err) {
-                        console.log('Error', err)
-                        logger.error(JSON.stringify(err.message))
-                    })
-            }).catch(async function (err) {
-                console.log('Error', err)
-                logger.error(JSON.stringify(err.message))
-            })
+        try {
+            const resLogin = await axios.post(process.env.API_URL_LOGIN as string, dataLogin, optionsLogin);
+            objData.access_token = resLogin.data.access_token;
+            objData.refresh_token = resLogin.data.refresh_token;
+            objData.token_type = resLogin.data.token_type;
+            dataRefresh.refresh_token = resLogin.data.refresh_token;
+        
+            const resRefresh = await axios.post(process.env.API_URL_REFRESH as string, dataRefresh, optionsRefreshLogin);
+            objData.newAccess_token = resRefresh.data.access_token;
+            objData.newRefresh_token = resRefresh.data.refresh_token;
+        
+            const resGet = await axios.post(process.env.API_URL_GET as string, jsonUsuario, {
+                headers: {
+                    "content-type": "application/json",
+                    "Authorization": `bearer ${objData.newAccess_token}`,
+                    "tenant": process.env.LOGIN_TENANT
+                }
+            });
+            console.log('Success', resGet.data);
+            logger.info('Success', JSON.stringify(resGet.data), null, 2);
+            res.status(999).json(resGet.data);
+        } catch (e: any) {
+            console.log('Error', e);
+            logger.error(JSON.stringify(e.message));
+            res.status(400).json({ Error: e });
+        }
 
 
     } catch (e) {
