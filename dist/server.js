@@ -192,13 +192,13 @@ var createUserB64 = async (req, res) => {
           "tenant": process.env.LOGIN_TENANT
         }
       });
-      console.log("Success", resGet.data);
+      console.log(resGet.data);
       logger.info("Success", JSON.stringify(resGet.data), null, 2);
-      res.status(999).json(resGet.data);
+      res.status(200).json({ response: resGet.data });
     } catch (e) {
-      console.log("Error", e);
-      logger.error(JSON.stringify(e.message));
-      res.status(400).json({ Error: e });
+      console.log("catch", e);
+      console.error("Error:", e.response.data);
+      res.status(500).json({ error: e.response.data });
     }
   } catch (e) {
     console.log("Fail Login", e);
