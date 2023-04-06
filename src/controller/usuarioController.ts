@@ -4,12 +4,11 @@ import { Request, Response } from 'express'
 import { PrismaClient } from '@prisma/client'
 import { logger } from '../utils/logger'
 import axios from 'axios'
-import { userSchema, IUsuarioUPDATEProps, userSchemaUpdate, ISendUsuarioProps } from './../interfaces/IuserInterface';
-
+import { IUsuarioUPDATEProps,  IUsuarioCREATEProps } from './../interfaces/IuserInterface';
 
 const prisma = new PrismaClient()
 
-export const createUserB64 = async (req: Request, res: Response) => {
+export const createUser = async (req: Request, res: Response) => {
     const optionsLogin = {
         headers: {
             "content-type": "multipart/form-data",
@@ -46,8 +45,8 @@ export const createUserB64 = async (req: Request, res: Response) => {
         refresh_token: ''
     }
     try {
-        const dataJson = userSchema.parse(await req.body)
-        let jsonUsuario: ISendUsuarioProps = {
+        const dataJson = await req.body
+        let jsonUsuario: IUsuarioCREATEProps = {
             criarUsuario: true,
             nome: '',
             sobrenome: 0,
@@ -114,7 +113,7 @@ export const createUserB64 = async (req: Request, res: Response) => {
                 },
                 include: { documentosDTO: true },
             })
-            const result = await prisma.$queryRawUnsafe(`UPDATE usuariossestsenat SET idUsuario_SCONSD = '${resGet.data.id}' WHERE (sobrenome = '${jsonUsuario.sobrenome}');`)
+            const result = await prisma.$queryRawUnsafe(`UPDATE usuariossestsenat SET idUsuario_SCOND = '${resGet.data.id}' WHERE (sobrenome = '${jsonUsuario.sobrenome}');`)
 
             logger.info('Success', JSON.stringify(resGet.data), null, 2)
             res.status(200).json({ response: resGet.data })
@@ -132,8 +131,7 @@ export const createUserB64 = async (req: Request, res: Response) => {
         res.status(400).json({ Error: e })
     }
 }
-
-export const updateUserB64 = async (req: Request, res: Response) => {
+export const updateUser = async (req: Request, res: Response) => {
     const matricula = Number(req.params.id)
     const optionsLogin = {
         headers: {
@@ -178,7 +176,7 @@ export const updateUserB64 = async (req: Request, res: Response) => {
     });
 
     try {
-        const dataJson = userSchemaUpdate.parse(await req.body)
+        const dataJson = await req.body
         let jsonUsuario: IUsuarioUPDATEProps = {
             id: '',
             nome: '',
@@ -228,8 +226,6 @@ export const updateUserB64 = async (req: Request, res: Response) => {
                 }
             })
 
-            // console.log(resGet.data);
-
             await prisma.usuariosSESTSENAT.update({
                 where: {
                     sobrenome: Number(jsonUsuario.sobrenome),
@@ -253,7 +249,7 @@ export const updateUserB64 = async (req: Request, res: Response) => {
                 },
                 include: { documentosDTO: true },
             })
-            // const result = await prisma.$queryRawUnsafe(`UPDATE usuariossestsenat SET situacao = 'Alterado' WHERE (sobrenome = '${matricula}');`);
+            const result = await prisma.$queryRawUnsafe(`UPDATE usuariossestsenat SET situacao = 'Alterado' WHERE (sobrenome = '${matricula}');`);
 
             logger.info('Success', JSON.stringify(resGet.data), null, 2)
             res.status(200).json({ response: resGet.data })
@@ -263,25 +259,10 @@ export const updateUserB64 = async (req: Request, res: Response) => {
             console.error('Error:', e.response.data);
             res.status(500).json({ error: e.response.data });
         }
-
-
     } catch (e) {
         console.log('Fail Login', e)
         logger.error(JSON.stringify({ Error: e, Status: '404' }))
         res.status(400).json({ Error: e })
-    }
-}
-
-export const getUsers = async (req: Request, res: Response) => {
-    try {
-
-        const getAllUsers = await prisma.usuariosSESTSENAT.findMany()
-        logger.info(JSON.stringify({ Message: 'Get all users', Error: 'false' }))
-
-        res.status(200).json({ getAllUsers })
-    } catch (e) {
-        logger.error(JSON.stringify({ Error: e, Status: '404' }))
-        res.status(404).send(e)
     }
 }
 export const deleteUser = async (req: Request, res: Response) => {
@@ -361,4 +342,96 @@ export const deleteUser = async (req: Request, res: Response) => {
         console.error('Error:', e.response.data);
         res.status(500).json({ error: e.response.data });
     }
-};
+}
+export const getUserB64 = async (req: Request, res: Response) => {
+    const matricula: number = Number(req.params.id)
+    console.log(matricula);
+
+    const optionsLogin = {
+        headers: {
+            "content-type": "multipart/form-data",
+            // "Accept": "*/*",
+            // "Accept-Encoding": "gzip, deflate, br",
+            // "Connection": "keep-alive",
+            "Authorization": process.env.LOGIN_AUTHORIZATION as string
+        }
+    }
+    const optionsRefreshLogin = {
+        headers: {
+            "content-type": "multipart/form-data",
+            "Authorization": process.env.LOGIN_AUTHORIZATION,
+            "tenant": process.env.LOGIN_TENANT as string
+        }
+    }
+    let objData = {
+        access_token: '',
+        refresh_token: '',
+        grant_type: 'refresh_token',
+        token_type: '',
+        Authorization: process.env.LOGIN_AUTHORIZATION,
+        tenant: process.env.LOGIN_TENANT,
+        newAccess_token: '',
+        newRefresh_token: '',
+    }
+    let dataLogin = {
+        username: process.env.USER_LOGIN,
+        password: process.env.USER_PASSWORD,
+        grant_type: "password"
+    }
+    let dataRefresh = {
+        grant_type: process.env.LOGIN_GRANT_TYPE,
+        refresh_token: ''
+    }
+
+    const user = await prisma.usuariosSESTSENAT.findFirst({
+        where: {
+            sobrenome: matricula,
+        }
+    });
+
+
+
+    try {
+        const resLogin = await axios.post(process.env.API_URL_LOGIN as string, dataLogin, optionsLogin);
+        objData.access_token = resLogin.data.access_token;
+        objData.refresh_token = resLogin.data.refresh_token;
+        objData.token_type = resLogin.data.token_type;
+        dataRefresh.refresh_token = resLogin.data.refresh_token;
+
+        const resRefresh = await axios.post(process.env.API_URL_REFRESH as string, dataRefresh, optionsRefreshLogin);
+        objData.newAccess_token = resRefresh.data.access_token;
+        objData.newRefresh_token = resRefresh.data.refresh_token;
+
+        // @ts-ignore
+        const resGet = await axios.get(`${process.env.API_URL_GET}${user.idUsuario_SCONSD}` as string, jsonUsuario, {
+            headers: {
+                "content-type": "application/json",
+                "Authorization": `bearer ${objData.newAccess_token}`,
+                "tenant": process.env.LOGIN_TENANT
+            }
+        })
+
+        logger.info('Success', JSON.stringify(resGet.data), null, 2)
+        res.status(200).json({ response: resGet.data })
+        console.log(resGet);
+
+
+    } catch (e: any) {
+        console.log('catch', e)
+        console.error('Error:', e.response.data);
+        res.status(500).json({ error: e.response.data });
+    }
+
+}
+export const getUsers = async (req: Request, res: Response) => {
+    try {
+
+        const getAllUsers = await prisma.usuariosSESTSENAT.findMany()
+        logger.info(JSON.stringify({ Message: 'Get all users', Error: 'false' }))
+
+        res.status(200).json({ getAllUsers })
+    } catch (e) {
+        logger.error(JSON.stringify({ Error: e, Status: '404' }))
+        res.status(404).send(e)
+    }
+}

@@ -1,6 +1,5 @@
 import * as z from 'zod'
 
-
 export interface IUsuarioUPDATEProps {
     id?: string,
     nome?: string,
@@ -25,8 +24,7 @@ export interface DocumentoDTO {
     tipoDocumento: string;
     documento: string;
 }
-
-export interface ISendUsuarioProps {
+export interface IUsuarioCREATEProps {
     criarUsuario: true,
     nome: string,
     sobrenome?: number,
@@ -45,7 +43,7 @@ export interface ISendUsuarioProps {
 export const documentoSchema = z.object({
     tipoDocumento: z.string(),
     documento: z.string(),
-}).required()
+})
 export const userSchema = z.object({
     criarUsuario: z.boolean(),
     nome: z.string(),
@@ -61,8 +59,7 @@ export const userSchema = z.object({
     telefone2: z.string(),
     grupoPessoa: z.string(),
     fotoFacial: z.string(),
-}).required()
-
+})
 export const userSchemaUpdate = z.object({
     nome: z.string(),
     sobrenome: z.number(),
@@ -77,4 +74,4 @@ export const userSchemaUpdate = z.object({
     telefone2: z.string(),
     grupoPessoa: z.string(),
     fotoFacial: z.string(),
-}).required()
+})

@@ -2,22 +2,18 @@ generator client {
   provider = "prisma-client-js"
 }
 
-generator erd {
-  provider = "prisma-erd-generator"
-  output   = "prisma-erd-generator/ERD.svg"
-  theme    = "forest"
-}
-
 datasource db {
   provider = "mysql"
   url      = env("DATABASE_URL")
 }
+
 model usuariosSESTSENAT {
   idUsuario           Int                             @id @default(autoincrement())
   idUsuario_SESTSENAT Int?
+  idUsuario_SCOND     Int?
   criarUsuario        Boolean                         @default(false)
   nome                String                          @db.VarChar(255)
-  sobrenome           String                          @db.VarChar(255)
+  sobrenome           Int                             @unique
   dataNascimento      String                          @db.VarChar(255)
   sociedade           String                          @db.VarChar(255)
   email               String                          @db.VarChar(255)
@@ -32,6 +28,7 @@ model usuariosSESTSENAT {
   updated_at          DateTime                        @updatedAt
   documentosDTO       UsuariosSESTSENATDocumentoDTO[]
 }
+
 model UsuariosSESTSENATDocumentoDTO {
   idDocumentoDTO             Int                @id @default(autoincrement())
   tipoDocumento              String

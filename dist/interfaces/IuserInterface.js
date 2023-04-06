@@ -31,18 +31,20 @@ var __toCommonJS = (mod) => __copyProps(__defProp({}, "__esModule", { value: tru
 var IuserInterface_exports = {};
 __export(IuserInterface_exports, {
   documentoSchema: () => documentoSchema,
-  userSchema: () => userSchema
+  userSchema: () => userSchema,
+  userSchemaUpdate: () => userSchemaUpdate
 });
 module.exports = __toCommonJS(IuserInterface_exports);
 var z = __toESM(require("zod"));
 var documentoSchema = z.object({
   tipoDocumento: z.string(),
   documento: z.string()
-}).required();
+});
 var userSchema = z.object({
   criarUsuario: z.boolean(),
   nome: z.string(),
-  sobrenome: z.string(),
+  sobrenome: z.number(),
+  matricula: z.string(),
   dataNascimento: z.string(),
   sociedade: z.string().optional(),
   email: z.string().email(),
@@ -53,9 +55,25 @@ var userSchema = z.object({
   telefone2: z.string(),
   grupoPessoa: z.string(),
   fotoFacial: z.string()
-}).required();
+});
+var userSchemaUpdate = z.object({
+  nome: z.string(),
+  sobrenome: z.number(),
+  matricula: z.string(),
+  dataNascimento: z.string(),
+  sociedade: z.string().optional(),
+  email: z.string().email(),
+  nomeTratamento: z.string(),
+  profissao: z.string(),
+  documentosDTO: z.array(documentoSchema).min(1),
+  telefone: z.string(),
+  telefone2: z.string(),
+  grupoPessoa: z.string(),
+  fotoFacial: z.string()
+});
 // Annotate the CommonJS export names for ESM import in node:
 0 && (module.exports = {
   documentoSchema,
-  userSchema
+  userSchema,
+  userSchemaUpdate
 });

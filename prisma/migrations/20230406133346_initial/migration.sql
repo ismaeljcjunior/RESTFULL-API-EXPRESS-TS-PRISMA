@@ -4,7 +4,7 @@ CREATE TABLE `usuariosSESTSENAT` (
     `idUsuario_SESTSENAT` INTEGER NULL,
     `criarUsuario` BOOLEAN NOT NULL DEFAULT false,
     `nome` VARCHAR(255) NOT NULL,
-    `sobrenome` VARCHAR(255) NOT NULL,
+    `sobrenome` INTEGER NOT NULL,
     `dataNascimento` VARCHAR(255) NOT NULL,
     `sociedade` VARCHAR(255) NOT NULL,
     `email` VARCHAR(255) NOT NULL,
@@ -18,6 +18,7 @@ CREATE TABLE `usuariosSESTSENAT` (
     `created_at` DATETIME(3) NOT NULL DEFAULT CURRENT_TIMESTAMP(3),
     `updated_at` DATETIME(3) NOT NULL,
 
+    UNIQUE INDEX `usuariosSESTSENAT_sobrenome_key`(`sobrenome`),
     PRIMARY KEY (`idUsuario`)
 ) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
 
