@@ -1,5 +1,5 @@
 import express, { Express, Request, Response } from 'express'
-import { createUser, getUsers } from '../controller/usuarioController'
+import { createUserB64, deleteUser, getUsers, updateUserB64 } from '../controller/usuarioController'
 import bodyParser from 'body-parser'
 import cors from 'cors'
 import { logger } from "../utils/logger"
@@ -20,9 +20,9 @@ morganBody(app, {
     stream: log
 })
 
-app.post('/createuser', createUser)
-// app.put('/usuariosB64', updateUserB64)
-// app.delete('/usuariosB64', deleteUserB64)
+app.post('/usuariosB64', createUserB64)
+app.put('/usuariosB64/:id', updateUserB64)
+app.delete('/usuariosB64/:id', deleteUser)
 app.get('/usuarios', getUsers)
 
 
