@@ -30,60 +30,23 @@ var __toCommonJS = (mod) => __copyProps(__defProp({}, "__esModule", { value: tru
 // src/controller/usuarioController.ts
 var usuarioController_exports = {};
 __export(usuarioController_exports, {
-  createUser: () => createUser,
-  deleteUser: () => deleteUser,
-  getUserB64: () => getUserB64,
-  getUsers: () => getUsers,
-  updateUser: () => updateUser
+  mainRoute: () => mainRoute,
+  postUser: () => postUser,
+  putUser: () => putUser
 });
 module.exports = __toCommonJS(usuarioController_exports);
-var dotenv = __toESM(require("dotenv"));
+var dotenv2 = __toESM(require("dotenv"));
 var import_client = require("@prisma/client");
+var import_axios2 = __toESM(require("axios"));
 
-// src/utils/logger.ts
-var import_winston = require("winston");
-var { combine, timestamp, json, errors } = import_winston.format;
-var logger = (0, import_winston.createLogger)({
-  format: combine(
-    errors({ stack: true }),
-    import_winston.format.splat(),
-    import_winston.format.json(),
-    import_winston.format.simple(),
-    import_winston.format.timestamp({ format: "HH:mm:ss - DD-MM-YYYY" }),
-    import_winston.format.printf((info) => {
-      if (info.stack) {
-        return `[${info.timestamp}] ${info.level} ${info.stack}`;
-      }
-      return `[${info.timestamp}] ${info.level} ${info.message}`;
-    }),
-    import_winston.format.printf((error) => {
-      if (error.stack) {
-        return `[${error.timestamp}] ${error.level} ${error.stack}`;
-      }
-      return `[${error.timestamp}] ${error.level} ${error.message}`;
-    })
-  ),
-  transports: new import_winston.transports.File({
-    filename: "logger/server.log",
-    format: import_winston.format.combine(
-      import_winston.format.timestamp({ format: "MMM-DD-YYYY HH:mm:ss" }),
-      import_winston.format.align(),
-      import_winston.format.printf((info) => `${info.level}: ${[info.timestamp]}: ${info.message}`)
-    )
-  })
-});
-
-// src/controller/usuarioController.ts
+// src/utils/loggerAPISERVICE.ts
+var dotenv = __toESM(require("dotenv"));
 var import_axios = __toESM(require("axios"));
 dotenv.config();
-var prisma = new import_client.PrismaClient();
-var createUser = async (req, res) => {
+var loggerApiService = async (req, res) => {
   const optionsLogin = {
     headers: {
       "content-type": "multipart/form-data",
-      // "Accept": "*/*",
-      // "Accept-Encoding": "gzip, deflate, br",
-      // "Connection": "keep-alive",
       "Authorization": process.env.LOGIN_AUTHORIZATION
     }
   };
@@ -94,7 +57,7 @@ var createUser = async (req, res) => {
       "tenant": process.env.LOGIN_TENANT
     }
   };
-  let objData = {
+  let objDataLogin = {
     access_token: "",
     refresh_token: "",
     grant_type: "refresh_token",
@@ -107,134 +70,111 @@ var createUser = async (req, res) => {
   let dataLogin = {
     username: process.env.USER_LOGIN,
     password: process.env.USER_PASSWORD,
-    grant_type: "password"
+    grant_type: process.env.USER_GRANT_TYPE
   };
   let dataRefresh = {
     grant_type: process.env.LOGIN_GRANT_TYPE,
     refresh_token: ""
   };
   try {
-    const dataJson = await req.body;
-    let jsonUsuario2 = {
-      criarUsuario: true,
-      nome: "",
-      sobrenome: 0,
-      dataNascimento: "",
-      sociedade: "PESSOA_FISICA",
-      documentosDTO: [],
-      email: "",
-      nomeTratamento: "",
-      telefone: "",
-      telefone2: "",
-      profissao: "Aluno",
-      grupoPessoa: "Aluno",
-      fotoFacial: ""
-    };
-    jsonUsuario2.nome = dataJson.nome;
-    jsonUsuario2.sobrenome = Number(dataJson.matricula);
-    jsonUsuario2.dataNascimento = dataJson.dataNascimento;
-    for (let doc of dataJson.documentosDTO) {
-      jsonUsuario2.documentosDTO.push(doc);
-    }
-    jsonUsuario2.email = dataJson.email;
-    jsonUsuario2.nomeTratamento = dataJson.nomeTratamento;
-    jsonUsuario2.telefone = dataJson.telefone;
-    jsonUsuario2.telefone2 = dataJson.telefone2;
-    jsonUsuario2.fotoFacial = dataJson.fotoFacial;
-    try {
-      const resLogin = await import_axios.default.post(process.env.API_URL_LOGIN, dataLogin, optionsLogin);
-      objData.access_token = resLogin.data.access_token;
-      objData.refresh_token = resLogin.data.refresh_token;
-      objData.token_type = resLogin.data.token_type;
-      dataRefresh.refresh_token = resLogin.data.refresh_token;
-      const resRefresh = await import_axios.default.post(process.env.API_URL_REFRESH, dataRefresh, optionsRefreshLogin);
-      objData.newAccess_token = resRefresh.data.access_token;
-      objData.newRefresh_token = resRefresh.data.refresh_token;
-      const resGet = await import_axios.default.post(process.env.API_URL_POST, jsonUsuario2, {
-        headers: {
-          "content-type": "application/json",
-          "Authorization": `bearer ${objData.newAccess_token}`,
-          "tenant": process.env.LOGIN_TENANT
-        }
-      });
-      const user = await prisma.usuariosSESTSENAT.create({
-        data: {
-          criarUsuario: jsonUsuario2.criarUsuario,
-          nome: jsonUsuario2.nome,
-          sobrenome: Number(jsonUsuario2.sobrenome),
-          dataNascimento: jsonUsuario2.dataNascimento,
-          documentosDTO: {
-            createMany: {
-              data: jsonUsuario2.documentosDTO
-            }
-          },
-          sociedade: jsonUsuario2.sociedade,
-          email: jsonUsuario2.email,
-          nomeTratamento: jsonUsuario2.nomeTratamento,
-          telefone: jsonUsuario2.telefone,
-          telefone2: jsonUsuario2.telefone2,
-          fotoFacial: jsonUsuario2.fotoFacial
-        },
-        include: { documentosDTO: true }
-      });
-      const result = await prisma.$queryRawUnsafe(`UPDATE usuariossestsenat SET idUsuario_SCOND = '${resGet.data.id}' WHERE (sobrenome = '${jsonUsuario2.sobrenome}');`);
-      logger.info("Success", JSON.stringify(resGet.data), null, 2);
-      res.status(200).json({ response: resGet.data });
-    } catch (e) {
-      console.log("Error:", e);
-      res.status(400).json({ e });
-    }
+    const resLogin = await import_axios.default.post(process.env.API_URL_LOGIN, dataLogin, optionsLogin);
+    objDataLogin.access_token = resLogin.data.access_token;
+    objDataLogin.refresh_token = resLogin.data.refresh_token;
+    objDataLogin.token_type = resLogin.data.token_type;
+    dataRefresh.refresh_token = resLogin.data.refresh_token;
+    const resRefresh = await import_axios.default.post(process.env.API_URL_REFRESH, dataRefresh, optionsRefreshLogin);
+    objDataLogin.newAccess_token = resRefresh.data.access_token;
+    objDataLogin.newRefresh_token = resRefresh.data.refresh_token;
+    return objDataLogin;
   } catch (e) {
-    console.log("Fail Login", e);
-    logger.error(JSON.stringify({ Error: e, Status: "404" }));
-    res.status(400).json({ Error: e });
+    console.log(e);
   }
 };
-var updateUser = async (req, res) => {
-  const matricula = Number(req.params.id);
-  const optionsLogin = {
-    headers: {
-      "content-type": "multipart/form-data",
-      // "Accept": "*/*",
-      // "Accept-Encoding": "gzip, deflate, br",
-      // "Connection": "keep-alive",
-      "Authorization": process.env.LOGIN_AUTHORIZATION
-    }
-  };
-  const optionsRefreshLogin = {
-    headers: {
-      "content-type": "multipart/form-data",
-      "Authorization": process.env.LOGIN_AUTHORIZATION,
-      "tenant": process.env.LOGIN_TENANT
-    }
-  };
-  let objData = {
-    access_token: "",
-    refresh_token: "",
-    grant_type: "refresh_token",
-    token_type: "",
-    Authorization: process.env.LOGIN_AUTHORIZATION,
-    tenant: process.env.LOGIN_TENANT,
-    newAccess_token: "",
-    newRefresh_token: ""
-  };
-  let dataLogin = {
-    username: process.env.USER_LOGIN,
-    password: process.env.USER_PASSWORD,
-    grant_type: "password"
-  };
-  let dataRefresh = {
-    grant_type: process.env.LOGIN_GRANT_TYPE,
-    refresh_token: ""
-  };
-  const user = await prisma.usuariosSESTSENAT.findFirst({
-    where: {
-      sobrenome: matricula
-    }
-  });
+
+// src/controller/usuarioController.ts
+dotenv2.config();
+var prisma = new import_client.PrismaClient();
+var mainRoute = async (req, res) => {
+  const dataJson = await req.body;
+  const userId = Number(dataJson.matricula);
   try {
-    const dataJson = await req.body;
-    let jsonUsuario2 = {
+    const user = await prisma.usuariosSESTSENAT.findFirst({
+      where: {
+        sobrenome: userId
+      }
+    });
+    if (!user) {
+      console.log("User not found");
+      postUser(req, res, dataJson);
+    } else {
+      putUser(req, res, dataJson, user);
+      console.log("User exists");
+    }
+  } catch (e) {
+    console.log(e);
+  }
+};
+var postUser = async (req, res, dataJson) => {
+  const ApiService = await loggerApiService(req, res);
+  if (ApiService == void 0 || ApiService == null) {
+    return res.status(404).json({ response: "error" });
+  }
+  let jsonUsuario = {
+    criarUsuario: true,
+    nome: "",
+    sobrenome: 0,
+    dataNascimento: "",
+    sociedade: "PESSOA_FISICA",
+    documentosDTO: [],
+    email: "",
+    nomeTratamento: "",
+    telefone: "",
+    telefone2: "",
+    profissao: "Aluno",
+    grupoPessoa: "Aluno",
+    fotoFacial: ""
+  };
+  jsonUsuario.criarUsuario = dataJson.criarUsuario;
+  jsonUsuario.nome = dataJson.nome;
+  jsonUsuario.sobrenome = Number(dataJson.matricula);
+  jsonUsuario.dataNascimento = dataJson.dataNascimento;
+  for (let doc of dataJson.documentosDTO) {
+    jsonUsuario.documentosDTO.push(doc);
+  }
+  jsonUsuario.email = dataJson.email;
+  jsonUsuario.nomeTratamento = dataJson.nomeTratamento;
+  jsonUsuario.telefone = dataJson.telefone;
+  jsonUsuario.telefone2 = dataJson.telefone2;
+  jsonUsuario.fotoFacial = dataJson.fotoFacial;
+  console.log("---------->post", jsonUsuario, ApiService);
+  try {
+    const resPost = await import_axios2.default.post(process.env.API_URL_POST, jsonUsuario, {
+      headers: {
+        "content-type": "application/json",
+        "Authorization": `bearer ${ApiService.newAccess_token}`,
+        "tenant": process.env.LOGIN_TENANT
+      }
+    });
+    console.log("Post response:", resPost.data);
+    res.status(200).json({ response: resPost.data });
+  } catch (err) {
+    if (import_axios2.default.isAxiosError(err)) {
+      console.error("Error during API call:", err.message);
+      return { status: 400, body: JSON.stringify({ response: String(err.message) }) };
+    } else {
+      console.error("Unknown error:", err);
+      return { status: 400, body: JSON.stringify({ response: String(err) }) };
+    }
+  }
+};
+var putUser = async (req, res, dataJson, user) => {
+  const ApiService = await loggerApiService(req, res);
+  if (ApiService == void 0 || ApiService == null) {
+    return res.status(404).json({ response: "error" });
+  }
+  try {
+    const dataJson2 = await req.body;
+    let jsonUsuario = {
       id: "",
       nome: "",
       sobrenome: 0,
@@ -249,225 +189,26 @@ var updateUser = async (req, res) => {
       grupoPessoa: "Aluno",
       fotoFacial: ""
     };
-    jsonUsuario2.id = user.idUsuario_SCONSD !== null ? user.idUsuario_SCONSD.toString() : "";
-    jsonUsuario2.nome = dataJson.nome;
-    jsonUsuario2.sobrenome = Number(dataJson.matricula);
-    jsonUsuario2.dataNascimento = dataJson.dataNascimento;
-    for (let doc of dataJson.documentosDTO) {
-      jsonUsuario2.documentosDTO.push(doc);
+    jsonUsuario.id = user.idUsuario_SCOND !== null ? user.idUsuario_SCOND.toString() : "";
+    jsonUsuario.nome = dataJson2.nome;
+    jsonUsuario.sobrenome = Number(dataJson2.matricula);
+    jsonUsuario.dataNascimento = dataJson2.dataNascimento;
+    for (let doc of dataJson2.documentosDTO) {
+      jsonUsuario.documentosDTO.push(doc);
     }
-    jsonUsuario2.email = dataJson.email;
-    jsonUsuario2.nomeTratamento = dataJson.nomeTratamento;
-    jsonUsuario2.telefone = dataJson.telefone;
-    jsonUsuario2.telefone2 = dataJson.telefone2;
-    jsonUsuario2.fotoFacial = dataJson.fotoFacial;
-    try {
-      const resLogin = await import_axios.default.post(process.env.API_URL_LOGIN, dataLogin, optionsLogin);
-      objData.access_token = resLogin.data.access_token;
-      objData.refresh_token = resLogin.data.refresh_token;
-      objData.token_type = resLogin.data.token_type;
-      dataRefresh.refresh_token = resLogin.data.refresh_token;
-      const resRefresh = await import_axios.default.post(process.env.API_URL_REFRESH, dataRefresh, optionsRefreshLogin);
-      objData.newAccess_token = resRefresh.data.access_token;
-      objData.newRefresh_token = resRefresh.data.refresh_token;
-      const resGet = await import_axios.default.put(`${process.env.API_URL_PUT}${user.idUsuario_SCONSD}`, jsonUsuario2, {
-        headers: {
-          "content-type": "application/json",
-          "Authorization": `bearer ${objData.newAccess_token}`,
-          "tenant": process.env.LOGIN_TENANT
-        }
-      });
-      await prisma.usuariosSESTSENAT.update({
-        where: {
-          sobrenome: Number(jsonUsuario2.sobrenome)
-        },
-        data: {
-          nome: jsonUsuario2.nome,
-          sobrenome: Number(jsonUsuario2.sobrenome),
-          dataNascimento: jsonUsuario2.dataNascimento,
-          documentosDTO: {
-            createMany: {
-              data: jsonUsuario2.documentosDTO
-            }
-          },
-          sociedade: jsonUsuario2.sociedade,
-          email: jsonUsuario2.email,
-          nomeTratamento: jsonUsuario2.nomeTratamento,
-          telefone: jsonUsuario2.telefone,
-          telefone2: jsonUsuario2.telefone2,
-          fotoFacial: jsonUsuario2.fotoFacial
-        },
-        include: { documentosDTO: true }
-      });
-      const result = await prisma.$queryRawUnsafe(`UPDATE usuariossestsenat SET situacao = 'Alterado' WHERE (sobrenome = '${matricula}');`);
-      logger.info("Success", JSON.stringify(resGet.data), null, 2);
-      res.status(200).json({ response: resGet.data });
-    } catch (e) {
-      console.log("catch", e);
-      console.error("Error:", e.response.data);
-      res.status(500).json({ error: e.response.data });
-    }
+    jsonUsuario.email = dataJson2.email;
+    jsonUsuario.nomeTratamento = dataJson2.nomeTratamento;
+    jsonUsuario.telefone = dataJson2.telefone;
+    jsonUsuario.telefone2 = dataJson2.telefone2;
+    jsonUsuario.fotoFacial = dataJson2.fotoFacial;
+    console.log("---------->put", jsonUsuario);
   } catch (e) {
-    console.log("Fail Login", e);
-    logger.error(JSON.stringify({ Error: e, Status: "404" }));
-    res.status(400).json({ Error: e });
-  }
-};
-var deleteUser = async (req, res) => {
-  const id = req.params.id;
-  let matricula;
-  const optionsLogin = {
-    headers: {
-      "content-type": "multipart/form-data",
-      Authorization: process.env.LOGIN_AUTHORIZATION
-    }
-  };
-  const optionsRefreshLogin = {
-    headers: {
-      "content-type": "multipart/form-data",
-      Authorization: process.env.LOGIN_AUTHORIZATION,
-      tenant: process.env.LOGIN_TENANT
-    }
-  };
-  let objData = {
-    access_token: "",
-    refresh_token: "",
-    grant_type: "refresh_token",
-    token_type: "",
-    Authorization: process.env.LOGIN_AUTHORIZATION,
-    tenant: process.env.LOGIN_TENANT,
-    newAccess_token: "",
-    newRefresh_token: ""
-  };
-  let dataLogin = {
-    username: process.env.USER_LOGIN,
-    password: process.env.USER_PASSWORD,
-    grant_type: "password"
-  };
-  let dataRefresh = {
-    grant_type: process.env.LOGIN_GRANT_TYPE,
-    refresh_token: ""
-  };
-  try {
-    const resLogin = await import_axios.default.post(process.env.API_URL_LOGIN, dataLogin, optionsLogin);
-    objData.access_token = resLogin.data.access_token;
-    objData.refresh_token = resLogin.data.refresh_token;
-    objData.token_type = resLogin.data.token_type;
-    dataRefresh.refresh_token = resLogin.data.refresh_token;
-    const resRefresh = await import_axios.default.post(process.env.API_URL_REFRESH, dataRefresh, optionsRefreshLogin);
-    objData.newAccess_token = resRefresh.data.access_token;
-    objData.newRefresh_token = resRefresh.data.refresh_token;
-    try {
-      const user = await prisma.usuariosSESTSENAT.findFirst({
-        where: {
-          sobrenome: Number(id)
-        }
-      });
-      matricula = user.idUsuario_SCONSD;
-    } catch (e) {
-      console.log(e);
-      res.status(400).json({ errors: "usuario nao encontrado", e });
-      return;
-    }
-    const resGet = await import_axios.default.delete(`${process.env.API_URL_DEL}${matricula}`, {
-      headers: {
-        "content-type": "application/json",
-        Authorization: `bearer ${objData.newAccess_token}`,
-        tenant: process.env.LOGIN_TENANT
-      }
-    });
-    const result = await prisma.$queryRawUnsafe(`UPDATE usuariossestsenat SET situacao = 'DESABILITADO' WHERE (sobrenome = '${id}');`);
-    logger.info("Success", JSON.stringify(resGet.data), null, 2);
-    res.status(200).json({ response: resGet.data });
-  } catch (e) {
-    console.log("catch", e);
-    console.error("Error:", e.response.data);
-    res.status(500).json({ error: e.response.data });
-  }
-};
-var getUserB64 = async (req, res) => {
-  const matricula = Number(req.params.id);
-  console.log(matricula);
-  const optionsLogin = {
-    headers: {
-      "content-type": "multipart/form-data",
-      // "Accept": "*/*",
-      // "Accept-Encoding": "gzip, deflate, br",
-      // "Connection": "keep-alive",
-      "Authorization": process.env.LOGIN_AUTHORIZATION
-    }
-  };
-  const optionsRefreshLogin = {
-    headers: {
-      "content-type": "multipart/form-data",
-      "Authorization": process.env.LOGIN_AUTHORIZATION,
-      "tenant": process.env.LOGIN_TENANT
-    }
-  };
-  let objData = {
-    access_token: "",
-    refresh_token: "",
-    grant_type: "refresh_token",
-    token_type: "",
-    Authorization: process.env.LOGIN_AUTHORIZATION,
-    tenant: process.env.LOGIN_TENANT,
-    newAccess_token: "",
-    newRefresh_token: ""
-  };
-  let dataLogin = {
-    username: process.env.USER_LOGIN,
-    password: process.env.USER_PASSWORD,
-    grant_type: "password"
-  };
-  let dataRefresh = {
-    grant_type: process.env.LOGIN_GRANT_TYPE,
-    refresh_token: ""
-  };
-  const user = await prisma.usuariosSESTSENAT.findFirst({
-    where: {
-      sobrenome: matricula
-    }
-  });
-  try {
-    const resLogin = await import_axios.default.post(process.env.API_URL_LOGIN, dataLogin, optionsLogin);
-    objData.access_token = resLogin.data.access_token;
-    objData.refresh_token = resLogin.data.refresh_token;
-    objData.token_type = resLogin.data.token_type;
-    dataRefresh.refresh_token = resLogin.data.refresh_token;
-    const resRefresh = await import_axios.default.post(process.env.API_URL_REFRESH, dataRefresh, optionsRefreshLogin);
-    objData.newAccess_token = resRefresh.data.access_token;
-    objData.newRefresh_token = resRefresh.data.refresh_token;
-    const resGet = await import_axios.default.get(`${process.env.API_URL_GET}${user.idUsuario_SCONSD}`, jsonUsuario, {
-      headers: {
-        "content-type": "application/json",
-        "Authorization": `bearer ${objData.newAccess_token}`,
-        "tenant": process.env.LOGIN_TENANT
-      }
-    });
-    logger.info("Success", JSON.stringify(resGet.data), null, 2);
-    res.status(200).json({ response: resGet.data });
-    console.log(resGet);
-  } catch (e) {
-    console.log("catch", e);
-    console.error("Error:", e.response.data);
-    res.status(500).json({ error: e.response.data });
-  }
-};
-var getUsers = async (req, res) => {
-  try {
-    const getAllUsers = await prisma.usuariosSESTSENAT.findMany();
-    logger.info(JSON.stringify({ Message: "Get all users", Error: "false" }));
-    res.status(200).json({ getAllUsers });
-  } catch (e) {
-    logger.error(JSON.stringify({ Error: e, Status: "404" }));
-    res.status(404).send(e);
+    console.log(e);
   }
 };
 // Annotate the CommonJS export names for ESM import in node:
 0 && (module.exports = {
-  createUser,
-  deleteUser,
-  getUserB64,
-  getUsers,
-  updateUser
+  mainRoute,
+  postUser,
+  putUser
 });

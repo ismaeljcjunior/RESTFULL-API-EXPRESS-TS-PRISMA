@@ -25,7 +25,7 @@ export interface DocumentoDTO {
     documento: string;
 }
 export interface IUsuarioCREATEProps {
-    criarUsuario: true,
+    criarUsuario?: true,
     nome: string,
     sobrenome?: number,
     matricula?: string,
