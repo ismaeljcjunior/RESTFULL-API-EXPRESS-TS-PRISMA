@@ -23,6 +23,8 @@ export interface IUsuarioDELProps {
 export interface DocumentoDTO {
     tipoDocumento: string;
     documento: string;
+    idDocumentoDTO?: number
+    usuariosSESTSENATIdUsuario?: number | string
 }
 export interface IUsuarioCREATEProps {
     criarUsuario?: true,

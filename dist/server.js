@@ -8977,6 +8977,10 @@ var putUser = async (req, res, dataJson, user) => {
   jsonUsuario.nome = user.nome;
   jsonUsuario.sobrenome = Number(user.sobrenome);
   jsonUsuario.dataNascimento = user.dataNascimento;
+  jsonUsuario.documentosDTO = [];
+  for (let doc of user.documentosDTO) {
+    jsonUsuario.documentosDTO.push(doc);
+  }
   jsonUsuario.email = user.email;
   jsonUsuario.nomeTratamento = user.nomeTratamento;
   jsonUsuario.telefone = user.telefone;
@@ -8985,14 +8989,20 @@ var putUser = async (req, res, dataJson, user) => {
   jsonUsuario.nome = dataJson.nome;
   jsonUsuario.sobrenome = Number(user.sobrenome);
   jsonUsuario.dataNascimento = dataJson.dataNascimento;
+  jsonUsuario.documentosDTO;
   jsonUsuario.email = dataJson.email;
   jsonUsuario.nomeTratamento = dataJson.nomeTratamento;
   jsonUsuario.telefone = dataJson.telefone;
   jsonUsuario.telefone2 = dataJson.telefone2;
   jsonUsuario.fotoFacial = dataJson.fotoFacial;
+  const newJsonUsuario = {
+    ...jsonUsuario,
+    documentosDTO: jsonUsuario.documentosDTO.map(({ idDocumentoDTO, usuariosSESTSENATIdUsuario, ...resto }) => resto)
+  };
   console.log("user DB", user);
   console.log("user PUT", dataJson);
-  console.log("---------->put", jsonUsuario);
+  console.log("--->", jsonUsuario);
+  console.log("---------->put", newJsonUsuario);
 };
 
 // src/routes/routes.ts
