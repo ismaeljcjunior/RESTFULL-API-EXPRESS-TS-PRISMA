@@ -22,7 +22,7 @@ export const mainRoute = async (req: Request, res: Response) => {
             console.log('User not found')
             postUser(req, res, dataJson)
         } else {
-            putUser(req, res, dataJson, user)
+            // putUser(req, res, dataJson, user)
             console.log('User exists')
         }
     } catch (e) {
@@ -35,6 +35,7 @@ export const postUser = async (req: Request, res: Response, dataJson: any) => {
     if (ApiService == undefined || ApiService == null) {
         return res.status(404).json({ response: 'error' })
     }
+
     let jsonUsuario: IUsuarioCREATEProps = {
         criarUsuario: true,
         nome: '',
@@ -68,22 +69,24 @@ export const postUser = async (req: Request, res: Response, dataJson: any) => {
     try {
         const resPost: AxiosResponse = await axios.post(process.env.API_URL_POST as string, jsonUsuario, {
             headers: {
-                "content-type": "application/json",
+                "Content-Type": "application/json",
                 "Authorization": `bearer ${ApiService.newAccess_token}`,
-                "tenant": process.env.LOGIN_TENANT
+                "tenant": process.env.LOGIN_TENANT,
+                "Accept": "application/json" // Set the Accept header to request a JSON response
             }
-        })
+        });
 
         console.log('Post response:', resPost.data)
         res.status(200).json({ response: resPost.data })
     } catch (err: unknown) {
         if (axios.isAxiosError(err)) {
             console.error('Error during API call:', err.message)
-            return { status: 400, body: JSON.stringify({ response: String(err.message) }) }
+            return res.status(404).json({ response: err.message })
         } else {
             console.error('Unknown error:', err)
-            return { status: 400, body: JSON.stringify({ response: String(err) }) }
+            return res.status(404).json({ response: err })
         }
+
     }
 
 
@@ -92,48 +95,48 @@ export const postUser = async (req: Request, res: Response, dataJson: any) => {
 
 
 }
-export const putUser = async (req: Request, res: Response, dataJson: any, user: any) => {
-    const ApiService = await loggerApiService(req, res)
-    if (ApiService == undefined || ApiService == null) {
-        return res.status(404).json({ response: 'error' })
-    }
+// export const putUser = async (req: Request, res: Response, dataJson: any, user: any) => {
+//     const ApiService = await loggerApiService(req, res)
+//     if (ApiService == undefined || ApiService == null) {
+//         return res.status(404).json({ response: 'error' })
+//     }
 
-    try {
-        const dataJson = await req.body
-        let jsonUsuario: IUsuarioUPDATEProps = {
-            id: '',
-            nome: '',
-            sobrenome: 0,
-            dataNascimento: '',
-            sociedade: "PESSOA_FISICA",
-            documentosDTO: [],
-            email: '',
-            nomeTratamento: '',
-            telefone: '',
-            telefone2: '',
-            profissao: 'Aluno',
-            grupoPessoa: 'Aluno',
-            fotoFacial: ''
-        }
+//     try {
+//         const dataJson = await req.body
+//         let jsonUsuario: IUsuarioUPDATEProps = {
+//             id: '',
+//             nome: '',
+//             sobrenome: 0,
+//             dataNascimento: '',
+//             sociedade: "PESSOA_FISICA",
+//             documentosDTO: [],
+//             email: '',
+//             nomeTratamento: '',
+//             telefone: '',
+//             telefone2: '',
+//             profissao: 'Aluno',
+//             grupoPessoa: 'Aluno',
+//             fotoFacial: ''
+//         }
 
-        jsonUsuario.id = user.idUsuario_SCOND !== null ? user.idUsuario_SCOND.toString() : "";
-        jsonUsuario.nome = dataJson.nome
-        jsonUsuario.sobrenome = Number(dataJson.matricula)
-        jsonUsuario.dataNascimento = dataJson.dataNascimento
-        for (let doc of dataJson.documentosDTO) {
-            jsonUsuario.documentosDTO.push(doc);
-        }
-        jsonUsuario.email = dataJson.email
-        jsonUsuario.nomeTratamento = dataJson.nomeTratamento
-        jsonUsuario.telefone = dataJson.telefone
-        jsonUsuario.telefone2 = dataJson.telefone2
-        jsonUsuario.fotoFacial = dataJson.fotoFacial
-        console.log('---------->put', jsonUsuario)
-    } catch (e) {
-        console.log(e)
-    }
+//         jsonUsuario.id = user.idUsuario_SCOND !== null ? user.idUsuario_SCOND.toString() : "";
+//         jsonUsuario.nome = dataJson.nome
+//         jsonUsuario.sobrenome = Number(dataJson.matricula)
+//         jsonUsuario.dataNascimento = dataJson.dataNascimento
+//         for (let doc of dataJson.documentosDTO) {
+//             jsonUsuario.documentosDTO.push(doc);
+//         }
+//         jsonUsuario.email = dataJson.email
+//         jsonUsuario.nomeTratamento = dataJson.nomeTratamento
+//         jsonUsuario.telefone = dataJson.telefone
+//         jsonUsuario.telefone2 = dataJson.telefone2
+//         jsonUsuario.fotoFacial = dataJson.fotoFacial
+//         console.log('---------->put', jsonUsuario)
+//     } catch (e) {
+//         console.log(e)
+//     }
 
-}
+// }
 // export const createUser = async (req: Request, res: Response) => {
 //     const optionsLogin = {
 //         headers: {

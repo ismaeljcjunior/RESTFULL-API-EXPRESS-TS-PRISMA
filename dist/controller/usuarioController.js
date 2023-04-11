@@ -31,8 +31,7 @@ var __toCommonJS = (mod) => __copyProps(__defProp({}, "__esModule", { value: tru
 var usuarioController_exports = {};
 __export(usuarioController_exports, {
   mainRoute: () => mainRoute,
-  postUser: () => postUser,
-  putUser: () => putUser
+  postUser: () => postUser
 });
 module.exports = __toCommonJS(usuarioController_exports);
 var dotenv2 = __toESM(require("dotenv"));
@@ -107,7 +106,6 @@ var mainRoute = async (req, res) => {
       console.log("User not found");
       postUser(req, res, dataJson);
     } else {
-      putUser(req, res, dataJson, user);
       console.log("User exists");
     }
   } catch (e) {
@@ -150,9 +148,11 @@ var postUser = async (req, res, dataJson) => {
   try {
     const resPost = await import_axios2.default.post(process.env.API_URL_POST, jsonUsuario, {
       headers: {
-        "content-type": "application/json",
+        "Content-Type": "application/json",
         "Authorization": `bearer ${ApiService.newAccess_token}`,
-        "tenant": process.env.LOGIN_TENANT
+        "tenant": process.env.LOGIN_TENANT,
+        "Accept": "application/json"
+        // Set the Accept header to request a JSON response
       }
     });
     console.log("Post response:", resPost.data);
@@ -160,55 +160,15 @@ var postUser = async (req, res, dataJson) => {
   } catch (err) {
     if (import_axios2.default.isAxiosError(err)) {
       console.error("Error during API call:", err.message);
-      return { status: 400, body: JSON.stringify({ response: String(err.message) }) };
+      return res.status(404).json({ response: err.message });
     } else {
       console.error("Unknown error:", err);
-      return { status: 400, body: JSON.stringify({ response: String(err) }) };
+      return res.status(404).json({ response: err });
     }
-  }
-};
-var putUser = async (req, res, dataJson, user) => {
-  const ApiService = await loggerApiService(req, res);
-  if (ApiService == void 0 || ApiService == null) {
-    return res.status(404).json({ response: "error" });
-  }
-  try {
-    const dataJson2 = await req.body;
-    let jsonUsuario = {
-      id: "",
-      nome: "",
-      sobrenome: 0,
-      dataNascimento: "",
-      sociedade: "PESSOA_FISICA",
-      documentosDTO: [],
-      email: "",
-      nomeTratamento: "",
-      telefone: "",
-      telefone2: "",
-      profissao: "Aluno",
-      grupoPessoa: "Aluno",
-      fotoFacial: ""
-    };
-    jsonUsuario.id = user.idUsuario_SCOND !== null ? user.idUsuario_SCOND.toString() : "";
-    jsonUsuario.nome = dataJson2.nome;
-    jsonUsuario.sobrenome = Number(dataJson2.matricula);
-    jsonUsuario.dataNascimento = dataJson2.dataNascimento;
-    for (let doc of dataJson2.documentosDTO) {
-      jsonUsuario.documentosDTO.push(doc);
-    }
-    jsonUsuario.email = dataJson2.email;
-    jsonUsuario.nomeTratamento = dataJson2.nomeTratamento;
-    jsonUsuario.telefone = dataJson2.telefone;
-    jsonUsuario.telefone2 = dataJson2.telefone2;
-    jsonUsuario.fotoFacial = dataJson2.fotoFacial;
-    console.log("---------->put", jsonUsuario);
-  } catch (e) {
-    console.log(e);
   }
 };
 // Annotate the CommonJS export names for ESM import in node:
 0 && (module.exports = {
   mainRoute,
-  postUser,
-  putUser
+  postUser
 });
