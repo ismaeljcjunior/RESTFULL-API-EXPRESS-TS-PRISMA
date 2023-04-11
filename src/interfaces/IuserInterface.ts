@@ -1,10 +1,8 @@
-
-
 export interface IUsuarioUPDATEProps {
     id?: number,
     nome?: string,
     sobrenome?: number,
-    matricula?: string,
+    matricula?: number,
     dataNascimento?: string,
     sociedade?: "PESSOA_FISICA",
     documentosDTO?: DocumentoDTO[],
@@ -30,7 +28,7 @@ export interface IUsuarioCREATEProps {
     criarUsuario?: true,
     nome: string,
     sobrenome?: number,
-    matricula?: string,
+    matricula?: number,
     dataNascimento: string,
     sociedade: "PESSOA_FISICA",
     documentosDTO: DocumentoDTO[],

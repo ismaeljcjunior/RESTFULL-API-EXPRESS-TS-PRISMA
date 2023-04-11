@@ -13,7 +13,7 @@ model usuariosSESTSENAT {
   idUsuario_SCOND     Int?
   criarUsuario        Boolean                         @default(false)
   nome                String                          @db.VarChar(255)
-  sobrenome           Int                             @unique
+  matricula           Int                             @unique
   dataNascimento      String                          @db.VarChar(255)
   sociedade           String                          @db.VarChar(255)
   email               String                          @db.VarChar(255)
