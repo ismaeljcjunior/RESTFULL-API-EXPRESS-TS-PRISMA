@@ -27,12 +27,12 @@ var __toESM = (mod, isNodeMode, target) => (target = mod != null ? __create(__ge
 ));
 var __toCommonJS = (mod) => __copyProps(__defProp({}, "__esModule", { value: true }), mod);
 
-// src/utils/loggerAPISERVICE.ts
-var loggerAPISERVICE_exports = {};
-__export(loggerAPISERVICE_exports, {
+// src/utils/loggerAPISERVICE copy.ts
+var loggerAPISERVICE_copy_exports = {};
+__export(loggerAPISERVICE_copy_exports, {
   loggerApiService: () => loggerApiService
 });
-module.exports = __toCommonJS(loggerAPISERVICE_exports);
+module.exports = __toCommonJS(loggerAPISERVICE_copy_exports);
 var dotenv = __toESM(require("dotenv"));
 var import_axios = __toESM(require("axios"));
 dotenv.config();
@@ -66,7 +66,7 @@ var loggerApiService = async (req, res) => {
     grant_type: process.env.USER_GRANT_TYPE
   };
   let dataRefresh = {
-    grant_type: "refresh_token",
+    grant_type: process.env.LOGIN_GRANT_TYPE,
     refresh_token: ""
   };
   try {

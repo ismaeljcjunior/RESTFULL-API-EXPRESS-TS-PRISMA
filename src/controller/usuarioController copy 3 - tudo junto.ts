@@ -4,7 +4,7 @@ import { Request, Response } from 'express'
 import { PrismaClient } from '@prisma/client'
 import { logger } from '../utils/logger'
 import axios, { AxiosResponse } from 'axios'
-import { IUsuarioUPDATEProps, IUsuarioCREATEProps } from './../interfaces/IuserInterface';
+import { IUsuarioUPDATEProps, IUsuarioCREATEProps } from '../interfaces/IuserInterface';
 import { loggerApiService } from '../utils/loggerAPISERVICE'
 
 const prisma = new PrismaClient()
@@ -31,9 +31,40 @@ export const mainRoute = async (req: Request, res: Response) => {
 }
 
 export const postUser = async (req: Request, res: Response, dataJson: any) => {
-    const ApiService = await loggerApiService(req, res)
-    if (ApiService == undefined || ApiService == null) {
-        return res.status(404).json({ response: 'error' })
+    const optionsLogin = {
+        headers: {
+            "content-type": "multipart/form-data",
+            // "Accept": "*/*",
+            // "Accept-Encoding": "gzip, deflate, br",
+            // "Connection": "keep-alive",
+            "Authorization": process.env.LOGIN_AUTHORIZATION as string
+        }
+    }
+    const optionsRefreshLogin = {
+        headers: {
+            "content-type": "multipart/form-data",
+            "Authorization": process.env.LOGIN_AUTHORIZATION,
+            "tenant": process.env.LOGIN_TENANT as string
+        }
+    }
+    let objData = {
+        access_token: '',
+        refresh_token: '',
+        grant_type: 'refresh_token',
+        token_type: '',
+        Authorization: process.env.LOGIN_AUTHORIZATION,
+        tenant: process.env.LOGIN_TENANT,
+        newAccess_token: '',
+        newRefresh_token: '',
+    }
+    let dataLogin = {
+        username: process.env.USER_LOGIN,
+        password: process.env.USER_PASSWORD,
+        grant_type: "password"
+    }
+    let dataRefresh = {
+        grant_type: process.env.LOGIN_GRANT_TYPE,
+        refresh_token: ''
     }
 
     let jsonUsuario: IUsuarioCREATEProps = {
@@ -67,34 +98,31 @@ export const postUser = async (req: Request, res: Response, dataJson: any) => {
     console.log('---------->post', jsonUsuario)
 
     try {
+        const resLogin = await axios.post(process.env.API_URL_LOGIN as string, dataLogin, optionsLogin);
+        objData.access_token = resLogin.data.access_token;
+        objData.refresh_token = resLogin.data.refresh_token;
+        objData.token_type = resLogin.data.token_type;
+        dataRefresh.refresh_token = resLogin.data.refresh_token;
+
+        const resRefresh = await axios.post(process.env.API_URL_REFRESH as string, dataRefresh, optionsRefreshLogin)
+        objData.newAccess_token = resRefresh.data.access_token;
+        objData.newRefresh_token = resRefresh.data.refresh_token;
+
         const resPost = await axios.post(process.env.API_URL_POST as string, jsonUsuario, {
             headers: {
                 "Content-Type": "application/json",
-                "Authorization": `bearer ${ApiService.newAccess_token}`,
+                "Authorization": `bearer ${objData.newAccess_token}`,
                 "tenant": process.env.LOGIN_TENANT,
-                "Accept": "application/json"
             }
         })
-            .then((resPost: AxiosResponse) => {
-                const result = prisma.$queryRawUnsafe(`UPDATE usuariossestsenat SET idUsuario_SCOND = '${resPost.data.id}' WHERE (sobrenome = '${jsonUsuario.sobrenome}');`)
-
-                console.log('Post response:', resPost.data)
-                res.status(200).json({ response: resPost.data })
-            })
-            .catch((err: unknown) => {
-                if (axios.isAxiosError(err)) {
-                    console.error('Error during API call inside:', err)
-                    const errorResponse = err.response?.data || err.message;
-                    return res.status(404).json({ response: errorResponse })
-                } else {
-                    console.error('Unknown error inside:', err)
-                    return res.status(404).json({ response: err })
-                }
-            });
-    } catch (err: unknown) {
-        console.error('Error during API call outside:', err)
-        return res.status(404).json({ response: err })
+        res.status(200).json({ response: resPost.data })
+    } catch (e: any) {
+        // console.log('catch', e)
+        console.log('Error:', e);
+        res.status(400).json({ e });
     }
+
+
 
 
 

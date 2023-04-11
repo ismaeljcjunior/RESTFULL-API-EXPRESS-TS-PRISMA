@@ -8,6 +8,10 @@ var __hasOwnProp = Object.prototype.hasOwnProperty;
 var __commonJS = (cb, mod) => function __require() {
   return mod || (0, cb[__getOwnPropNames(cb)[0]])((mod = { exports: {} }).exports, mod), mod.exports;
 };
+var __export = (target, all) => {
+  for (var name in all)
+    __defProp(target, name, { get: all[name], enumerable: true });
+};
 var __copyProps = (to2, from, except, desc) => {
   if (from && typeof from === "object" || typeof from === "function") {
     for (let key of __getOwnPropNames(from))
@@ -24,6 +28,7 @@ var __toESM = (mod, isNodeMode, target) => (target = mod != null ? __create(__ge
   isNodeMode || !mod || !mod.__esModule ? __defProp(target, "default", { value: mod, enumerable: true }) : target,
   mod
 ));
+var __toCommonJS = (mod) => __copyProps(__defProp({}, "__esModule", { value: true }), mod);
 
 // node_modules/@prisma/client/runtime/library.js
 var require_library = __commonJS({
@@ -8635,10 +8640,10 @@ var require_client = __commonJS({
       JsonNull: objectEnumValues2.classes.JsonNull,
       AnyNull: objectEnumValues2.classes.AnyNull
     };
-    var path2 = require("path");
-    var fs3 = require("fs");
+    var path = require("path");
+    var fs2 = require("fs");
     var hasDirname = typeof __dirname !== "undefined" && __dirname !== "/";
-    var regularDirname = hasDirname && fs3.existsSync(path2.join(__dirname, "schema.prisma")) && __dirname;
+    var regularDirname = hasDirname && fs2.existsSync(path.join(__dirname, "schema.prisma")) && __dirname;
     var foundDirname = !regularDirname && findSync2(process.cwd(), [
       "node_modules\\.prisma\\client",
       ".prisma\\client"
@@ -8724,16 +8729,16 @@ var require_client = __commonJS({
     config3.document = dmmf;
     var { warnEnvConflicts: warnEnvConflicts2 } = require_library();
     warnEnvConflicts2({
-      rootEnvPath: config3.relativeEnvPaths.rootEnvPath && path2.resolve(dirname2, config3.relativeEnvPaths.rootEnvPath),
-      schemaEnvPath: config3.relativeEnvPaths.schemaEnvPath && path2.resolve(dirname2, config3.relativeEnvPaths.schemaEnvPath)
+      rootEnvPath: config3.relativeEnvPaths.rootEnvPath && path.resolve(dirname2, config3.relativeEnvPaths.rootEnvPath),
+      schemaEnvPath: config3.relativeEnvPaths.schemaEnvPath && path.resolve(dirname2, config3.relativeEnvPaths.schemaEnvPath)
     });
     var PrismaClient2 = getPrismaClient2(config3);
     exports2.PrismaClient = PrismaClient2;
     Object.assign(exports2, Prisma);
-    path2.join(__dirname, "query_engine-windows.dll.node");
-    path2.join(process.cwd(), "node_modules\\.prisma\\client\\query_engine-windows.dll.node");
-    path2.join(__dirname, "schema.prisma");
-    path2.join(process.cwd(), "node_modules\\.prisma\\client\\schema.prisma");
+    path.join(__dirname, "query_engine-windows.dll.node");
+    path.join(process.cwd(), "node_modules\\.prisma\\client\\query_engine-windows.dll.node");
+    path.join(__dirname, "schema.prisma");
+    path.join(process.cwd(), "node_modules\\.prisma\\client\\schema.prisma");
   }
 });
 
@@ -8746,52 +8751,13 @@ var require_client2 = __commonJS({
   }
 });
 
-// src/server.ts
-var import_express2 = __toESM(require("express"));
-var import_dotenv = __toESM(require("dotenv"));
-
-// src/utils/logger.ts
-var import_winston = require("winston");
-var { combine, timestamp, json, errors } = import_winston.format;
-var logger = (0, import_winston.createLogger)({
-  format: combine(
-    errors({ stack: true }),
-    import_winston.format.splat(),
-    import_winston.format.json(),
-    import_winston.format.simple(),
-    import_winston.format.timestamp({ format: "HH:mm:ss - DD-MM-YYYY" }),
-    import_winston.format.printf((info) => {
-      if (info.stack) {
-        return `[${info.timestamp}] ${info.level} ${info.stack}`;
-      }
-      return `[${info.timestamp}] ${info.level} ${info.message}`;
-    }),
-    import_winston.format.printf((error) => {
-      if (error.stack) {
-        return `[${error.timestamp}] ${error.level} ${error.stack}`;
-      }
-      return `[${error.timestamp}] ${error.level} ${error.message}`;
-    })
-  ),
-  transports: new import_winston.transports.File({
-    filename: "logger/server.log",
-    format: import_winston.format.combine(
-      import_winston.format.timestamp({ format: "MMM-DD-YYYY HH:mm:ss" }),
-      import_winston.format.align(),
-      import_winston.format.printf((info) => `${info.level}: ${[info.timestamp]}: ${info.message}`)
-    )
-  })
+// src/controller/usuarioController copy 2.ts
+var usuarioController_copy_2_exports = {};
+__export(usuarioController_copy_2_exports, {
+  mainRoute: () => mainRoute,
+  postUser: () => postUser
 });
-
-// src/routes/routes.ts
-var import_express = __toESM(require("express"));
-var import_body_parser = __toESM(require("body-parser"));
-var import_cors = __toESM(require("cors"));
-var import_morgan_body = __toESM(require("morgan-body"));
-var import_fs = __toESM(require("fs"));
-var import_path = __toESM(require("path"));
-
-// src/controller/usuarioController.ts
+module.exports = __toCommonJS(usuarioController_copy_2_exports);
 var dotenv2 = __toESM(require("dotenv"));
 var import_client = __toESM(require_client2());
 var import_axios2 = __toESM(require("axios"));
@@ -8848,7 +8814,7 @@ var loggerApiService = async (req, res) => {
   }
 };
 
-// src/controller/usuarioController.ts
+// src/controller/usuarioController copy 2.ts
 dotenv2.config();
 var prisma = new import_client.PrismaClient();
 var mainRoute = async (req, res) => {
@@ -8902,7 +8868,7 @@ var postUser = async (req, res, dataJson) => {
   jsonUsuario.telefone = dataJson.telefone;
   jsonUsuario.telefone2 = dataJson.telefone2;
   jsonUsuario.fotoFacial = dataJson.fotoFacial;
-  console.log("---------->post", jsonUsuario);
+  console.log("---------->post", jsonUsuario, ApiService);
   try {
     const resPost = await import_axios2.default.post(process.env.API_URL_POST, jsonUsuario, {
       headers: {
@@ -8910,67 +8876,25 @@ var postUser = async (req, res, dataJson) => {
         "Authorization": `bearer ${ApiService.newAccess_token}`,
         "tenant": process.env.LOGIN_TENANT,
         "Accept": "application/json"
-      }
-    }).then((resPost2) => {
-      const result = prisma.$queryRawUnsafe(`UPDATE usuariossestsenat SET idUsuario_SCOND = '${resPost2.data.id}' WHERE (sobrenome = '${jsonUsuario.sobrenome}');`);
-      console.log("Post response:", resPost2.data);
-      res.status(200).json({ response: resPost2.data });
-    }).catch((err) => {
-      var _a2;
-      if (import_axios2.default.isAxiosError(err)) {
-        console.error("Error during API call inside:", err);
-        const errorResponse = ((_a2 = err.response) == null ? void 0 : _a2.data) || err.message;
-        return res.status(404).json({ response: errorResponse });
-      } else {
-        console.error("Unknown error inside:", err);
-        return res.status(404).json({ response: err });
+        // Set the Accept header to request a JSON response
       }
     });
+    console.log("Post response:", resPost.data);
+    res.status(200).json({ response: resPost.data });
   } catch (err) {
-    console.error("Error during API call outside:", err);
-    return res.status(404).json({ response: err });
+    if (import_axios2.default.isAxiosError(err)) {
+      console.error("Error during API call:", err.message);
+      return res.status(404).json({ response: err.message });
+    } else {
+      console.error("Unknown error:", err);
+      return res.status(404).json({ response: err });
+    }
   }
 };
-
-// src/routes/routes.ts
-var app = (0, import_express.default)();
-var logFilePath = import_path.default.join("logger", "serverHTTP.log");
-var log = import_fs.default.createWriteStream(logFilePath, { flags: "a" });
-app.use(import_body_parser.default.json());
-app.use((0, import_cors.default)({ origin: "*" }));
-app.use(import_express.default.json());
-app.use(import_express.default.urlencoded({ extended: true }));
-(0, import_morgan_body.default)(app, {
-  noColors: true,
-  stream: log
-});
-app.post("/usuarios", mainRoute);
-app.get("/", (req, res) => {
-  res.send("Server is running 1.0");
-  logger.info("Server is running 1.0");
-});
-var appRoutes = app;
-
-// src/server.ts
-var import_body_parser2 = __toESM(require("body-parser"));
-var import_cors2 = __toESM(require("cors"));
-import_dotenv.default.config();
-var app2 = (0, import_express2.default)();
-var port = process.env.PORT;
-app2.use(import_body_parser2.default.json({
-  limit: "50mb"
-}));
-app2.use(import_body_parser2.default.urlencoded({
-  limit: "50mb",
-  parameterLimit: 1e5,
-  extended: true
-}));
-app2.use(import_express2.default.json());
-app2.use("/", appRoutes);
-app2.use((0, import_cors2.default)());
-app2.listen(port, () => {
-  console.log(`\u26A1\uFE0F[${port}]: Server is running at http://localhost:${port}`);
-  logger.info(`\u26A1\uFE0F[${port}]: Server is running at http://localhost:${port}`);
+// Annotate the CommonJS export names for ESM import in node:
+0 && (module.exports = {
+  mainRoute,
+  postUser
 });
 /*! Bundled license information:
 

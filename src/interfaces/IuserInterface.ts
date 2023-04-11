@@ -1,4 +1,4 @@
-import * as z from 'zod'
+
 
 export interface IUsuarioUPDATEProps {
     id?: string,
@@ -40,38 +40,38 @@ export interface IUsuarioCREATEProps {
     grupoPessoa: string,
     fotoFacial: string
 }
-export const documentoSchema = z.object({
-    tipoDocumento: z.string(),
-    documento: z.string(),
-})
-export const userSchema = z.object({
-    criarUsuario: z.boolean(),
-    nome: z.string(),
-    sobrenome: z.number(),
-    matricula: z.string(),
-    dataNascimento: z.string(),
-    sociedade: z.string().optional(),
-    email: z.string().email(),
-    nomeTratamento: z.string(),
-    profissao: z.string(),
-    documentosDTO: z.array(documentoSchema).min(1),
-    telefone: z.string(),
-    telefone2: z.string(),
-    grupoPessoa: z.string(),
-    fotoFacial: z.string(),
-})
-export const userSchemaUpdate = z.object({
-    nome: z.string(),
-    sobrenome: z.number(),
-    matricula: z.string(),
-    dataNascimento: z.string(),
-    sociedade: z.string().optional(),
-    email: z.string().email(),
-    nomeTratamento: z.string(),
-    profissao: z.string(),
-    documentosDTO: z.array(documentoSchema).min(1),
-    telefone: z.string(),
-    telefone2: z.string(),
-    grupoPessoa: z.string(),
-    fotoFacial: z.string(),
-})
+// export const documentoSchema = z.object({
+//     tipoDocumento: z.string(),
+//     documento: z.string(),
+// })
+// export const userSchema = z.object({
+//     criarUsuario: z.boolean(),
+//     nome: z.string(),
+//     sobrenome: z.number(),
+//     matricula: z.string(),
+//     dataNascimento: z.string(),
+//     sociedade: z.string().optional(),
+//     email: z.string().email(),
+//     nomeTratamento: z.string(),
+//     profissao: z.string(),
+//     documentosDTO: z.array(documentoSchema).min(1),
+//     telefone: z.string(),
+//     telefone2: z.string(),
+//     grupoPessoa: z.string(),
+//     fotoFacial: z.string(),
+// })
+// export const userSchemaUpdate = z.object({
+//     nome: z.string(),
+//     sobrenome: z.number(),
+//     matricula: z.string(),
+//     dataNascimento: z.string(),
+//     sociedade: z.string().optional(),
+//     email: z.string().email(),
+//     nomeTratamento: z.string(),
+//     profissao: z.string(),
+//     documentosDTO: z.array(documentoSchema).min(1),
+//     telefone: z.string(),
+//     telefone2: z.string(),
+//     grupoPessoa: z.string(),
+//     fotoFacial: z.string(),
+// })

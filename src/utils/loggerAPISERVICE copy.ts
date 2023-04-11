@@ -33,9 +33,10 @@ export const loggerApiService = async (req: Request, res: Response) => {
         grant_type: process.env.USER_GRANT_TYPE
     }
     let dataRefresh = {
-        grant_type: 'refresh_token',
+        grant_type: process.env.LOGIN_GRANT_TYPE,
         refresh_token: ''
     }
+
     try {
         const resLogin = await axios.post(process.env.API_URL_LOGIN as string, dataLogin, optionsLogin)
         objDataLogin.access_token = resLogin.data.access_token

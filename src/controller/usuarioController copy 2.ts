@@ -64,39 +64,30 @@ export const postUser = async (req: Request, res: Response, dataJson: any) => {
     jsonUsuario.telefone2 = dataJson.telefone2
     jsonUsuario.fotoFacial = dataJson.fotoFacial
 
-    console.log('---------->post', jsonUsuario)
+    console.log('---------->post', jsonUsuario, ApiService)
 
     try {
-        const resPost = await axios.post(process.env.API_URL_POST as string, jsonUsuario, {
+        const resPost: AxiosResponse = await axios.post(process.env.API_URL_POST as string, jsonUsuario, {
             headers: {
                 "Content-Type": "application/json",
                 "Authorization": `bearer ${ApiService.newAccess_token}`,
                 "tenant": process.env.LOGIN_TENANT,
-                "Accept": "application/json"
+                "Accept": "application/json" // Set the Accept header to request a JSON response
             }
-        })
-            .then((resPost: AxiosResponse) => {
-                const result = prisma.$queryRawUnsafe(`UPDATE usuariossestsenat SET idUsuario_SCOND = '${resPost.data.id}' WHERE (sobrenome = '${jsonUsuario.sobrenome}');`)
+        });
 
-                console.log('Post response:', resPost.data)
-                res.status(200).json({ response: resPost.data })
-            })
-            .catch((err: unknown) => {
-                if (axios.isAxiosError(err)) {
-                    console.error('Error during API call inside:', err)
-                    const errorResponse = err.response?.data || err.message;
-                    return res.status(404).json({ response: errorResponse })
-                } else {
-                    console.error('Unknown error inside:', err)
-                    return res.status(404).json({ response: err })
-                }
-            });
+        console.log('Post response:', resPost.data)
+        res.status(200).json({ response: resPost.data })
     } catch (err: unknown) {
-        console.error('Error during API call outside:', err)
-        return res.status(404).json({ response: err })
+        if (axios.isAxiosError(err)) {
+            console.error('Error during API call:', err.message)
+            return res.status(404).json({ response: err.message })
+        } else {
+            console.error('Unknown error:', err)
+            return res.status(404).json({ response: err })
+        }
+
     }
-
-
 
 
 
@@ -128,7 +119,7 @@ export const postUser = async (req: Request, res: Response, dataJson: any) => {
 //             fotoFacial: ''
 //         }
 
-//         jsonUsuario.id = user.idUsuario_SCOND !== null ? user.idUsuario_SCOND.toString() : ""
+//         jsonUsuario.id = user.idUsuario_SCOND !== null ? user.idUsuario_SCOND.toString() : "";
 //         jsonUsuario.nome = dataJson.nome
 //         jsonUsuario.sobrenome = Number(dataJson.matricula)
 //         jsonUsuario.dataNascimento = dataJson.dataNascimento
