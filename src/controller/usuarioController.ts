@@ -17,12 +17,15 @@ export const mainRoute = async (req: Request, res: Response) => {
             where: {
                 sobrenome: userId,
             },
+            include: {
+                documentosDTO: true
+            }
         })
         if (!user) {
             console.log('User not found')
             postUser(req, res, dataJson)
         } else {
-            // putUser(req, res, dataJson, user)
+            putUser(req, res, dataJson, user)
             console.log('User exists')
         }
     } catch (e) {
@@ -75,13 +78,36 @@ export const postUser = async (req: Request, res: Response, dataJson: any) => {
                 "Accept": "application/json"
             }
         })
-            .then((resPost: AxiosResponse) => {
-                const result = prisma.$queryRawUnsafe(`UPDATE usuariossestsenat SET idUsuario_SCOND = '${resPost.data.id}' WHERE (sobrenome = '${jsonUsuario.sobrenome}');`)
+            .then(async (resPost: AxiosResponse) => {
+
+                await prisma.usuariosSESTSENAT.create({
+                    data: {
+                        criarUsuario: jsonUsuario.criarUsuario,
+                        nome: jsonUsuario.nome,
+                        sobrenome: Number(jsonUsuario.sobrenome),
+                        dataNascimento: jsonUsuario.dataNascimento,
+                        documentosDTO: {
+                            createMany: {
+                                data: jsonUsuario.documentosDTO
+                            },
+                        },
+                        sociedade: jsonUsuario.sociedade,
+                        email: jsonUsuario.email,
+                        nomeTratamento: jsonUsuario.nomeTratamento,
+                        telefone: jsonUsuario.telefone,
+                        telefone2: jsonUsuario.telefone2,
+                        fotoFacial: jsonUsuario.fotoFacial,
+
+                    },
+                    include: { documentosDTO: true },
+                })
+
+                const result = await prisma.$queryRawUnsafe(`UPDATE usuariossestsenat SET idUsuario_SCOND = '${resPost.data.id}' WHERE (sobrenome = '${jsonUsuario.sobrenome}');`)
 
                 console.log('Post response:', resPost.data)
                 res.status(200).json({ response: resPost.data })
             })
-            .catch((err: unknown) => {
+            .catch(async (err: unknown) => {
                 if (axios.isAxiosError(err)) {
                     console.error('Error during API call inside:', err)
                     const errorResponse = err.response?.data || err.message;
@@ -90,7 +116,7 @@ export const postUser = async (req: Request, res: Response, dataJson: any) => {
                     console.error('Unknown error inside:', err)
                     return res.status(404).json({ response: err })
                 }
-            });
+            })
     } catch (err: unknown) {
         console.error('Error during API call outside:', err)
         return res.status(404).json({ response: err })
@@ -104,48 +130,111 @@ export const postUser = async (req: Request, res: Response, dataJson: any) => {
 
 
 }
-// export const putUser = async (req: Request, res: Response, dataJson: any, user: any) => {
-//     const ApiService = await loggerApiService(req, res)
-//     if (ApiService == undefined || ApiService == null) {
-//         return res.status(404).json({ response: 'error' })
-//     }
+export const putUser = async (req: Request, res: Response, dataJson: any, user: any) => {
+    const ApiService = await loggerApiService(req, res)
+    if (ApiService == undefined || ApiService == null) {
+        return res.status(404).json({ response: 'error' })
+    }
 
-//     try {
-//         const dataJson = await req.body
-//         let jsonUsuario: IUsuarioUPDATEProps = {
-//             id: '',
-//             nome: '',
-//             sobrenome: 0,
-//             dataNascimento: '',
-//             sociedade: "PESSOA_FISICA",
-//             documentosDTO: [],
-//             email: '',
-//             nomeTratamento: '',
-//             telefone: '',
-//             telefone2: '',
-//             profissao: 'Aluno',
-//             grupoPessoa: 'Aluno',
-//             fotoFacial: ''
-//         }
+    // const updateUser = await prisma.usuariosSESTSENAT.update({
+    //     where: {
+    //         sobrenome: dataJson.userId,
+    //     },
+    //     data: {
+    //         idUsuario_SCOND: user.idUsuario_SCOND,
+    //         nome: dataJson.nome,
+    //         sobrenome: dataJson.sobrenome,
+    //         dataNascimento: dataJson.dataNascimento,
+    //         sociedade: dataJson.sociedade,
+    //         email: dataJson.email,
+    //         nomeTratamento: dataJson.nomeTratamento,
+    //         telefone: dataJson.telefone,
+    //         telefone2: dataJson.telefone2,
+    //         profissao: 'Aluno',
+    //         grupoPessoa: 'Aluno',
+    //         fotoFacial: dataJson.fotoFacial,
+    //         situacao: 'Atualizado',
 
-//         jsonUsuario.id = user.idUsuario_SCOND !== null ? user.idUsuario_SCOND.toString() : ""
-//         jsonUsuario.nome = dataJson.nome
-//         jsonUsuario.sobrenome = Number(dataJson.matricula)
-//         jsonUsuario.dataNascimento = dataJson.dataNascimento
-//         for (let doc of dataJson.documentosDTO) {
-//             jsonUsuario.documentosDTO.push(doc);
-//         }
-//         jsonUsuario.email = dataJson.email
-//         jsonUsuario.nomeTratamento = dataJson.nomeTratamento
-//         jsonUsuario.telefone = dataJson.telefone
-//         jsonUsuario.telefone2 = dataJson.telefone2
-//         jsonUsuario.fotoFacial = dataJson.fotoFacial
-//         console.log('---------->put', jsonUsuario)
-//     } catch (e) {
-//         console.log(e)
-//     }
+    //     },
+    // })
 
-// }
+    let jsonUsuario: IUsuarioUPDATEProps = {
+        nome: '',
+        sobrenome: 0,
+        dataNascimento: '',
+        sociedade: "PESSOA_FISICA",
+        // documentosDTO: [],
+        email: '',
+        nomeTratamento: '',
+        telefone: '',
+        telefone2: '',
+        profissao: 'Aluno',
+        grupoPessoa: 'Aluno',
+        fotoFacial: ''
+    }
+
+    //atualizar dados conforme banco
+    jsonUsuario.nome = user.nome
+    jsonUsuario.sobrenome = Number(user.sobrenome)
+    jsonUsuario.dataNascimento = user.dataNascimento
+    jsonUsuario.documentosDTO = [] 
+    for (let doc of user.documentosDTO) {
+        jsonUsuario.documentosDTO.push(doc);
+    }
+    jsonUsuario.email = user.email
+    jsonUsuario.nomeTratamento = user.nomeTratamento
+    jsonUsuario.telefone = user.telefone
+    jsonUsuario.telefone2 = user.telefone2
+    jsonUsuario.fotoFacial = user.fotoFacial
+
+    //atualizar dados no objeto
+    jsonUsuario.nome = dataJson.nome
+    jsonUsuario.sobrenome = Number(user.sobrenome)
+    jsonUsuario.dataNascimento = dataJson.dataNascimento
+    for (let doc of dataJson.documentosDTO) {
+        jsonUsuario.documentosDTO.push(doc);
+    }
+    jsonUsuario.email = dataJson.email
+    jsonUsuario.nomeTratamento = dataJson.nomeTratamento
+    jsonUsuario.telefone = dataJson.telefone
+    jsonUsuario.telefone2 = dataJson.telefone2
+    jsonUsuario.fotoFacial = dataJson.fotoFacial
+
+
+    console.log('user DB', user)
+    console.log('user PUT', dataJson)
+    console.log('---------->put', jsonUsuario)
+
+    // try {
+    //     const resPut = await axios.put(process.env.API_URL_POST as string, jsonUsuario, {
+    //         headers: {
+    //             "Content-Type": "application/json",
+    //             "Authorization": `bearer ${ApiService.newAccess_token}`,
+    //             "tenant": process.env.LOGIN_TENANT,
+    //             "Accept": "application/json"
+    //         }
+    //     })
+    //         .then((resPost: AxiosResponse) => {
+
+    //             console.log('Post response:', resPost.data)
+    //             res.status(200).json({ response: resPost.data })
+    //         })
+    //         .catch((err: unknown) => {
+    //             if (axios.isAxiosError(err)) {
+    //                 console.error('Error during API call inside:', err)
+    //                 const errorResponse = err.response?.data || err.message;
+    //                 return res.status(404).json({ response: errorResponse })
+    //             } else {
+    //                 console.error('Unknown error inside:', err)
+    //                 return res.status(404).json({ response: err })
+    //             }
+    //         });
+    // } catch (err: unknown) {
+    //     console.error('Error during API call outside:', err)
+    //     return res.status(404).json({ response: err })
+    // }
+
+}
 // export const createUser = async (req: Request, res: Response) => {
 //     const optionsLogin = {
 //         headers: {

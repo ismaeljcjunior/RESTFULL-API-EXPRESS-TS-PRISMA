@@ -8755,7 +8755,8 @@ var require_client2 = __commonJS({
 var usuarioController_exports = {};
 __export(usuarioController_exports, {
   mainRoute: () => mainRoute,
-  postUser: () => postUser
+  postUser: () => postUser,
+  putUser: () => putUser
 });
 module.exports = __toCommonJS(usuarioController_exports);
 var dotenv2 = __toESM(require("dotenv"));
@@ -8824,12 +8825,16 @@ var mainRoute = async (req, res) => {
     const user = await prisma.usuariosSESTSENAT.findFirst({
       where: {
         sobrenome: userId
+      },
+      include: {
+        documentosDTO: true
       }
     });
     if (!user) {
       console.log("User not found");
       postUser(req, res, dataJson);
     } else {
+      putUser(req, res, dataJson, user);
       console.log("User exists");
     }
   } catch (e) {
@@ -8877,11 +8882,31 @@ var postUser = async (req, res, dataJson) => {
         "tenant": process.env.LOGIN_TENANT,
         "Accept": "application/json"
       }
-    }).then((resPost2) => {
-      const result = prisma.$queryRawUnsafe(`UPDATE usuariossestsenat SET idUsuario_SCOND = '${resPost2.data.id}' WHERE (sobrenome = '${jsonUsuario.sobrenome}');`);
+    }).then(async (resPost2) => {
+      await prisma.usuariosSESTSENAT.create({
+        data: {
+          criarUsuario: jsonUsuario.criarUsuario,
+          nome: jsonUsuario.nome,
+          sobrenome: Number(jsonUsuario.sobrenome),
+          dataNascimento: jsonUsuario.dataNascimento,
+          documentosDTO: {
+            createMany: {
+              data: jsonUsuario.documentosDTO
+            }
+          },
+          sociedade: jsonUsuario.sociedade,
+          email: jsonUsuario.email,
+          nomeTratamento: jsonUsuario.nomeTratamento,
+          telefone: jsonUsuario.telefone,
+          telefone2: jsonUsuario.telefone2,
+          fotoFacial: jsonUsuario.fotoFacial
+        },
+        include: { documentosDTO: true }
+      });
+      const result = await prisma.$queryRawUnsafe(`UPDATE usuariossestsenat SET idUsuario_SCOND = '${resPost2.data.id}' WHERE (sobrenome = '${jsonUsuario.sobrenome}');`);
       console.log("Post response:", resPost2.data);
       res.status(200).json({ response: resPost2.data });
-    }).catch((err) => {
+    }).catch(async (err) => {
       var _a2;
       if (import_axios2.default.isAxiosError(err)) {
         console.error("Error during API call inside:", err);
@@ -8897,10 +8922,50 @@ var postUser = async (req, res, dataJson) => {
     return res.status(404).json({ response: err });
   }
 };
+var putUser = async (req, res, dataJson, user) => {
+  const ApiService = await loggerApiService(req, res);
+  if (ApiService == void 0 || ApiService == null) {
+    return res.status(404).json({ response: "error" });
+  }
+  let jsonUsuario = {
+    nome: "",
+    sobrenome: 0,
+    dataNascimento: "",
+    sociedade: "PESSOA_FISICA",
+    // documentosDTO: [],
+    email: "",
+    nomeTratamento: "",
+    telefone: "",
+    telefone2: "",
+    profissao: "Aluno",
+    grupoPessoa: "Aluno",
+    fotoFacial: ""
+  };
+  jsonUsuario.nome = user.nome;
+  jsonUsuario.sobrenome = Number(user.sobrenome);
+  jsonUsuario.dataNascimento = user.dataNascimento;
+  jsonUsuario.email = user.email;
+  jsonUsuario.nomeTratamento = user.nomeTratamento;
+  jsonUsuario.telefone = user.telefone;
+  jsonUsuario.telefone2 = user.telefone2;
+  jsonUsuario.fotoFacial = user.fotoFacial;
+  jsonUsuario.nome = dataJson.nome;
+  jsonUsuario.sobrenome = Number(user.sobrenome);
+  jsonUsuario.dataNascimento = dataJson.dataNascimento;
+  jsonUsuario.email = dataJson.email;
+  jsonUsuario.nomeTratamento = dataJson.nomeTratamento;
+  jsonUsuario.telefone = dataJson.telefone;
+  jsonUsuario.telefone2 = dataJson.telefone2;
+  jsonUsuario.fotoFacial = dataJson.fotoFacial;
+  console.log("user DB", user);
+  console.log("user PUT", dataJson);
+  console.log("---------->put", jsonUsuario);
+};
 // Annotate the CommonJS export names for ESM import in node:
 0 && (module.exports = {
   mainRoute,
-  postUser
+  postUser,
+  putUser
 });
 /*! Bundled license information:
 
