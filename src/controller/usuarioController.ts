@@ -14,7 +14,7 @@ export const mainRoute = async (req: Request, res: Response) => {
     try {
         const user = await prisma.usuariosSESTSENAT.findFirst({
             where: {
-                matricula: userId,
+                sobrenome: userId,
             },
             include: {
                 documentosDTO: true
@@ -41,6 +41,7 @@ export const postUser = async (req: Request, res: Response, dataJson: any) => {
         criarUsuario: true,
         nome: '',
         sobrenome: 0,
+        matricula: 0,
         dataNascimento: '',
         sociedade: "PESSOA_FISICA",
         documentosDTO: [],
@@ -54,6 +55,7 @@ export const postUser = async (req: Request, res: Response, dataJson: any) => {
     }
     jsonUsuario.criarUsuario = dataJson.criarUsuario
     jsonUsuario.nome = dataJson.nome
+    jsonUsuario.sobrenome = Number(dataJson.matricula)
     jsonUsuario.matricula = Number(dataJson.matricula)
     jsonUsuario.dataNascimento = dataJson.dataNascimento
     for (let doc of dataJson.documentosDTO) {
@@ -82,7 +84,8 @@ export const postUser = async (req: Request, res: Response, dataJson: any) => {
                     data: {
                         criarUsuario: jsonUsuario.criarUsuario,
                         nome: jsonUsuario.nome,
-                        matricula: Number(jsonUsuario.matricula),
+                        sobrenome: Number(jsonUsuario.sobrenome),
+                        matricula: Number(jsonUsuario.sobrenome),
                         dataNascimento: jsonUsuario.dataNascimento,
                         documentosDTO: {
                             createMany: {
@@ -100,7 +103,7 @@ export const postUser = async (req: Request, res: Response, dataJson: any) => {
                     include: { documentosDTO: true },
                 })
 
-                const result = await prisma.$queryRawUnsafe(`UPDATE usuariossestsenat SET idUsuario_SCOND = '${resPost.data.id}' WHERE (matricula = '${jsonUsuario.matricula}');`)
+                const result = await prisma.$queryRawUnsafe(`UPDATE usuariossestsenat SET idUsuario_SCOND = '${resPost.data.id}', WHERE (sobrenome = '${jsonUsuario.sobrenome}');`)
 
                 console.log('Post response:', resPost.data)
                 res.status(200).json({ response: resPost.data })
@@ -128,6 +131,7 @@ export const putUser = async (req: Request, res: Response, dataJson: any, user: 
     let jsonUsuario: IUsuarioUPDATEProps = {
         id: 0,
         nome: '',
+        sobrenome: 0,
         matricula: 0,
         dataNascimento: '',
         sociedade: "PESSOA_FISICA",
@@ -142,6 +146,7 @@ export const putUser = async (req: Request, res: Response, dataJson: any, user: 
     }
     //atualizar dados conforme banco
     jsonUsuario.nome = user.nome
+    jsonUsuario.sobrenome = Number(user.matricula)
     jsonUsuario.matricula = Number(user.matricula)
     jsonUsuario.dataNascimento = user.dataNascimento
     jsonUsuario.documentosDTO = []
@@ -157,11 +162,12 @@ export const putUser = async (req: Request, res: Response, dataJson: any, user: 
     //atualizar dados no objeto
     jsonUsuario.id = user.idUsuario_SCOND
     jsonUsuario.nome = dataJson.nome
+    jsonUsuario.sobrenome = Number(user.matricula)
     jsonUsuario.matricula = Number(user.matricula)
     jsonUsuario.dataNascimento = dataJson.dataNascimento
-    // for (let doc of dataJson.documentosDTO) {
-    //     jsonUsuario.documentosDTO.push(doc);
-    // }
+    for (let doc of dataJson.documentosDTO) {
+        jsonUsuario.documentosDTO.push(doc);
+    }
     jsonUsuario.documentosDTO
     jsonUsuario.email = dataJson.email
     jsonUsuario.nomeTratamento = dataJson.nomeTratamento
@@ -188,26 +194,62 @@ export const putUser = async (req: Request, res: Response, dataJson: any, user: 
         })
             .then(async (resPut: AxiosResponse) => {
 
-                const updateUser = await prisma.usuariosSESTSENAT.update({
-                    where: {
-                        matricula: Number(user.matricula),
-                    },
-                    data: {
-                        // idUsuario_SCOND: user.idUsuario_SCOND,
-                        nome: dataJson.nome,
-                        matricula: Number(dataJson.matricula),
-                        dataNascimento: dataJson.dataNascimento,
-                        sociedade: dataJson.sociedade,
-                        email: dataJson.email,
-                        nomeTratamento: dataJson.nomeTratamento,
-                        telefone: dataJson.telefone,
-                        telefone2: dataJson.telefone2,
+                // const updateUser = await prisma.usuariosSESTSENAT.update({
+                //     where: {
+                //         sobrenome: Number(newJsonUsuario.matricula),
+                //     },
+                //     data: {
+                //         // idUsuario_SCOND: user.idUsuario_SCOND,
+                //         nome: newJsonUsuario.nome,
+                //         sobrenome: Number(newJsonUsuario.matricula),
+                //         matricula: Number(newJsonUsuario.matricula),
+                //         dataNascimento: newJsonUsuario.dataNascimento,
+                //         sociedade: newJsonUsuario.sociedade,
+                //         email: newJsonUsuario.email,
+                //         nomeTratamento: newJsonUsuario.nomeTratamento,
+                //         telefone: newJsonUsuario.telefone,
+                //         telefone2: newJsonUsuario.telefone2,
+                //         profissao: 'Aluno',
+                //         grupoPessoa: 'Aluno',
+                //         fotoFacial: newJsonUsuario.fotoFacial,
+                //         situacao: 'Atualizado',
+                //     },
+                    
+                // })
+                await prisma.$transaction([
+                    prisma.usuariosSESTSENAT.updateMany({
+                      where: {
+                        sobrenome: Number(newJsonUsuario.matricula),
+                      },
+                      data: {
+                        nome: newJsonUsuario.nome,
+                        sobrenome: Number(newJsonUsuario.matricula),
+                        matricula: Number(newJsonUsuario.matricula),
+                        dataNascimento: newJsonUsuario.dataNascimento,
+                        sociedade: newJsonUsuario.sociedade,
+                        email: newJsonUsuario.email,
+                        nomeTratamento: newJsonUsuario.nomeTratamento,
+                        telefone: newJsonUsuario.telefone,
+                        telefone2: newJsonUsuario.telefone2,
                         profissao: 'Aluno',
                         grupoPessoa: 'Aluno',
-                        fotoFacial: dataJson.fotoFacial,
+                        fotoFacial: newJsonUsuario.fotoFacial,
                         situacao: 'Atualizado',
-                    },
-                })
+                      },
+                    }),
+                    prisma.usuariosSESTSENATDocumentoDTO.updateMany({
+                      where: {
+                        usuariosSESTSENAT: {
+                          sobrenome: Number(newJsonUsuario.matricula),
+                        },
+                      },
+                      data: {
+                        tipoDocumento: newJsonUsuario.tipoDocumento,
+                        documento: newJsonUsuario.documento,
+                      },
+                    }),
+                  ]);
+                  
                 console.log('Post response:', resPut.data)
                 res.status(200).json({ response: resPut.data })
             })
@@ -227,19 +269,19 @@ export const putUser = async (req: Request, res: Response, dataJson: any, user: 
     }
 }
 export const getUsers = async (req: Request, res: Response) => {
-    const userId = req.params.id
+    const userId = Number(req.params.id)
 
     try {
-        const user = await prisma.usuariosSESTSENAT.findFirst({
+        const getUser = await prisma.usuariosSESTSENAT.findFirst({
             where: {
-                matricula: Number(userId),
+                sobrenome: Number(userId),
             },
             include: {
                 documentosDTO: true
             }
         })
 
-        // res.status(200).json({ response: res.data })
+        res.status(200).json({ data: getUser })
     } catch (err: unknown) {
         console.error('Error during API call outside:', err)
         return res.status(404).json({ response: err })
