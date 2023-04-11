@@ -8961,6 +8961,7 @@ var putUser = async (req, res, dataJson, user) => {
     return res.status(404).json({ response: "error" });
   }
   let jsonUsuario = {
+    id: 0,
     nome: "",
     sobrenome: 0,
     dataNascimento: "",
@@ -8986,6 +8987,7 @@ var putUser = async (req, res, dataJson, user) => {
   jsonUsuario.telefone = user.telefone;
   jsonUsuario.telefone2 = user.telefone2;
   jsonUsuario.fotoFacial = user.fotoFacial;
+  jsonUsuario.id = user.idUsuario_SCOND;
   jsonUsuario.nome = dataJson.nome;
   jsonUsuario.sobrenome = Number(user.sobrenome);
   jsonUsuario.dataNascimento = dataJson.dataNascimento;
@@ -9003,6 +9005,51 @@ var putUser = async (req, res, dataJson, user) => {
   console.log("user PUT", dataJson);
   console.log("--->", jsonUsuario);
   console.log("---------->put", newJsonUsuario);
+  try {
+    const resPut = await import_axios2.default.put(`${process.env.API_URL_PUT}${user.idUsuario_SCOND}`, newJsonUsuario, {
+      headers: {
+        "Content-Type": "application/json",
+        "Authorization": `bearer ${ApiService.newAccess_token}`,
+        "tenant": process.env.LOGIN_TENANT
+      }
+    }).then(async (resPut2) => {
+      const updateUser = await prisma.usuariosSESTSENAT.update({
+        where: {
+          sobrenome: Number(user.sobrenome)
+        },
+        data: {
+          // idUsuario_SCOND: user.idUsuario_SCOND,
+          nome: dataJson.nome,
+          sobrenome: Number(dataJson.matricula),
+          dataNascimento: dataJson.dataNascimento,
+          sociedade: dataJson.sociedade,
+          email: dataJson.email,
+          nomeTratamento: dataJson.nomeTratamento,
+          telefone: dataJson.telefone,
+          telefone2: dataJson.telefone2,
+          profissao: "Aluno",
+          grupoPessoa: "Aluno",
+          fotoFacial: dataJson.fotoFacial,
+          situacao: "Atualizado"
+        }
+      });
+      console.log("Post response:", resPut2.data);
+      res.status(200).json({ response: resPut2.data });
+    }).catch(async (err) => {
+      var _a2;
+      if (import_axios2.default.isAxiosError(err)) {
+        console.error("Error during API call inside:", err);
+        const errorResponse = ((_a2 = err.response) == null ? void 0 : _a2.data) || err.message;
+        return res.status(404).json({ response: errorResponse });
+      } else {
+        console.error("Unknown error inside:", err);
+        return res.status(404).json({ response: err });
+      }
+    });
+  } catch (err) {
+    console.error("Error during API call outside:", err);
+    return res.status(404).json({ response: err });
+  }
 };
 
 // src/routes/routes.ts

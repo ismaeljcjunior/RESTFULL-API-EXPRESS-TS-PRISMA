@@ -1,7 +1,7 @@
 
 
 export interface IUsuarioUPDATEProps {
-    id?: string,
+    id?: number,
     nome?: string,
     sobrenome?: number,
     matricula?: string,
