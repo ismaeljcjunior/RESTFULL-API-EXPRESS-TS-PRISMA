@@ -9107,6 +9107,7 @@ var getUsers = async (req, res) => {
   }
 };
 var getUserSC = async (req, res) => {
+  var _a2, _b, _c2, _d2, _e2, _f2, _g2, _h2, _i2, _j, _k, _l2, _m, _n2, _o2;
   const userId = Number(req.params.id);
   const ApiService = await loggerApiService(req, res);
   if (ApiService == void 0 || ApiService == null) {
@@ -9122,8 +9123,64 @@ var getUserSC = async (req, res) => {
         "tenant": process.env.LOGIN_TENANT
       }
     });
-    console.log(resGet);
-    res.status(200).json({ data: resGet.data });
+    if (resGet === void 0 || resGet === null) {
+      return res.status(404).json({ response: "Error" });
+    }
+    if (resGet.data.hasOwnProperty("id")) {
+      (_a2 = resGet.data) == null ? true : delete _a2.id;
+    }
+    if (resGet.data.hasOwnProperty("enderecos")) {
+      (_b = resGet.data) == null ? true : delete _b.enderecos;
+    }
+    if (resGet.data.hasOwnProperty("pessoaUnidades")) {
+      (_c2 = resGet.data) == null ? true : delete _c2.pessoaUnidades;
+    }
+    if (resGet.data.hasOwnProperty("grupos")) {
+      (_d2 = resGet.data) == null ? true : delete _d2.grupos;
+    }
+    if (resGet.data.hasOwnProperty("perfilAcessos")) {
+      (_e2 = resGet.data) == null ? true : delete _e2.perfilAcessos;
+    }
+    if (resGet.data.hasOwnProperty("primeiroAcesso")) {
+      (_f2 = resGet.data) == null ? true : delete _f2.primeiroAcesso;
+    }
+    if (resGet.data.hasOwnProperty("documentosDTO")) {
+      (_g2 = resGet.data) == null ? true : delete _g2.documentosDTO;
+    }
+    if (resGet.data.hasOwnProperty("criarUsuario")) {
+      (_h2 = resGet.data) == null ? true : delete _h2.criarUsuario;
+    }
+    if (resGet.data.hasOwnProperty("habilitarCampoCriarUsuario")) {
+      (_i2 = resGet.data) == null ? true : delete _i2.habilitarCampoCriarUsuario;
+    }
+    if (resGet.data.hasOwnProperty("nomeCompleto")) {
+      (_j = resGet.data) == null ? true : delete _j.nomeCompleto;
+    }
+    if (resGet.data.hasOwnProperty("gruposAtivos")) {
+      (_k = resGet.data) == null ? true : delete _k.gruposAtivos;
+    }
+    if (resGet.data.hasOwnProperty("pessoaUnidadesAtivas")) {
+      (_l2 = resGet.data) == null ? true : delete _l2.pessoaUnidadesAtivas;
+    }
+    if (resGet.data.hasOwnProperty("administrador")) {
+      (_m = resGet.data) == null ? true : delete _m.administrador;
+    }
+    if (resGet.data.hasOwnProperty("primeiroNome")) {
+      (_n2 = resGet.data) == null ? true : delete _n2.primeiroNome;
+    }
+    if (resGet.data.hasOwnProperty("hibernateLazyInitializer")) {
+      (_o2 = resGet.data) == null ? true : delete _o2.hibernateLazyInitializer;
+    }
+    const documentosSemTipoDocumento = resGet.data.documentos.map((documento) => {
+      const { tipoDocumento, ...restoDocumento } = documento;
+      return { ...restoDocumento };
+    });
+    const resultado = {
+      ...resGet.data,
+      documentos: documentosSemTipoDocumento
+    };
+    console.log(resultado);
+    res.status(200).json({ data: resultado });
   } catch (err) {
     console.error(err);
     return res.status(404).json({ response: err.data });
@@ -9144,7 +9201,7 @@ app.use(import_express.default.urlencoded({ extended: true }));
 });
 app.post("/usuarios", mainRoute);
 app.get("/usuarios/:id", getUsers);
-app.get("/usuarios2/:id", getUserSC);
+app.get("/usuariosC/:id", getUserSC);
 app.get("/", (req, res) => {
   res.send("Server is running 1.0");
   logger.info("Server is running 1.0");

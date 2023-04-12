@@ -291,7 +291,6 @@ export const getUsers = async (req: Request, res: Response) => {
     }
 
 }
-
 export const getUserSC = async (req: Request, res: Response) => {
     const userId = Number(req.params.id)
 
@@ -309,8 +308,83 @@ export const getUserSC = async (req: Request, res: Response) => {
                 "tenant": process.env.LOGIN_TENANT,
             }
         })
-        console.log(resGet)
-        res.status(200).json({ data: resGet.data })
+        if (resGet === undefined || resGet === null) {
+            return res.status(404).json({ response: 'Error' })
+        }
+        if (resGet.data.hasOwnProperty("id")) {
+            //@ts-ignore
+            delete resGet.data?.id;
+        }
+        if (resGet.data.hasOwnProperty("enderecos")) {
+            //@ts-ignore
+            delete resGet.data?.enderecos;
+        }
+        if (resGet.data.hasOwnProperty("pessoaUnidades")) {
+            //@ts-ignore
+            delete resGet.data?.pessoaUnidades;
+        }
+        if (resGet.data.hasOwnProperty("grupos")) {
+            //@ts-ignore
+            delete resGet.data?.grupos;
+        }
+        if (resGet.data.hasOwnProperty("perfilAcessos")) {
+            //@ts-ignore
+            delete resGet.data?.perfilAcessos;
+        }
+        if (resGet.data.hasOwnProperty("primeiroAcesso")) {
+            //@ts-ignore
+            delete resGet.data?.primeiroAcesso;
+        }
+        if (resGet.data.hasOwnProperty("documentosDTO")) {
+            //@ts-ignore
+            delete resGet.data?.documentosDTO;
+        }
+        if (resGet.data.hasOwnProperty("criarUsuario")) {
+            //@ts-ignore
+            delete resGet.data?.criarUsuario;
+        }
+        if (resGet.data.hasOwnProperty("habilitarCampoCriarUsuario")) {
+            //@ts-ignore
+            delete resGet.data?.habilitarCampoCriarUsuario;
+        }
+        if (resGet.data.hasOwnProperty("nomeCompleto")) {
+            //@ts-ignore
+            delete resGet.data?.nomeCompleto;
+        }
+        if (resGet.data.hasOwnProperty("gruposAtivos")) {
+            //@ts-ignore
+            delete resGet.data?.gruposAtivos;
+        }
+        if (resGet.data.hasOwnProperty("pessoaUnidadesAtivas")) {
+            //@ts-ignore
+            delete resGet.data?.pessoaUnidadesAtivas;
+        }
+        if (resGet.data.hasOwnProperty("administrador")) {
+            //@ts-ignore
+            delete resGet.data?.administrador;
+        }
+        if (resGet.data.hasOwnProperty("primeiroNome")) {
+            //@ts-ignore
+            delete resGet.data?.primeiroNome;
+        }
+        if (resGet.data.hasOwnProperty("hibernateLazyInitializer")) {
+            //@ts-ignore
+            delete resGet.data?.hibernateLazyInitializer;
+        }
+        const documentosSemTipoDocumento = resGet.data.documentos.map((documento: { [x: string]: any; tipoDocumento: any }) => {
+            const { tipoDocumento, ...restoDocumento } = documento;
+            return { ...restoDocumento };
+        });
+
+        const resultado = {
+            ...resGet.data,
+            documentos: documentosSemTipoDocumento,
+        };
+
+
+
+        console.log(resultado)
+        res.status(200).json({ data: resultado })
     } catch (err: any) {
         console.error(err)
         return res.status(404).json({ response: err.data })
