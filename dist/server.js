@@ -8661,11 +8661,9 @@ var require_client = __commonJS({
       idDocumentoDTO: "idDocumentoDTO",
       tipoDocumento: "tipoDocumento",
       documento: "documento",
-      usuariosSESTSENATIdUsuario: "usuariosSESTSENATIdUsuario"
+      usuariosSESTSENATidUsuario_SCOND: "usuariosSESTSENATidUsuario_SCOND"
     });
     exports2.Prisma.UsuariosSESTSENATScalarFieldEnum = makeEnum({
-      idUsuario: "idUsuario",
-      idUsuario_SESTSENAT: "idUsuario_SESTSENAT",
       idUsuario_SCOND: "idUsuario_SCOND",
       criarUsuario: "criarUsuario",
       nome: "nome",
@@ -8688,7 +8686,7 @@ var require_client = __commonJS({
       usuariosSESTSENAT: "usuariosSESTSENAT",
       UsuariosSESTSENATDocumentoDTO: "UsuariosSESTSENATDocumentoDTO"
     });
-    var dmmfString = '{"datamodel":{"enums":[],"models":[{"name":"usuariosSESTSENAT","dbName":null,"fields":[{"name":"idUsuario","kind":"scalar","isList":false,"isRequired":true,"isUnique":false,"isId":true,"isReadOnly":false,"hasDefaultValue":true,"type":"Int","default":{"name":"autoincrement","args":[]},"isGenerated":false,"isUpdatedAt":false},{"name":"idUsuario_SESTSENAT","kind":"scalar","isList":false,"isRequired":false,"isUnique":false,"isId":false,"isReadOnly":false,"hasDefaultValue":false,"type":"Int","isGenerated":false,"isUpdatedAt":false},{"name":"idUsuario_SCOND","kind":"scalar","isList":false,"isRequired":false,"isUnique":false,"isId":false,"isReadOnly":false,"hasDefaultValue":false,"type":"Int","isGenerated":false,"isUpdatedAt":false},{"name":"criarUsuario","kind":"scalar","isList":false,"isRequired":true,"isUnique":false,"isId":false,"isReadOnly":false,"hasDefaultValue":true,"type":"Boolean","default":false,"isGenerated":false,"isUpdatedAt":false},{"name":"nome","kind":"scalar","isList":false,"isRequired":true,"isUnique":false,"isId":false,"isReadOnly":false,"hasDefaultValue":false,"type":"String","isGenerated":false,"isUpdatedAt":false},{"name":"sobrenome","kind":"scalar","isList":false,"isRequired":true,"isUnique":true,"isId":false,"isReadOnly":false,"hasDefaultValue":false,"type":"Int","isGenerated":false,"isUpdatedAt":false},{"name":"matricula","kind":"scalar","isList":false,"isRequired":false,"isUnique":false,"isId":false,"isReadOnly":false,"hasDefaultValue":false,"type":"Int","isGenerated":false,"isUpdatedAt":false},{"name":"dataNascimento","kind":"scalar","isList":false,"isRequired":true,"isUnique":false,"isId":false,"isReadOnly":false,"hasDefaultValue":false,"type":"String","isGenerated":false,"isUpdatedAt":false},{"name":"sociedade","kind":"scalar","isList":false,"isRequired":true,"isUnique":false,"isId":false,"isReadOnly":false,"hasDefaultValue":false,"type":"String","isGenerated":false,"isUpdatedAt":false},{"name":"email","kind":"scalar","isList":false,"isRequired":true,"isUnique":false,"isId":false,"isReadOnly":false,"hasDefaultValue":false,"type":"String","isGenerated":false,"isUpdatedAt":false},{"name":"nomeTratamento","kind":"scalar","isList":false,"isRequired":true,"isUnique":false,"isId":false,"isReadOnly":false,"hasDefaultValue":false,"type":"String","isGenerated":false,"isUpdatedAt":false},{"name":"telefone","kind":"scalar","isList":false,"isRequired":true,"isUnique":false,"isId":false,"isReadOnly":false,"hasDefaultValue":false,"type":"String","isGenerated":false,"isUpdatedAt":false},{"name":"telefone2","kind":"scalar","isList":false,"isRequired":true,"isUnique":false,"isId":false,"isReadOnly":false,"hasDefaultValue":false,"type":"String","isGenerated":false,"isUpdatedAt":false},{"name":"profissao","kind":"scalar","isList":false,"isRequired":true,"isUnique":false,"isId":false,"isReadOnly":false,"hasDefaultValue":true,"type":"String","default":"Aluno","isGenerated":false,"isUpdatedAt":false},{"name":"grupoPessoa","kind":"scalar","isList":false,"isRequired":true,"isUnique":false,"isId":false,"isReadOnly":false,"hasDefaultValue":true,"type":"String","default":"Aluno","isGenerated":false,"isUpdatedAt":false},{"name":"fotoFacial","kind":"scalar","isList":false,"isRequired":true,"isUnique":false,"isId":false,"isReadOnly":false,"hasDefaultValue":false,"type":"String","isGenerated":false,"isUpdatedAt":false},{"name":"situacao","kind":"scalar","isList":false,"isRequired":false,"isUnique":false,"isId":false,"isReadOnly":false,"hasDefaultValue":true,"type":"String","default":"AGUARDANDO","isGenerated":false,"isUpdatedAt":false},{"name":"created_at","kind":"scalar","isList":false,"isRequired":true,"isUnique":false,"isId":false,"isReadOnly":false,"hasDefaultValue":true,"type":"DateTime","default":{"name":"now","args":[]},"isGenerated":false,"isUpdatedAt":false},{"name":"updated_at","kind":"scalar","isList":false,"isRequired":true,"isUnique":false,"isId":false,"isReadOnly":false,"hasDefaultValue":false,"type":"DateTime","isGenerated":false,"isUpdatedAt":true},{"name":"documentosDTO","kind":"object","isList":true,"isRequired":true,"isUnique":false,"isId":false,"isReadOnly":false,"hasDefaultValue":false,"type":"UsuariosSESTSENATDocumentoDTO","relationName":"UsuariosSESTSENATDocumentoDTOTousuariosSESTSENAT","relationFromFields":[],"relationToFields":[],"isGenerated":false,"isUpdatedAt":false}],"primaryKey":null,"uniqueFields":[],"uniqueIndexes":[],"isGenerated":false},{"name":"UsuariosSESTSENATDocumentoDTO","dbName":null,"fields":[{"name":"idDocumentoDTO","kind":"scalar","isList":false,"isRequired":true,"isUnique":false,"isId":true,"isReadOnly":false,"hasDefaultValue":true,"type":"Int","default":{"name":"autoincrement","args":[]},"isGenerated":false,"isUpdatedAt":false},{"name":"tipoDocumento","kind":"scalar","isList":false,"isRequired":true,"isUnique":false,"isId":false,"isReadOnly":false,"hasDefaultValue":false,"type":"String","isGenerated":false,"isUpdatedAt":false},{"name":"documento","kind":"scalar","isList":false,"isRequired":true,"isUnique":false,"isId":false,"isReadOnly":false,"hasDefaultValue":false,"type":"String","isGenerated":false,"isUpdatedAt":false},{"name":"usuariosSESTSENAT","kind":"object","isList":false,"isRequired":false,"isUnique":false,"isId":false,"isReadOnly":false,"hasDefaultValue":false,"type":"usuariosSESTSENAT","relationName":"UsuariosSESTSENATDocumentoDTOTousuariosSESTSENAT","relationFromFields":["usuariosSESTSENATIdUsuario"],"relationToFields":["idUsuario"],"isGenerated":false,"isUpdatedAt":false},{"name":"usuariosSESTSENATIdUsuario","kind":"scalar","isList":false,"isRequired":false,"isUnique":false,"isId":false,"isReadOnly":true,"hasDefaultValue":false,"type":"Int","isGenerated":false,"isUpdatedAt":false}],"primaryKey":null,"uniqueFields":[],"uniqueIndexes":[],"isGenerated":false}],"types":[]},"mappings":{"modelOperations":[{"model":"usuariosSESTSENAT","plural":"usuariosSESTSENATS","findUnique":"findUniqueusuariosSESTSENAT","findUniqueOrThrow":"findUniqueusuariosSESTSENATOrThrow","findFirst":"findFirstusuariosSESTSENAT","findFirstOrThrow":"findFirstusuariosSESTSENATOrThrow","findMany":"findManyusuariosSESTSENAT","create":"createOneusuariosSESTSENAT","createMany":"createManyusuariosSESTSENAT","delete":"deleteOneusuariosSESTSENAT","update":"updateOneusuariosSESTSENAT","deleteMany":"deleteManyusuariosSESTSENAT","updateMany":"updateManyusuariosSESTSENAT","upsert":"upsertOneusuariosSESTSENAT","aggregate":"aggregateusuariosSESTSENAT","groupBy":"groupByusuariosSESTSENAT"},{"model":"UsuariosSESTSENATDocumentoDTO","plural":"usuariosSESTSENATDocumentoDTOS","findUnique":"findUniqueUsuariosSESTSENATDocumentoDTO","findUniqueOrThrow":"findUniqueUsuariosSESTSENATDocumentoDTOOrThrow","findFirst":"findFirstUsuariosSESTSENATDocumentoDTO","findFirstOrThrow":"findFirstUsuariosSESTSENATDocumentoDTOOrThrow","findMany":"findManyUsuariosSESTSENATDocumentoDTO","create":"createOneUsuariosSESTSENATDocumentoDTO","createMany":"createManyUsuariosSESTSENATDocumentoDTO","delete":"deleteOneUsuariosSESTSENATDocumentoDTO","update":"updateOneUsuariosSESTSENATDocumentoDTO","deleteMany":"deleteManyUsuariosSESTSENATDocumentoDTO","updateMany":"updateManyUsuariosSESTSENATDocumentoDTO","upsert":"upsertOneUsuariosSESTSENATDocumentoDTO","aggregate":"aggregateUsuariosSESTSENATDocumentoDTO","groupBy":"groupByUsuariosSESTSENATDocumentoDTO"}],"otherOperations":{"read":[],"write":["executeRaw","queryRaw"]}}}';
+    var dmmfString = '{"datamodel":{"enums":[],"models":[{"name":"usuariosSESTSENAT","dbName":null,"fields":[{"name":"idUsuario_SCOND","kind":"scalar","isList":false,"isRequired":true,"isUnique":false,"isId":true,"isReadOnly":false,"hasDefaultValue":false,"type":"Int","isGenerated":false,"isUpdatedAt":false},{"name":"criarUsuario","kind":"scalar","isList":false,"isRequired":true,"isUnique":false,"isId":false,"isReadOnly":false,"hasDefaultValue":true,"type":"Boolean","default":false,"isGenerated":false,"isUpdatedAt":false},{"name":"nome","kind":"scalar","isList":false,"isRequired":true,"isUnique":false,"isId":false,"isReadOnly":false,"hasDefaultValue":false,"type":"String","isGenerated":false,"isUpdatedAt":false},{"name":"sobrenome","kind":"scalar","isList":false,"isRequired":true,"isUnique":true,"isId":false,"isReadOnly":false,"hasDefaultValue":false,"type":"Int","isGenerated":false,"isUpdatedAt":false},{"name":"matricula","kind":"scalar","isList":false,"isRequired":true,"isUnique":false,"isId":false,"isReadOnly":false,"hasDefaultValue":false,"type":"Int","isGenerated":false,"isUpdatedAt":false},{"name":"dataNascimento","kind":"scalar","isList":false,"isRequired":true,"isUnique":false,"isId":false,"isReadOnly":false,"hasDefaultValue":false,"type":"String","isGenerated":false,"isUpdatedAt":false},{"name":"sociedade","kind":"scalar","isList":false,"isRequired":true,"isUnique":false,"isId":false,"isReadOnly":false,"hasDefaultValue":false,"type":"String","isGenerated":false,"isUpdatedAt":false},{"name":"email","kind":"scalar","isList":false,"isRequired":true,"isUnique":false,"isId":false,"isReadOnly":false,"hasDefaultValue":false,"type":"String","isGenerated":false,"isUpdatedAt":false},{"name":"nomeTratamento","kind":"scalar","isList":false,"isRequired":true,"isUnique":false,"isId":false,"isReadOnly":false,"hasDefaultValue":false,"type":"String","isGenerated":false,"isUpdatedAt":false},{"name":"telefone","kind":"scalar","isList":false,"isRequired":true,"isUnique":false,"isId":false,"isReadOnly":false,"hasDefaultValue":false,"type":"String","isGenerated":false,"isUpdatedAt":false},{"name":"telefone2","kind":"scalar","isList":false,"isRequired":true,"isUnique":false,"isId":false,"isReadOnly":false,"hasDefaultValue":false,"type":"String","isGenerated":false,"isUpdatedAt":false},{"name":"profissao","kind":"scalar","isList":false,"isRequired":true,"isUnique":false,"isId":false,"isReadOnly":false,"hasDefaultValue":true,"type":"String","default":"Aluno","isGenerated":false,"isUpdatedAt":false},{"name":"grupoPessoa","kind":"scalar","isList":false,"isRequired":true,"isUnique":false,"isId":false,"isReadOnly":false,"hasDefaultValue":true,"type":"String","default":"Aluno","isGenerated":false,"isUpdatedAt":false},{"name":"fotoFacial","kind":"scalar","isList":false,"isRequired":true,"isUnique":false,"isId":false,"isReadOnly":false,"hasDefaultValue":false,"type":"String","isGenerated":false,"isUpdatedAt":false},{"name":"situacao","kind":"scalar","isList":false,"isRequired":false,"isUnique":false,"isId":false,"isReadOnly":false,"hasDefaultValue":true,"type":"String","default":"AGUARDANDO","isGenerated":false,"isUpdatedAt":false},{"name":"created_at","kind":"scalar","isList":false,"isRequired":true,"isUnique":false,"isId":false,"isReadOnly":false,"hasDefaultValue":true,"type":"DateTime","default":{"name":"now","args":[]},"isGenerated":false,"isUpdatedAt":false},{"name":"updated_at","kind":"scalar","isList":false,"isRequired":true,"isUnique":false,"isId":false,"isReadOnly":false,"hasDefaultValue":false,"type":"DateTime","isGenerated":false,"isUpdatedAt":true},{"name":"documentosDTO","kind":"object","isList":true,"isRequired":true,"isUnique":false,"isId":false,"isReadOnly":false,"hasDefaultValue":false,"type":"UsuariosSESTSENATDocumentoDTO","relationName":"UsuariosSESTSENATDocumentoDTOTousuariosSESTSENAT","relationFromFields":[],"relationToFields":[],"isGenerated":false,"isUpdatedAt":false}],"primaryKey":null,"uniqueFields":[],"uniqueIndexes":[],"isGenerated":false},{"name":"UsuariosSESTSENATDocumentoDTO","dbName":null,"fields":[{"name":"idDocumentoDTO","kind":"scalar","isList":false,"isRequired":true,"isUnique":false,"isId":true,"isReadOnly":false,"hasDefaultValue":true,"type":"Int","default":{"name":"autoincrement","args":[]},"isGenerated":false,"isUpdatedAt":false},{"name":"tipoDocumento","kind":"scalar","isList":false,"isRequired":true,"isUnique":false,"isId":false,"isReadOnly":false,"hasDefaultValue":false,"type":"String","isGenerated":false,"isUpdatedAt":false},{"name":"documento","kind":"scalar","isList":false,"isRequired":true,"isUnique":false,"isId":false,"isReadOnly":false,"hasDefaultValue":false,"type":"String","isGenerated":false,"isUpdatedAt":false},{"name":"usuariosSESTSENAT","kind":"object","isList":false,"isRequired":false,"isUnique":false,"isId":false,"isReadOnly":false,"hasDefaultValue":false,"type":"usuariosSESTSENAT","relationName":"UsuariosSESTSENATDocumentoDTOTousuariosSESTSENAT","relationFromFields":["usuariosSESTSENATidUsuario_SCOND"],"relationToFields":["idUsuario_SCOND"],"isGenerated":false,"isUpdatedAt":false},{"name":"usuariosSESTSENATidUsuario_SCOND","kind":"scalar","isList":false,"isRequired":false,"isUnique":false,"isId":false,"isReadOnly":true,"hasDefaultValue":false,"type":"Int","isGenerated":false,"isUpdatedAt":false}],"primaryKey":null,"uniqueFields":[],"uniqueIndexes":[],"isGenerated":false}],"types":[]},"mappings":{"modelOperations":[{"model":"usuariosSESTSENAT","plural":"usuariosSESTSENATS","findUnique":"findUniqueusuariosSESTSENAT","findUniqueOrThrow":"findUniqueusuariosSESTSENATOrThrow","findFirst":"findFirstusuariosSESTSENAT","findFirstOrThrow":"findFirstusuariosSESTSENATOrThrow","findMany":"findManyusuariosSESTSENAT","create":"createOneusuariosSESTSENAT","createMany":"createManyusuariosSESTSENAT","delete":"deleteOneusuariosSESTSENAT","update":"updateOneusuariosSESTSENAT","deleteMany":"deleteManyusuariosSESTSENAT","updateMany":"updateManyusuariosSESTSENAT","upsert":"upsertOneusuariosSESTSENAT","aggregate":"aggregateusuariosSESTSENAT","groupBy":"groupByusuariosSESTSENAT"},{"model":"UsuariosSESTSENATDocumentoDTO","plural":"usuariosSESTSENATDocumentoDTOS","findUnique":"findUniqueUsuariosSESTSENATDocumentoDTO","findUniqueOrThrow":"findUniqueUsuariosSESTSENATDocumentoDTOOrThrow","findFirst":"findFirstUsuariosSESTSENATDocumentoDTO","findFirstOrThrow":"findFirstUsuariosSESTSENATDocumentoDTOOrThrow","findMany":"findManyUsuariosSESTSENATDocumentoDTO","create":"createOneUsuariosSESTSENATDocumentoDTO","createMany":"createManyUsuariosSESTSENATDocumentoDTO","delete":"deleteOneUsuariosSESTSENATDocumentoDTO","update":"updateOneUsuariosSESTSENATDocumentoDTO","deleteMany":"deleteManyUsuariosSESTSENATDocumentoDTO","updateMany":"updateManyUsuariosSESTSENATDocumentoDTO","upsert":"upsertOneUsuariosSESTSENATDocumentoDTO","aggregate":"aggregateUsuariosSESTSENATDocumentoDTO","groupBy":"groupByUsuariosSESTSENATDocumentoDTO"}],"otherOperations":{"read":[],"write":["executeRaw","queryRaw"]}}}';
     var dmmf = JSON.parse(dmmfString);
     exports2.Prisma.dmmf = JSON.parse(dmmfString);
     var config3 = {
@@ -8923,6 +8921,7 @@ var postUser = async (req, res, dataJson) => {
         data: {
           criarUsuario: jsonUsuario.criarUsuario,
           nome: jsonUsuario.nome,
+          idUsuario_SCOND: resPost2.data.id,
           sobrenome: Number(jsonUsuario.sobrenome),
           matricula: Number(jsonUsuario.sobrenome),
           dataNascimento: jsonUsuario.dataNascimento,
@@ -8940,8 +8939,7 @@ var postUser = async (req, res, dataJson) => {
         },
         include: { documentosDTO: true }
       });
-      const result = await prisma.$queryRawUnsafe(`UPDATE usuariossestsenat SET idUsuario_SCOND = '${resPost2.data.id}', WHERE (sobrenome = '${jsonUsuario.sobrenome}');`);
-      console.log("Post response:", resPost2.data);
+      console.log("Post response:", resPost2.data.id);
       res.status(200).json({ response: resPost2.data });
     }).catch(async (err) => {
       var _a2;
@@ -8997,12 +8995,6 @@ var putUser = async (req, res, dataJson, user) => {
   jsonUsuario.nome = dataJson.nome;
   jsonUsuario.sobrenome = Number(user.matricula);
   jsonUsuario.matricula = Number(user.matricula);
-  jsonUsuario.dataNascimento = dataJson.dataNascimento;
-  for (let doc of dataJson.documentosDTO) {
-    jsonUsuario.documentosDTO.push(doc);
-  }
-  jsonUsuario.documentosDTO;
-  jsonUsuario.email = dataJson.email;
   jsonUsuario.nomeTratamento = dataJson.nomeTratamento;
   jsonUsuario.telefone = dataJson.telefone;
   jsonUsuario.telefone2 = dataJson.telefone2;
@@ -9023,40 +9015,27 @@ var putUser = async (req, res, dataJson, user) => {
         "tenant": process.env.LOGIN_TENANT
       }
     }).then(async (resPut2) => {
-      await prisma.$transaction([
-        prisma.usuariosSESTSENAT.updateMany({
-          where: {
-            sobrenome: Number(newJsonUsuario.matricula)
-          },
-          data: {
-            nome: newJsonUsuario.nome,
-            sobrenome: Number(newJsonUsuario.matricula),
-            matricula: Number(newJsonUsuario.matricula),
-            dataNascimento: newJsonUsuario.dataNascimento,
-            sociedade: newJsonUsuario.sociedade,
-            email: newJsonUsuario.email,
-            nomeTratamento: newJsonUsuario.nomeTratamento,
-            telefone: newJsonUsuario.telefone,
-            telefone2: newJsonUsuario.telefone2,
-            profissao: "Aluno",
-            grupoPessoa: "Aluno",
-            fotoFacial: newJsonUsuario.fotoFacial,
-            situacao: "Atualizado"
-          }
-        }),
-        prisma.usuariosSESTSENATDocumentoDTO.updateMany({
-          where: {
-            usuariosSESTSENAT: {
-              sobrenome: Number(newJsonUsuario.matricula)
-            }
-          },
-          data: {
-            tipoDocumento: newJsonUsuario.tipoDocumento,
-            documento: newJsonUsuario.documento
-          }
-        })
-      ]);
-      console.log("Post response:", resPut2.data);
+      const updateUser = await prisma.usuariosSESTSENAT.update({
+        where: {
+          sobrenome: Number(newJsonUsuario.matricula)
+        },
+        data: {
+          // idUsuario_SCOND: user.idUsuario_SCOND,
+          nome: newJsonUsuario.nome,
+          sobrenome: Number(newJsonUsuario.matricula),
+          matricula: Number(newJsonUsuario.matricula),
+          // dataNascimento: newJsonUsuario.dataNascimento,
+          sociedade: newJsonUsuario.sociedade,
+          // email: newJsonUsuario.email,
+          nomeTratamento: newJsonUsuario.nomeTratamento,
+          telefone: newJsonUsuario.telefone,
+          telefone2: newJsonUsuario.telefone2,
+          profissao: "Aluno",
+          grupoPessoa: "Aluno",
+          fotoFacial: newJsonUsuario.fotoFacial,
+          situacao: "Atualizado"
+        }
+      });
       res.status(200).json({ response: resPut2.data });
     }).catch(async (err) => {
       var _a2;

@@ -80,10 +80,11 @@ export const postUser = async (req: Request, res: Response, dataJson: any) => {
         })
             .then(async (resPost: AxiosResponse) => {
 
-                await prisma.usuariosSESTSENAT.create({
+               await prisma.usuariosSESTSENAT.create({
                     data: {
                         criarUsuario: jsonUsuario.criarUsuario,
                         nome: jsonUsuario.nome,
+                        idUsuario_SCOND: resPost.data.id,
                         sobrenome: Number(jsonUsuario.sobrenome),
                         matricula: Number(jsonUsuario.sobrenome),
                         dataNascimento: jsonUsuario.dataNascimento,
@@ -103,9 +104,9 @@ export const postUser = async (req: Request, res: Response, dataJson: any) => {
                     include: { documentosDTO: true },
                 })
 
-                const result = await prisma.$queryRawUnsafe(`UPDATE usuariossestsenat SET idUsuario_SCOND = '${resPost.data.id}', WHERE (sobrenome = '${jsonUsuario.sobrenome}');`)
+                // await prisma.$queryRawUnsafe(`UPDATE  usuariossestsenat SET idUsuario_SCOND = '${resPost.data.id}' WHERE (sobrenome = ${jsonUsuario.sobrenome});`)
 
-                console.log('Post response:', resPost.data)
+                console.log('Post response:', resPost.data.id)
                 res.status(200).json({ response: resPost.data })
             })
             .catch(async (err: unknown) => {
@@ -164,12 +165,12 @@ export const putUser = async (req: Request, res: Response, dataJson: any, user: 
     jsonUsuario.nome = dataJson.nome
     jsonUsuario.sobrenome = Number(user.matricula)
     jsonUsuario.matricula = Number(user.matricula)
-    jsonUsuario.dataNascimento = dataJson.dataNascimento
-    for (let doc of dataJson.documentosDTO) {
-        jsonUsuario.documentosDTO.push(doc);
-    }
-    jsonUsuario.documentosDTO
-    jsonUsuario.email = dataJson.email
+    // jsonUsuario.dataNascimento = dataJson.dataNascimento
+    // for (let doc of dataJson.documentosDTO) {
+    //     jsonUsuario.documentosDTO.push(doc);
+    // }
+    // jsonUsuario.documentosDTO
+    // jsonUsuario.email = dataJson.email
     jsonUsuario.nomeTratamento = dataJson.nomeTratamento
     jsonUsuario.telefone = dataJson.telefone
     jsonUsuario.telefone2 = dataJson.telefone2
@@ -194,40 +195,18 @@ export const putUser = async (req: Request, res: Response, dataJson: any, user: 
         })
             .then(async (resPut: AxiosResponse) => {
 
-                // const updateUser = await prisma.usuariosSESTSENAT.update({
-                //     where: {
-                //         sobrenome: Number(newJsonUsuario.matricula),
-                //     },
-                //     data: {
-                //         // idUsuario_SCOND: user.idUsuario_SCOND,
-                //         nome: newJsonUsuario.nome,
-                //         sobrenome: Number(newJsonUsuario.matricula),
-                //         matricula: Number(newJsonUsuario.matricula),
-                //         dataNascimento: newJsonUsuario.dataNascimento,
-                //         sociedade: newJsonUsuario.sociedade,
-                //         email: newJsonUsuario.email,
-                //         nomeTratamento: newJsonUsuario.nomeTratamento,
-                //         telefone: newJsonUsuario.telefone,
-                //         telefone2: newJsonUsuario.telefone2,
-                //         profissao: 'Aluno',
-                //         grupoPessoa: 'Aluno',
-                //         fotoFacial: newJsonUsuario.fotoFacial,
-                //         situacao: 'Atualizado',
-                //     },
-                    
-                // })
-                await prisma.$transaction([
-                    prisma.usuariosSESTSENAT.updateMany({
-                      where: {
+                const updateUser = await prisma.usuariosSESTSENAT.update({
+                    where: {
                         sobrenome: Number(newJsonUsuario.matricula),
-                      },
-                      data: {
+                    },
+                    data: {
+                        // idUsuario_SCOND: user.idUsuario_SCOND,
                         nome: newJsonUsuario.nome,
                         sobrenome: Number(newJsonUsuario.matricula),
                         matricula: Number(newJsonUsuario.matricula),
-                        dataNascimento: newJsonUsuario.dataNascimento,
+                        // dataNascimento: newJsonUsuario.dataNascimento,
                         sociedade: newJsonUsuario.sociedade,
-                        email: newJsonUsuario.email,
+                        // email: newJsonUsuario.email,
                         nomeTratamento: newJsonUsuario.nomeTratamento,
                         telefone: newJsonUsuario.telefone,
                         telefone2: newJsonUsuario.telefone2,
@@ -235,22 +214,46 @@ export const putUser = async (req: Request, res: Response, dataJson: any, user: 
                         grupoPessoa: 'Aluno',
                         fotoFacial: newJsonUsuario.fotoFacial,
                         situacao: 'Atualizado',
-                      },
-                    }),
-                    prisma.usuariosSESTSENATDocumentoDTO.updateMany({
-                      where: {
-                        usuariosSESTSENAT: {
-                          sobrenome: Number(newJsonUsuario.matricula),
-                        },
-                      },
-                      data: {
-                        tipoDocumento: newJsonUsuario.tipoDocumento,
-                        documento: newJsonUsuario.documento,
-                      },
-                    }),
-                  ]);
-                  
-                console.log('Post response:', resPut.data)
+                    },
+
+                })
+
+
+                // await prisma.$transaction([
+                //     prisma.usuariosSESTSENAT.updateMany({
+                //         where: {
+                //             sobrenome: Number(newJsonUsuario.matricula),
+                //         },
+                //         data: {
+                //             nome: newJsonUsuario.nome,
+                //             sobrenome: Number(newJsonUsuario.matricula),
+                //             matricula: Number(newJsonUsuario.matricula),
+                //             dataNascimento: newJsonUsuario.dataNascimento,
+                //             sociedade: newJsonUsuario.sociedade,
+                //             email: newJsonUsuario.email,
+                //             nomeTratamento: newJsonUsuario.nomeTratamento,
+                //             telefone: newJsonUsuario.telefone,
+                //             telefone2: newJsonUsuario.telefone2,
+                //             profissao: 'Aluno',
+                //             grupoPessoa: 'Aluno',
+                //             fotoFacial: newJsonUsuario.fotoFacial,
+                //             situacao: 'Atualizado',
+                //         },
+                //     }),
+                //     prisma.usuariosSESTSENATDocumentoDTO.updateMany({
+                //         where: {
+                //             usuariosSESTSENAT: {
+                //                 sobrenome: Number(newJsonUsuario.matricula),
+                //             },
+                //         },
+                //         data: {
+                //             tipoDocumento: newJsonUsuario.tipoDocumento,
+                //             documento: newJsonUsuario.documento,
+                //         },
+                //     }),
+                // ]);
+
+                // console.log('Post response:', resPut.data)
                 res.status(200).json({ response: resPut.data })
             })
             .catch(async (err: unknown) => {
