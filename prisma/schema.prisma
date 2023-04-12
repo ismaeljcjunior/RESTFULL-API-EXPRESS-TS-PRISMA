@@ -8,32 +8,30 @@ datasource db {
 }
 
 model usuariosSESTSENAT {
-  idUsuario           Int                             @id @default(autoincrement())
-  idUsuario_SESTSENAT Int?
-  idUsuario_SCOND     Int?
-  criarUsuario        Boolean                         @default(false)
-  nome                String                          @db.VarChar(255)
-  sobrenome           Int                             @unique
-  matricula           Int?
-  dataNascimento      String                          @db.VarChar(255)
-  sociedade           String                          @db.VarChar(255)
-  email               String                          @db.VarChar(255)
-  nomeTratamento      String                          @db.VarChar(255)
-  telefone            String                          @db.VarChar(255)
-  telefone2           String                          @db.VarChar(255)
-  profissao           String                          @default("Aluno")
-  grupoPessoa         String                          @default("Aluno")
-  fotoFacial          String                          @db.MediumText
-  situacao            String?                         @default("AGUARDANDO") @db.VarChar(255)
-  created_at          DateTime                        @default(now())
-  updated_at          DateTime                        @updatedAt
-  documentosDTO       UsuariosSESTSENATDocumentoDTO[]
+  idUsuario_SCOND Int                             @id @unique
+  criarUsuario    Boolean                         @default(false)
+  nome            String                          @db.VarChar(255)
+  sobrenome       Int                             @unique
+  matricula       Int
+  dataNascimento  String                          @db.VarChar(255)
+  sociedade       String                          @db.VarChar(255)
+  email           String                          @db.VarChar(255)
+  nomeTratamento  String                          @db.VarChar(255)
+  telefone        String                          @db.VarChar(255)
+  telefone2       String                          @db.VarChar(255)
+  profissao       String                          @default("Aluno")
+  grupoPessoa     String                          @default("Aluno")
+  fotoFacial      String                          @db.MediumText
+  situacao        String?                         @default("AGUARDANDO") @db.VarChar(255)
+  created_at      DateTime                        @default(now())
+  updated_at      DateTime                        @updatedAt
+  documentosDTO   UsuariosSESTSENATDocumentoDTO[]
 }
 
 model UsuariosSESTSENATDocumentoDTO {
-  idDocumentoDTO             Int                @id @default(autoincrement())
-  tipoDocumento              String
-  documento                  String
-  usuariosSESTSENAT          usuariosSESTSENAT? @relation(fields: [usuariosSESTSENATIdUsuario], references: [idUsuario])
-  usuariosSESTSENATIdUsuario Int?
+  idDocumentoDTO                   Int                @id @default(autoincrement())
+  tipoDocumento                    String
+  documento                        String
+  usuariosSESTSENAT                usuariosSESTSENAT? @relation(fields: [usuariosSESTSENATidUsuario_SCOND], references: [idUsuario_SCOND])
+  usuariosSESTSENATidUsuario_SCOND Int?
 }
