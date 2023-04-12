@@ -9036,6 +9036,7 @@ var putUser = async (req, res, dataJson, user) => {
           situacao: "Atualizado"
         }
       });
+      console.log("Post response:", resPut2.data);
       res.status(200).json({ response: resPut2.data });
     }).catch(async (err) => {
       var _a2;
@@ -9064,10 +9065,60 @@ var getUsers = async (req, res) => {
         documentosDTO: true
       }
     });
+    if (getUser === void 0 || getUser === null) {
+      return res.status(404).json({ response: "Error" });
+    }
+    if (getUser.hasOwnProperty("idUsuario_SCOND")) {
+      getUser == null ? true : delete getUser.idUsuario_SCOND;
+    }
+    if (getUser.hasOwnProperty("criarUsuario")) {
+      getUser == null ? true : delete getUser.criarUsuario;
+    }
+    if (getUser.hasOwnProperty("situacao")) {
+      getUser == null ? true : delete getUser.situacao;
+    }
+    if (getUser.hasOwnProperty("created_at")) {
+      getUser == null ? true : delete getUser.created_at;
+    }
+    if (getUser.hasOwnProperty("updated_at")) {
+      getUser == null ? true : delete getUser.updated_at;
+    }
+    getUser.documentosDTO = getUser.documentosDTO.map((item) => {
+      if (item.hasOwnProperty("idDocumentoDTO")) {
+        item == null ? true : delete item.idDocumentoDTO;
+      }
+      if (item.hasOwnProperty("usuariosSESTSENATidUsuario_SCOND")) {
+        delete item.usuariosSESTSENATidUsuario_SCOND;
+      }
+      return item;
+    });
     res.status(200).json({ data: getUser });
   } catch (err) {
     console.error("Error during API call outside:", err);
     return res.status(404).json({ response: err });
+  }
+};
+var getUserSC = async (req, res) => {
+  const userId = Number(req.params.id);
+  const ApiService = await loggerApiService(req, res);
+  if (ApiService == void 0 || ApiService == null) {
+    return res.status(404).json({ response: "error" });
+  }
+  try {
+    const resultIdScondGet = await prisma.$queryRawUnsafe(`SELECT idUsuario_SCOND FROM usuariossestsenat where matricula = '${userId}'`);
+    const idUsuario_SCOND = resultIdScondGet[0].idUsuario_SCOND;
+    const resGet = await import_axios2.default.get(`${process.env.API_URL_GET}${idUsuario_SCOND}`, {
+      headers: {
+        "Content-Type": "application/json",
+        "Authorization": `bearer ${ApiService.newAccess_token}`,
+        "tenant": process.env.LOGIN_TENANT
+      }
+    });
+    console.log(resGet);
+    res.status(200).json({ data: resGet.data });
+  } catch (err) {
+    console.error(err);
+    return res.status(404).json({ response: err.data });
   }
 };
 
@@ -9085,6 +9136,7 @@ app.use(import_express.default.urlencoded({ extended: true }));
 });
 app.post("/usuarios", mainRoute);
 app.get("/usuarios/:id", getUsers);
+app.get("/usuarios2/:id", getUserSC);
 app.get("/", (req, res) => {
   res.send("Server is running 1.0");
   logger.info("Server is running 1.0");

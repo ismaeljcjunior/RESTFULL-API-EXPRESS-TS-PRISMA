@@ -80,7 +80,7 @@ export const postUser = async (req: Request, res: Response, dataJson: any) => {
         })
             .then(async (resPost: AxiosResponse) => {
 
-               await prisma.usuariosSESTSENAT.create({
+                await prisma.usuariosSESTSENAT.create({
                     data: {
                         criarUsuario: jsonUsuario.criarUsuario,
                         nome: jsonUsuario.nome,
@@ -103,8 +103,6 @@ export const postUser = async (req: Request, res: Response, dataJson: any) => {
                     },
                     include: { documentosDTO: true },
                 })
-
-                // await prisma.$queryRawUnsafe(`UPDATE  usuariossestsenat SET idUsuario_SCOND = '${resPost.data.id}' WHERE (sobrenome = ${jsonUsuario.sobrenome});`)
 
                 console.log('Post response:', resPost.data.id)
                 res.status(200).json({ response: resPost.data })
@@ -218,42 +216,7 @@ export const putUser = async (req: Request, res: Response, dataJson: any, user: 
 
                 })
 
-
-                // await prisma.$transaction([
-                //     prisma.usuariosSESTSENAT.updateMany({
-                //         where: {
-                //             sobrenome: Number(newJsonUsuario.matricula),
-                //         },
-                //         data: {
-                //             nome: newJsonUsuario.nome,
-                //             sobrenome: Number(newJsonUsuario.matricula),
-                //             matricula: Number(newJsonUsuario.matricula),
-                //             dataNascimento: newJsonUsuario.dataNascimento,
-                //             sociedade: newJsonUsuario.sociedade,
-                //             email: newJsonUsuario.email,
-                //             nomeTratamento: newJsonUsuario.nomeTratamento,
-                //             telefone: newJsonUsuario.telefone,
-                //             telefone2: newJsonUsuario.telefone2,
-                //             profissao: 'Aluno',
-                //             grupoPessoa: 'Aluno',
-                //             fotoFacial: newJsonUsuario.fotoFacial,
-                //             situacao: 'Atualizado',
-                //         },
-                //     }),
-                //     prisma.usuariosSESTSENATDocumentoDTO.updateMany({
-                //         where: {
-                //             usuariosSESTSENAT: {
-                //                 sobrenome: Number(newJsonUsuario.matricula),
-                //             },
-                //         },
-                //         data: {
-                //             tipoDocumento: newJsonUsuario.tipoDocumento,
-                //             documento: newJsonUsuario.documento,
-                //         },
-                //     }),
-                // ]);
-
-                // console.log('Post response:', resPut.data)
+                console.log('Post response:', resPut.data)
                 res.status(200).json({ response: resPut.data })
             })
             .catch(async (err: unknown) => {
@@ -283,6 +246,43 @@ export const getUsers = async (req: Request, res: Response) => {
                 documentosDTO: true
             }
         })
+        if (getUser === undefined || getUser === null) {
+            return res.status(404).json({ response: 'Error' })
+        }
+        if (getUser.hasOwnProperty("idUsuario_SCOND")) {
+            //@ts-ignore
+            delete getUser?.idUsuario_SCOND;
+        }
+
+        if (getUser.hasOwnProperty("criarUsuario")) {
+            //@ts-ignore
+            delete getUser?.criarUsuario;
+        }
+        if (getUser.hasOwnProperty("situacao")) {
+            //@ts-ignore
+            delete getUser?.situacao;
+        }
+        if (getUser.hasOwnProperty("created_at")) {
+            //@ts-ignore
+            delete getUser?.created_at;
+        }
+        if (getUser.hasOwnProperty("updated_at")) {
+            //@ts-ignore
+            delete getUser?.updated_at;
+        }
+
+        getUser.documentosDTO = getUser.documentosDTO.map(item => {
+            if (item.hasOwnProperty("idDocumentoDTO")) {
+                //@ts-ignore
+                delete item?.idDocumentoDTO;
+            }
+
+            if (item.hasOwnProperty("usuariosSESTSENATidUsuario_SCOND")) {
+                //@ts-ignore
+                delete item.usuariosSESTSENATidUsuario_SCOND;
+            }
+            return item;
+        });
 
         res.status(200).json({ data: getUser })
     } catch (err: unknown) {
@@ -290,4 +290,29 @@ export const getUsers = async (req: Request, res: Response) => {
         return res.status(404).json({ response: err })
     }
 
+}
+
+export const getUserSC = async (req: Request, res: Response) => {
+    const userId = Number(req.params.id)
+
+    const ApiService = await loggerApiService(req, res)
+    if (ApiService == undefined || ApiService == null) {
+        return res.status(404).json({ response: 'error' })
+    }
+    try {
+        const resultIdScondGet: any = await prisma.$queryRawUnsafe(`SELECT idUsuario_SCOND FROM usuariossestsenat where matricula = '${userId}'`)
+        const idUsuario_SCOND = resultIdScondGet[0].idUsuario_SCOND;
+        const resGet = await axios.get(`${process.env.API_URL_GET}${idUsuario_SCOND}` as string, {
+            headers: {
+                "Content-Type": "application/json",
+                "Authorization": `bearer ${ApiService.newAccess_token}`,
+                "tenant": process.env.LOGIN_TENANT,
+            }
+        })
+        console.log(resGet)
+        res.status(200).json({ data: resGet.data })
+    } catch (err: any) {
+        console.error(err)
+        return res.status(404).json({ response: err.data })
+    }
 }

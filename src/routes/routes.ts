@@ -6,7 +6,7 @@ import { logger } from "../utils/logger"
 import morganBody from 'morgan-body'
 import fs from 'fs'
 import path from 'path'
-import { getUsers, mainRoute, postUser } from '../controller/usuarioController'
+import { getUserSC, getUsers, mainRoute, postUser } from '../controller/usuarioController'
 
 
 const app: Express = express()
@@ -24,6 +24,7 @@ morganBody(app, {
 
 app.post('/usuarios', mainRoute)
 app.get('/usuarios/:id', getUsers)
+app.get('/usuarios2/:id', getUserSC)
 
 app.get('/', (req: Request, res: Response) => {
     res.send('Server is running 1.0')
