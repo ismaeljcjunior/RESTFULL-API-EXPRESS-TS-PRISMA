@@ -8816,6 +8816,27 @@ var loggerApiService = async (req, res) => {
   }
 };
 
+// src/logger/logger.ts
+var import_winston = __toESM(require("winston"));
+var import_winston_daily_rotate_file = __toESM(require("winston-daily-rotate-file"));
+var loggerConfig = {
+  level: "info",
+  format: import_winston.default.format.json(),
+  transports: [
+    new import_winston.default.transports.Console({
+      format: import_winston.default.format.simple()
+    }),
+    new import_winston_daily_rotate_file.default({
+      filename: "logs/application-%DATE%.log",
+      datePattern: "YYYY-MM-DD",
+      zippedArchive: true,
+      maxSize: "100m",
+      maxFiles: "5"
+    })
+  ]
+};
+var logger = import_winston.default.createLogger(loggerConfig);
+
 // src/controller/usuarioController.ts
 dotenv2.config();
 var prisma = new import_client.PrismaClient();
@@ -8833,13 +8854,16 @@ var mainRoute = async (req, res) => {
     });
     if (!user) {
       console.log("User not found");
+      logger.info("User not found");
       postUser(req, res, dataJson);
     } else {
       putUser(req, res, dataJson, user);
       console.log("User exists");
+      logger.info("User exists");
     }
   } catch (e) {
     console.log(e);
+    logger.info(e);
   }
 };
 var postUser = async (req, res, dataJson) => {
@@ -9076,6 +9100,13 @@ var getUserSC = async (req, res) => {
   }
   try {
     const resultIdScondGet = await prisma.$queryRawUnsafe(`SELECT idUsuario_SCOND FROM usuariossestsenat where matricula = '${userId}'`);
+    console.log("-------------------->", resultIdScondGet.length);
+    if (resultIdScondGet.length > 0) {
+    } else {
+      console.log("User not found", userId);
+      logger.error({ response: "User not found", id: userId });
+      return res.status(400).json({ response: "User not found", id: userId });
+    }
     const idUsuario_SCOND = resultIdScondGet[0].idUsuario_SCOND;
     const resGet = await import_axios2.default.get(`${process.env.API_URL_GET}${idUsuario_SCOND}`, {
       headers: {
@@ -9140,10 +9171,12 @@ var getUserSC = async (req, res) => {
       ...resGet.data,
       documentos: documentosSemTipoDocumento
     };
+    logger.info(resultado);
     console.log(resultado);
     res.status(200).json({ data: resultado });
   } catch (err) {
     console.error(err);
+    logger.info(err);
     return res.status(404).json({ response: err.data });
   }
 };

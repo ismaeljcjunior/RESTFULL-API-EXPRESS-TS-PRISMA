@@ -5,6 +5,7 @@ import { PrismaClient } from '@prisma/client'
 import axios, { AxiosResponse } from 'axios'
 import { IUsuarioUPDATEProps, IUsuarioCREATEProps } from './../interfaces/IuserInterface';
 import { loggerApiService } from '../utils/loggerAPISERVICE'
+import { logger } from '../logger/logger'
 
 const prisma = new PrismaClient()
 
@@ -22,13 +23,16 @@ export const mainRoute = async (req: Request, res: Response) => {
         })
         if (!user) {
             console.log('User not found')
+            logger.info('User not found')
             postUser(req, res, dataJson)
         } else {
             putUser(req, res, dataJson, user)
             console.log('User exists')
+            logger.info('User exists')
         }
     } catch (e) {
         console.log(e)
+        logger.info(e)
     }
 }
 export const postUser = async (req: Request, res: Response, dataJson: any) => {
@@ -251,42 +255,44 @@ export const getUsers = async (req: Request, res: Response) => {
         }
         if (getUser.hasOwnProperty("idUsuario_SCOND")) {
             //@ts-ignore
-            delete getUser?.idUsuario_SCOND;
+            delete getUser?.idUsuario_SCOND
         }
 
         if (getUser.hasOwnProperty("criarUsuario")) {
             //@ts-ignore
-            delete getUser?.criarUsuario;
+            delete getUser?.criarUsuario
         }
         if (getUser.hasOwnProperty("situacao")) {
             //@ts-ignore
-            delete getUser?.situacao;
+            delete getUser?.situacao
         }
         if (getUser.hasOwnProperty("created_at")) {
             //@ts-ignore
-            delete getUser?.created_at;
+            delete getUser?.created_at
         }
         if (getUser.hasOwnProperty("updated_at")) {
             //@ts-ignore
-            delete getUser?.updated_at;
+            delete getUser?.updated_at
         }
 
         getUser.documentosDTO = getUser.documentosDTO.map(item => {
             if (item.hasOwnProperty("idDocumentoDTO")) {
                 //@ts-ignore
-                delete item?.idDocumentoDTO;
+                delete item?.idDocumentoDTO
             }
 
             if (item.hasOwnProperty("usuariosSESTSENATidUsuario_SCOND")) {
                 //@ts-ignore
-                delete item.usuariosSESTSENATidUsuario_SCOND;
+                delete item.usuariosSESTSENATidUsuario_SCOND
             }
-            return item;
-        });
+            return item
+        })
+
 
         res.status(200).json({ data: getUser })
     } catch (err: unknown) {
         console.error('Error during API call outside:', err)
+
         return res.status(404).json({ response: err })
     }
 
@@ -298,9 +304,20 @@ export const getUserSC = async (req: Request, res: Response) => {
     if (ApiService == undefined || ApiService == null) {
         return res.status(404).json({ response: 'error' })
     }
+
     try {
         const resultIdScondGet: any = await prisma.$queryRawUnsafe(`SELECT idUsuario_SCOND FROM usuariossestsenat where matricula = '${userId}'`)
-        const idUsuario_SCOND = resultIdScondGet[0].idUsuario_SCOND;
+        console.log('-------------------->', resultIdScondGet.length);
+
+        if (resultIdScondGet.length > 0) {
+
+        } else {
+            console.log('User not found', userId)
+            logger.error({ response: 'User not found', id: userId })
+            return res.status(400).json({ response: 'User not found', id: userId })
+        }
+        const idUsuario_SCOND = resultIdScondGet[0].idUsuario_SCOND
+
         const resGet = await axios.get(`${process.env.API_URL_GET}${idUsuario_SCOND}` as string, {
             headers: {
                 "Content-Type": "application/json",
@@ -313,80 +330,79 @@ export const getUserSC = async (req: Request, res: Response) => {
         }
         if (resGet.data.hasOwnProperty("id")) {
             //@ts-ignore
-            delete resGet.data?.id;
+            delete resGet.data?.id
         }
         if (resGet.data.hasOwnProperty("enderecos")) {
             //@ts-ignore
-            delete resGet.data?.enderecos;
+            delete resGet.data?.enderecos
         }
         if (resGet.data.hasOwnProperty("pessoaUnidades")) {
             //@ts-ignore
-            delete resGet.data?.pessoaUnidades;
+            delete resGet.data?.pessoaUnidades
         }
         if (resGet.data.hasOwnProperty("grupos")) {
             //@ts-ignore
-            delete resGet.data?.grupos;
+            delete resGet.data?.grupos
         }
         if (resGet.data.hasOwnProperty("perfilAcessos")) {
             //@ts-ignore
-            delete resGet.data?.perfilAcessos;
+            delete resGet.data?.perfilAcessos
         }
         if (resGet.data.hasOwnProperty("primeiroAcesso")) {
             //@ts-ignore
-            delete resGet.data?.primeiroAcesso;
+            delete resGet.data?.primeiroAcesso
         }
         if (resGet.data.hasOwnProperty("documentosDTO")) {
             //@ts-ignore
-            delete resGet.data?.documentosDTO;
+            delete resGet.data?.documentosDTO
         }
         if (resGet.data.hasOwnProperty("criarUsuario")) {
             //@ts-ignore
-            delete resGet.data?.criarUsuario;
+            delete resGet.data?.criarUsuario
         }
         if (resGet.data.hasOwnProperty("habilitarCampoCriarUsuario")) {
             //@ts-ignore
-            delete resGet.data?.habilitarCampoCriarUsuario;
+            delete resGet.data?.habilitarCampoCriarUsuario
         }
         if (resGet.data.hasOwnProperty("nomeCompleto")) {
             //@ts-ignore
-            delete resGet.data?.nomeCompleto;
+            delete resGet.data?.nomeCompleto
         }
         if (resGet.data.hasOwnProperty("gruposAtivos")) {
             //@ts-ignore
-            delete resGet.data?.gruposAtivos;
+            delete resGet.data?.gruposAtivos
         }
         if (resGet.data.hasOwnProperty("pessoaUnidadesAtivas")) {
             //@ts-ignore
-            delete resGet.data?.pessoaUnidadesAtivas;
+            delete resGet.data?.pessoaUnidadesAtivas
         }
         if (resGet.data.hasOwnProperty("administrador")) {
             //@ts-ignore
-            delete resGet.data?.administrador;
+            delete resGet.data?.administrador
         }
         if (resGet.data.hasOwnProperty("primeiroNome")) {
             //@ts-ignore
-            delete resGet.data?.primeiroNome;
+            delete resGet.data?.primeiroNome
         }
         if (resGet.data.hasOwnProperty("hibernateLazyInitializer")) {
             //@ts-ignore
-            delete resGet.data?.hibernateLazyInitializer;
+            delete resGet.data?.hibernateLazyInitializer
         }
         const documentosSemTipoDocumento = resGet.data.documentos.map((documento: { [x: string]: any; tipoDocumento: any }) => {
-            const { tipoDocumento, ...restoDocumento } = documento;
-            return { ...restoDocumento };
-        });
+            const { tipoDocumento, ...restoDocumento } = documento
+            return { ...restoDocumento }
+        })
 
         const resultado = {
             ...resGet.data,
             documentos: documentosSemTipoDocumento,
-        };
-
-
-
+        }
+        logger.info(resultado)
         console.log(resultado)
         res.status(200).json({ data: resultado })
     } catch (err: any) {
         console.error(err)
+        logger.info(err)
         return res.status(404).json({ response: err.data })
     }
 }
