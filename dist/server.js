@@ -8703,7 +8703,12 @@ var require_client = __commonJS({
         "config": {
           "engineType": "library"
         },
-        "binaryTargets": [],
+        "binaryTargets": [
+          {
+            "fromEnvVar": null,
+            "value": "windows"
+          }
+        ],
         "previewFeatures": []
       },
       "relativeEnvPaths": {

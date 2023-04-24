@@ -70,7 +70,6 @@ export const postUser = async (req: Request, res: Response, dataJson: any) => {
     jsonUsuario.telefone = dataJson.telefone
     jsonUsuario.telefone2 = dataJson.telefone2
     jsonUsuario.fotoFacial = dataJson.fotoFacial
-
     console.log('---------->post', jsonUsuario)
 
     try {
@@ -83,7 +82,6 @@ export const postUser = async (req: Request, res: Response, dataJson: any) => {
             }
         })
             .then(async (resPost: AxiosResponse) => {
-
                 await prisma.usuariosSESTSENAT.create({
                     data: {
                         criarUsuario: jsonUsuario.criarUsuario,
@@ -107,7 +105,6 @@ export const postUser = async (req: Request, res: Response, dataJson: any) => {
                     },
                     include: { documentosDTO: true },
                 })
-
                 console.log('Post response:', resPost.data.id)
                 res.status(200).json({ response: resPost.data })
             })
