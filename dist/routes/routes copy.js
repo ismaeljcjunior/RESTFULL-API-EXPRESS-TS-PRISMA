@@ -8640,10 +8640,10 @@ var require_client = __commonJS({
       JsonNull: objectEnumValues2.classes.JsonNull,
       AnyNull: objectEnumValues2.classes.AnyNull
     };
-    var path = require("path");
-    var fs2 = require("fs");
+    var path2 = require("path");
+    var fs3 = require("fs");
     var hasDirname = typeof __dirname !== "undefined" && __dirname !== "/";
-    var regularDirname = hasDirname && fs2.existsSync(path.join(__dirname, "schema.prisma")) && __dirname;
+    var regularDirname = hasDirname && fs3.existsSync(path2.join(__dirname, "schema.prisma")) && __dirname;
     var foundDirname = !regularDirname && findSync2(process.cwd(), [
       "node_modules\\.prisma\\client",
       ".prisma\\client"
@@ -8728,16 +8728,16 @@ var require_client = __commonJS({
     config3.document = dmmf;
     var { warnEnvConflicts: warnEnvConflicts2 } = require_library();
     warnEnvConflicts2({
-      rootEnvPath: config3.relativeEnvPaths.rootEnvPath && path.resolve(dirname2, config3.relativeEnvPaths.rootEnvPath),
-      schemaEnvPath: config3.relativeEnvPaths.schemaEnvPath && path.resolve(dirname2, config3.relativeEnvPaths.schemaEnvPath)
+      rootEnvPath: config3.relativeEnvPaths.rootEnvPath && path2.resolve(dirname2, config3.relativeEnvPaths.rootEnvPath),
+      schemaEnvPath: config3.relativeEnvPaths.schemaEnvPath && path2.resolve(dirname2, config3.relativeEnvPaths.schemaEnvPath)
     });
     var PrismaClient2 = getPrismaClient2(config3);
     exports2.PrismaClient = PrismaClient2;
     Object.assign(exports2, Prisma);
-    path.join(__dirname, "query_engine-windows.dll.node");
-    path.join(process.cwd(), "node_modules\\.prisma\\client\\query_engine-windows.dll.node");
-    path.join(__dirname, "schema.prisma");
-    path.join(process.cwd(), "node_modules\\.prisma\\client\\schema.prisma");
+    path2.join(__dirname, "query_engine-windows.dll.node");
+    path2.join(process.cwd(), "node_modules\\.prisma\\client\\query_engine-windows.dll.node");
+    path2.join(__dirname, "schema.prisma");
+    path2.join(process.cwd(), "node_modules\\.prisma\\client\\schema.prisma");
   }
 });
 
@@ -8750,16 +8750,55 @@ var require_client2 = __commonJS({
   }
 });
 
-// src/controller/usuarioController.ts
-var usuarioController_exports = {};
-__export(usuarioController_exports, {
-  getUserSC: () => getUserSC,
-  getUsers: () => getUsers,
-  mainRoute: () => mainRoute,
-  postUser: () => postUser,
-  putUser: () => putUser
+// src/routes/routes copy.ts
+var routes_copy_exports = {};
+__export(routes_copy_exports, {
+  appRoutes: () => appRoutes
 });
-module.exports = __toCommonJS(usuarioController_exports);
+module.exports = __toCommonJS(routes_copy_exports);
+var import_express = __toESM(require("express"));
+var import_body_parser = __toESM(require("body-parser"));
+var import_cors = __toESM(require("cors"));
+
+// src/utils/logger.ts
+var import_winston = require("winston");
+var { combine, timestamp, json, errors } = import_winston.format;
+var logger = (0, import_winston.createLogger)({
+  format: combine(
+    errors({ stack: true }),
+    import_winston.format.splat(),
+    import_winston.format.json(),
+    import_winston.format.simple(),
+    import_winston.format.timestamp({ format: "HH:mm:ss - DD-MM-YYYY" }),
+    import_winston.format.printf((info) => {
+      if (info.stack) {
+        return `[${info.timestamp}] ${info.level} ${info.stack}`;
+      }
+      return `[${info.timestamp}] ${info.level} ${info.message}`;
+    }),
+    import_winston.format.printf((error) => {
+      if (error.stack) {
+        return `[${error.timestamp}] ${error.level} ${error.stack}`;
+      }
+      return `[${error.timestamp}] ${error.level} ${error.message}`;
+    })
+  ),
+  transports: new import_winston.transports.File({
+    filename: "logger/server.log",
+    format: import_winston.format.combine(
+      import_winston.format.timestamp({ format: "MMM-DD-YYYY HH:mm:ss" }),
+      import_winston.format.align(),
+      import_winston.format.printf((info) => `${info.level}: ${[info.timestamp]}: ${info.message}`)
+    )
+  })
+});
+
+// src/routes/routes copy.ts
+var import_morgan_body = __toESM(require("morgan-body"));
+var import_fs = __toESM(require("fs"));
+var import_path = __toESM(require("path"));
+
+// src/controller/usuarioController.ts
 var dotenv2 = __toESM(require("dotenv"));
 var import_client = __toESM(require_client2());
 var import_axios2 = __toESM(require("axios"));
@@ -8817,14 +8856,14 @@ var loggerApiService = async (req, res) => {
 };
 
 // src/logger/logger.ts
-var import_winston = __toESM(require("winston"));
+var import_winston2 = __toESM(require("winston"));
 var import_winston_daily_rotate_file = __toESM(require("winston-daily-rotate-file"));
 var loggerConfig = {
   level: "info",
-  format: import_winston.default.format.json(),
+  format: import_winston2.default.format.json(),
   transports: [
-    new import_winston.default.transports.Console({
-      format: import_winston.default.format.simple()
+    new import_winston2.default.transports.Console({
+      format: import_winston2.default.format.simple()
     }),
     new import_winston_daily_rotate_file.default({
       filename: "logs/application-%DATE%.log",
@@ -8835,7 +8874,7 @@ var loggerConfig = {
     })
   ]
 };
-var logger = import_winston.default.createLogger(loggerConfig);
+var logger2 = import_winston2.default.createLogger(loggerConfig);
 
 // src/controller/usuarioController.ts
 dotenv2.config();
@@ -8857,16 +8896,16 @@ var mainRoute = async (req, res) => {
     });
     if (!user) {
       console.log("User not found");
-      logger.info("User not found");
+      logger2.info("User not found");
       postUser(req, res, dataJson);
     } else {
       putUser(req, res, dataJson, user);
       console.log("User exists");
-      logger.info("User exists");
+      logger2.info("User exists");
     }
   } catch (e) {
     console.log(e);
-    logger.info(e);
+    logger2.info(e);
   }
 };
 var postUser = async (req, res, dataJson) => {
@@ -9112,7 +9151,7 @@ var getUserSC = async (req, res) => {
     if (resultIdScondGet.length > 0) {
     } else {
       console.log("User not found", userId);
-      logger.error({ response: "User not found", id: userId });
+      logger2.error({ response: "User not found", id: userId });
       return res.status(400).json({ response: "User not found", id: userId });
     }
     const idUsuario_SCOND = resultIdScondGet[0].idUsuario_SCOND;
@@ -9179,22 +9218,39 @@ var getUserSC = async (req, res) => {
       ...resGet.data,
       documentos: documentosSemTipoDocumento
     };
-    logger.info(resultado);
+    logger2.info(resultado);
     console.log(resultado);
     res.status(200).json({ data: resultado });
   } catch (err) {
     console.error(err);
-    logger.info(err);
+    logger2.info(err);
     return res.status(404).json({ response: err.data });
   }
 };
+
+// src/routes/routes copy.ts
+var app = (0, import_express.default)();
+var logFilePath = import_path.default.join("logger", "serverHTTP.log");
+var log = import_fs.default.createWriteStream(logFilePath, { flags: "a" });
+app.use(import_body_parser.default.json());
+app.use((0, import_cors.default)({ origin: "*" }));
+app.use(import_express.default.json());
+app.use(import_express.default.urlencoded({ extended: true }));
+(0, import_morgan_body.default)(app, {
+  noColors: true,
+  stream: log
+});
+app.post("/usuarios", mainRoute);
+app.get("/usuarios/:id", getUsers);
+app.get("/usuariosC/:id", getUserSC);
+app.get("/", (req, res) => {
+  res.send("Server is running 1.0");
+  logger.info("Server is running 1.0");
+});
+var appRoutes = app;
 // Annotate the CommonJS export names for ESM import in node:
 0 && (module.exports = {
-  getUserSC,
-  getUsers,
-  mainRoute,
-  postUser,
-  putUser
+  appRoutes
 });
 /*! Bundled license information:
 

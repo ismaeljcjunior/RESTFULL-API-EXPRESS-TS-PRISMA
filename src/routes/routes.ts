@@ -1,12 +1,11 @@
 import express, { Express, Request, Response } from 'express'
-// import { createUser, deleteUser, getUsers, updateUser } from '../controller/usuarioController'
 import bodyParser from 'body-parser'
 import cors from 'cors'
 import { logger } from "../utils/logger"
 import morganBody from 'morgan-body'
 import fs from 'fs'
 import path from 'path'
-import { getUserSC, getUsers, mainRoute, postUser } from '../controller/usuarioController'
+import { getUserSC, getUsers, mainRoute } from '../controller/usuarioController'
 
 
 const app: Express = express()
@@ -17,6 +16,7 @@ app.use(bodyParser.json())
 app.use(cors({ origin: '*' }))
 app.use(express.json())
 app.use(express.urlencoded({ extended: true }))
+
 morganBody(app, {
     noColors: true,
     stream: log

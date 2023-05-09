@@ -8794,7 +8794,7 @@ var logger = (0, import_winston.createLogger)({
 });
 
 // src/routes/routes.ts
-var import_morgan_body = __toESM(require("morgan-body"));
+var import_morgan = __toESM(require("morgan"));
 var import_fs = __toESM(require("fs"));
 var import_path = __toESM(require("path"));
 
@@ -8897,13 +8897,201 @@ var mainRoute = async (req, res) => {
     if (!user) {
       console.log("User not found");
       logger2.info("User not found");
+      postUser(req, res, dataJson);
     } else {
+      putUser(req, res, dataJson, user);
       console.log("User exists");
       logger2.info("User exists");
     }
   } catch (e) {
     console.log(e);
     logger2.info(e);
+  }
+};
+var postUser = async (req, res, dataJson) => {
+  const ApiService = await loggerApiService(req, res);
+  if (ApiService == void 0 || ApiService == null) {
+    return res.status(404).json({ response: "error" });
+  }
+  let jsonUsuario = {
+    criarUsuario: true,
+    nome: "",
+    sobrenome: 0,
+    matricula: 0,
+    dataNascimento: "",
+    sociedade: "PESSOA_FISICA",
+    documentosDTO: [],
+    email: "",
+    nomeTratamento: "",
+    telefone: "",
+    telefone2: "",
+    profissao: "Aluno",
+    grupoPessoa: "Aluno",
+    fotoFacial: ""
+  };
+  jsonUsuario.criarUsuario = dataJson.criarUsuario;
+  jsonUsuario.nome = dataJson.nome;
+  jsonUsuario.sobrenome = Number(dataJson.matricula);
+  jsonUsuario.matricula = Number(dataJson.matricula);
+  jsonUsuario.dataNascimento = dataJson.dataNascimento;
+  for (let doc of dataJson.documentosDTO) {
+    jsonUsuario.documentosDTO.push(doc);
+  }
+  if (dataJson.email == "") {
+    jsonUsuario.email = `newline${dataJson.matricula}@nl.com`;
+  } else {
+    jsonUsuario.email = `newline${dataJson.email}`;
+  }
+  jsonUsuario.nomeTratamento = dataJson.nomeTratamento;
+  jsonUsuario.telefone = dataJson.telefone;
+  jsonUsuario.telefone2 = dataJson.telefone2;
+  jsonUsuario.fotoFacial = dataJson.fotoFacial;
+  console.log("---------->post", jsonUsuario);
+  try {
+    console.log("--------------------------------", jsonUsuario);
+    const resPost = await import_axios2.default.post(process.env.API_URL_POST, jsonUsuario, {
+      headers: {
+        "Content-Type": "application/json",
+        "Authorization": `bearer ${ApiService.newAccess_token}`,
+        "tenant": process.env.LOGIN_TENANT,
+        "Accept": "application/json"
+      }
+    }).then(async (resPost2) => {
+      await prisma.usuariosSESTSENAT.create({
+        data: {
+          criarUsuario: jsonUsuario.criarUsuario,
+          nome: jsonUsuario.nome,
+          idUsuario_SCOND: resPost2.data.id,
+          sobrenome: Number(jsonUsuario.sobrenome),
+          matricula: Number(jsonUsuario.sobrenome),
+          dataNascimento: jsonUsuario.dataNascimento,
+          documentosDTO: {
+            createMany: {
+              data: jsonUsuario.documentosDTO
+            }
+          },
+          sociedade: jsonUsuario.sociedade,
+          email: jsonUsuario.email,
+          nomeTratamento: jsonUsuario.nomeTratamento,
+          telefone: jsonUsuario.telefone,
+          telefone2: jsonUsuario.telefone2,
+          fotoFacial: jsonUsuario.fotoFacial
+        },
+        include: { documentosDTO: true }
+      });
+      console.log("Post response:", resPost2.data.id);
+      res.status(200).json({ response: resPost2.data });
+    }).catch(async (err) => {
+      var _a2;
+      if (import_axios2.default.isAxiosError(err)) {
+        console.error("Error during API call inside:", err);
+        const errorResponse = ((_a2 = err.response) == null ? void 0 : _a2.data) || err.message;
+        return res.status(404).json({ response: errorResponse });
+      } else {
+        console.error("Unknown error inside:", err);
+        return res.status(404).json({ response: err });
+      }
+    });
+  } catch (err) {
+    console.error("Error during API call outside:", err);
+    return res.status(404).json({ response: err });
+  }
+};
+var putUser = async (req, res, dataJson, user) => {
+  const ApiService = await loggerApiService(req, res);
+  if (ApiService == void 0 || ApiService == null) {
+    return res.status(404).json({ response: "error" });
+  }
+  let jsonUsuario = {
+    id: 0,
+    nome: "",
+    sobrenome: 0,
+    matricula: 0,
+    dataNascimento: "",
+    sociedade: "PESSOA_FISICA",
+    // documentosDTO: [],
+    email: "",
+    nomeTratamento: "",
+    telefone: "",
+    telefone2: "",
+    profissao: "Aluno",
+    grupoPessoa: "Aluno",
+    fotoFacial: ""
+  };
+  jsonUsuario.nome = user.nome;
+  jsonUsuario.sobrenome = Number(user.matricula);
+  jsonUsuario.matricula = Number(user.matricula);
+  jsonUsuario.dataNascimento = user.dataNascimento;
+  jsonUsuario.documentosDTO = [];
+  for (let doc of user.documentosDTO) {
+    jsonUsuario.documentosDTO.push(doc);
+  }
+  jsonUsuario.email = user.email;
+  jsonUsuario.nomeTratamento = user.nomeTratamento;
+  jsonUsuario.telefone = user.telefone;
+  jsonUsuario.telefone2 = user.telefone2;
+  jsonUsuario.fotoFacial = user.fotoFacial;
+  jsonUsuario.id = user.idUsuario_SCOND;
+  jsonUsuario.nome = dataJson.nome;
+  jsonUsuario.sobrenome = Number(user.matricula);
+  jsonUsuario.matricula = Number(user.matricula);
+  jsonUsuario.nomeTratamento = dataJson.nomeTratamento;
+  jsonUsuario.telefone = dataJson.telefone;
+  jsonUsuario.telefone2 = dataJson.telefone2;
+  jsonUsuario.fotoFacial = dataJson.fotoFacial;
+  const newJsonUsuario = {
+    ...jsonUsuario,
+    documentosDTO: jsonUsuario.documentosDTO.map(({ idDocumentoDTO, usuariosSESTSENATIdUsuario, ...resto }) => resto)
+  };
+  console.log("user DB", user);
+  console.log("user PUT", dataJson);
+  console.log("--->", jsonUsuario);
+  console.log("---------->put", newJsonUsuario);
+  try {
+    const resPut = await import_axios2.default.put(`${process.env.API_URL_PUT}${user.idUsuario_SCOND}`, newJsonUsuario, {
+      headers: {
+        "Content-Type": "application/json",
+        "Authorization": `bearer ${ApiService.newAccess_token}`,
+        "tenant": process.env.LOGIN_TENANT
+      }
+    }).then(async (resPut2) => {
+      const updateUser = await prisma.usuariosSESTSENAT.update({
+        where: {
+          sobrenome: Number(newJsonUsuario.matricula)
+        },
+        data: {
+          // idUsuario_SCOND: user.idUsuario_SCOND,
+          nome: newJsonUsuario.nome,
+          sobrenome: Number(newJsonUsuario.matricula),
+          matricula: Number(newJsonUsuario.matricula),
+          // dataNascimento: newJsonUsuario.dataNascimento,
+          sociedade: newJsonUsuario.sociedade,
+          // email: newJsonUsuario.email,
+          nomeTratamento: newJsonUsuario.nomeTratamento,
+          telefone: newJsonUsuario.telefone,
+          telefone2: newJsonUsuario.telefone2,
+          profissao: "Aluno",
+          grupoPessoa: "Aluno",
+          fotoFacial: newJsonUsuario.fotoFacial,
+          situacao: "Atualizado"
+        }
+      });
+      console.log("Post response:", resPut2.data);
+      res.status(200).json({ response: resPut2.data });
+    }).catch(async (err) => {
+      var _a2;
+      if (import_axios2.default.isAxiosError(err)) {
+        console.error("Error during API call inside:", err);
+        const errorResponse = ((_a2 = err.response) == null ? void 0 : _a2.data) || err.message;
+        return res.status(404).json({ response: errorResponse });
+      } else {
+        console.error("Unknown error inside:", err);
+        return res.status(404).json({ response: err });
+      }
+    });
+  } catch (err) {
+    console.error("Error during API call outside:", err);
+    return res.status(404).json({ response: err });
   }
 };
 var getUsers = async (req, res) => {
@@ -9041,17 +9229,25 @@ var getUserSC = async (req, res) => {
 };
 
 // src/routes/routes.ts
+var rotatingFileStream = require("rotating-file-stream").createStream;
 var app = (0, import_express.default)();
-var logFilePath = import_path.default.join("logger", "serverHTTP.log");
-var log = import_fs.default.createWriteStream(logFilePath, { flags: "a" });
+var logDirectory = import_path.default.join(__dirname, "../logger");
+var logFileName = "serverHTTP.log";
+import_fs.default.existsSync(logDirectory) || import_fs.default.mkdirSync(logDirectory);
+var logStream = rotatingFileStream(logFileName, {
+  interval: "1d",
+  // Rotação diária
+  path: logDirectory,
+  maxFiles: 5,
+  // Número máximo de arquivos a serem mantidos
+  compress: "gzip"
+  // Compressão dos arquivos antigos
+});
+app.use((0, import_morgan.default)("combined", { stream: logStream }));
 app.use(import_body_parser.default.json());
 app.use((0, import_cors.default)({ origin: "*" }));
 app.use(import_express.default.json());
 app.use(import_express.default.urlencoded({ extended: true }));
-(0, import_morgan_body.default)(app, {
-  noColors: true,
-  stream: log
-});
 app.post("/usuarios", mainRoute);
 app.get("/usuarios/:id", getUsers);
 app.get("/usuariosC/:id", getUserSC);
