@@ -12,6 +12,9 @@ const prisma = new PrismaClient()
 export const mainRoute = async (req: Request, res: Response) => {
     const dataJson = await req.body
     const userId: number = Number(dataJson.matricula)
+    if (dataJson.criarUsuario == false) {
+        return res.status(200).json({ response: dataJson })
+    }
     try {
         const user = await prisma.usuariosSESTSENAT.findFirst({
             where: {
@@ -65,14 +68,18 @@ export const postUser = async (req: Request, res: Response, dataJson: any) => {
     for (let doc of dataJson.documentosDTO) {
         jsonUsuario.documentosDTO.push(doc);
     }
-    jsonUsuario.email = dataJson.email
+    if (dataJson.email == '') {
+        jsonUsuario.email = `newline${dataJson.matricula}@nl.com`
+    } else {
+        jsonUsuario.email = `newline${dataJson.email}`
+    }
     jsonUsuario.nomeTratamento = dataJson.nomeTratamento
     jsonUsuario.telefone = dataJson.telefone
     jsonUsuario.telefone2 = dataJson.telefone2
     jsonUsuario.fotoFacial = dataJson.fotoFacial
     console.log('---------->post', jsonUsuario)
-
     try {
+        console.log('--------------------------------', jsonUsuario)
         const resPost = await axios.post(process.env.API_URL_POST as string, jsonUsuario, {
             headers: {
                 "Content-Type": "application/json",
@@ -101,7 +108,6 @@ export const postUser = async (req: Request, res: Response, dataJson: any) => {
                         telefone: jsonUsuario.telefone,
                         telefone2: jsonUsuario.telefone2,
                         fotoFacial: jsonUsuario.fotoFacial,
-
                     },
                     include: { documentosDTO: true },
                 })
@@ -118,6 +124,8 @@ export const postUser = async (req: Request, res: Response, dataJson: any) => {
                     return res.status(404).json({ response: err })
                 }
             })
+
+
     } catch (err: unknown) {
         console.error('Error during API call outside:', err)
         return res.status(404).json({ response: err })

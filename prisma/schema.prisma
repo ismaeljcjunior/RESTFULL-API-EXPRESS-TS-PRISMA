@@ -15,7 +15,7 @@ model usuariosSESTSENAT {
   matricula       Int
   dataNascimento  String                          @db.VarChar(255)
   sociedade       String                          @db.VarChar(255)
-  email           String                          @db.VarChar(255)
+  email           String?                          @db.VarChar(255)
   nomeTratamento  String                          @db.VarChar(255)
   telefone        String                          @db.VarChar(255)
   telefone2       String                          @db.VarChar(255)

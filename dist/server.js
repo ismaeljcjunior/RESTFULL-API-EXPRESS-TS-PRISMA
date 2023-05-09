@@ -8686,7 +8686,7 @@ var require_client = __commonJS({
       usuariosSESTSENAT: "usuariosSESTSENAT",
       UsuariosSESTSENATDocumentoDTO: "UsuariosSESTSENATDocumentoDTO"
     });
-    var dmmfString = '{"datamodel":{"enums":[],"models":[{"name":"usuariosSESTSENAT","dbName":null,"fields":[{"name":"idUsuario_SCOND","kind":"scalar","isList":false,"isRequired":true,"isUnique":false,"isId":true,"isReadOnly":false,"hasDefaultValue":false,"type":"Int","isGenerated":false,"isUpdatedAt":false},{"name":"criarUsuario","kind":"scalar","isList":false,"isRequired":true,"isUnique":false,"isId":false,"isReadOnly":false,"hasDefaultValue":true,"type":"Boolean","default":false,"isGenerated":false,"isUpdatedAt":false},{"name":"nome","kind":"scalar","isList":false,"isRequired":true,"isUnique":false,"isId":false,"isReadOnly":false,"hasDefaultValue":false,"type":"String","isGenerated":false,"isUpdatedAt":false},{"name":"sobrenome","kind":"scalar","isList":false,"isRequired":true,"isUnique":true,"isId":false,"isReadOnly":false,"hasDefaultValue":false,"type":"Int","isGenerated":false,"isUpdatedAt":false},{"name":"matricula","kind":"scalar","isList":false,"isRequired":true,"isUnique":false,"isId":false,"isReadOnly":false,"hasDefaultValue":false,"type":"Int","isGenerated":false,"isUpdatedAt":false},{"name":"dataNascimento","kind":"scalar","isList":false,"isRequired":true,"isUnique":false,"isId":false,"isReadOnly":false,"hasDefaultValue":false,"type":"String","isGenerated":false,"isUpdatedAt":false},{"name":"sociedade","kind":"scalar","isList":false,"isRequired":true,"isUnique":false,"isId":false,"isReadOnly":false,"hasDefaultValue":false,"type":"String","isGenerated":false,"isUpdatedAt":false},{"name":"email","kind":"scalar","isList":false,"isRequired":true,"isUnique":false,"isId":false,"isReadOnly":false,"hasDefaultValue":false,"type":"String","isGenerated":false,"isUpdatedAt":false},{"name":"nomeTratamento","kind":"scalar","isList":false,"isRequired":true,"isUnique":false,"isId":false,"isReadOnly":false,"hasDefaultValue":false,"type":"String","isGenerated":false,"isUpdatedAt":false},{"name":"telefone","kind":"scalar","isList":false,"isRequired":true,"isUnique":false,"isId":false,"isReadOnly":false,"hasDefaultValue":false,"type":"String","isGenerated":false,"isUpdatedAt":false},{"name":"telefone2","kind":"scalar","isList":false,"isRequired":true,"isUnique":false,"isId":false,"isReadOnly":false,"hasDefaultValue":false,"type":"String","isGenerated":false,"isUpdatedAt":false},{"name":"profissao","kind":"scalar","isList":false,"isRequired":true,"isUnique":false,"isId":false,"isReadOnly":false,"hasDefaultValue":true,"type":"String","default":"Aluno","isGenerated":false,"isUpdatedAt":false},{"name":"grupoPessoa","kind":"scalar","isList":false,"isRequired":true,"isUnique":false,"isId":false,"isReadOnly":false,"hasDefaultValue":true,"type":"String","default":"Aluno","isGenerated":false,"isUpdatedAt":false},{"name":"fotoFacial","kind":"scalar","isList":false,"isRequired":true,"isUnique":false,"isId":false,"isReadOnly":false,"hasDefaultValue":false,"type":"String","isGenerated":false,"isUpdatedAt":false},{"name":"situacao","kind":"scalar","isList":false,"isRequired":false,"isUnique":false,"isId":false,"isReadOnly":false,"hasDefaultValue":true,"type":"String","default":"AGUARDANDO","isGenerated":false,"isUpdatedAt":false},{"name":"created_at","kind":"scalar","isList":false,"isRequired":true,"isUnique":false,"isId":false,"isReadOnly":false,"hasDefaultValue":true,"type":"DateTime","default":{"name":"now","args":[]},"isGenerated":false,"isUpdatedAt":false},{"name":"updated_at","kind":"scalar","isList":false,"isRequired":true,"isUnique":false,"isId":false,"isReadOnly":false,"hasDefaultValue":false,"type":"DateTime","isGenerated":false,"isUpdatedAt":true},{"name":"documentosDTO","kind":"object","isList":true,"isRequired":true,"isUnique":false,"isId":false,"isReadOnly":false,"hasDefaultValue":false,"type":"UsuariosSESTSENATDocumentoDTO","relationName":"UsuariosSESTSENATDocumentoDTOTousuariosSESTSENAT","relationFromFields":[],"relationToFields":[],"isGenerated":false,"isUpdatedAt":false}],"primaryKey":null,"uniqueFields":[],"uniqueIndexes":[],"isGenerated":false},{"name":"UsuariosSESTSENATDocumentoDTO","dbName":null,"fields":[{"name":"idDocumentoDTO","kind":"scalar","isList":false,"isRequired":true,"isUnique":false,"isId":true,"isReadOnly":false,"hasDefaultValue":true,"type":"Int","default":{"name":"autoincrement","args":[]},"isGenerated":false,"isUpdatedAt":false},{"name":"tipoDocumento","kind":"scalar","isList":false,"isRequired":true,"isUnique":false,"isId":false,"isReadOnly":false,"hasDefaultValue":false,"type":"String","isGenerated":false,"isUpdatedAt":false},{"name":"documento","kind":"scalar","isList":false,"isRequired":true,"isUnique":false,"isId":false,"isReadOnly":false,"hasDefaultValue":false,"type":"String","isGenerated":false,"isUpdatedAt":false},{"name":"usuariosSESTSENAT","kind":"object","isList":false,"isRequired":false,"isUnique":false,"isId":false,"isReadOnly":false,"hasDefaultValue":false,"type":"usuariosSESTSENAT","relationName":"UsuariosSESTSENATDocumentoDTOTousuariosSESTSENAT","relationFromFields":["usuariosSESTSENATidUsuario_SCOND"],"relationToFields":["idUsuario_SCOND"],"isGenerated":false,"isUpdatedAt":false},{"name":"usuariosSESTSENATidUsuario_SCOND","kind":"scalar","isList":false,"isRequired":false,"isUnique":false,"isId":false,"isReadOnly":true,"hasDefaultValue":false,"type":"Int","isGenerated":false,"isUpdatedAt":false}],"primaryKey":null,"uniqueFields":[],"uniqueIndexes":[],"isGenerated":false}],"types":[]},"mappings":{"modelOperations":[{"model":"usuariosSESTSENAT","plural":"usuariosSESTSENATS","findUnique":"findUniqueusuariosSESTSENAT","findUniqueOrThrow":"findUniqueusuariosSESTSENATOrThrow","findFirst":"findFirstusuariosSESTSENAT","findFirstOrThrow":"findFirstusuariosSESTSENATOrThrow","findMany":"findManyusuariosSESTSENAT","create":"createOneusuariosSESTSENAT","createMany":"createManyusuariosSESTSENAT","delete":"deleteOneusuariosSESTSENAT","update":"updateOneusuariosSESTSENAT","deleteMany":"deleteManyusuariosSESTSENAT","updateMany":"updateManyusuariosSESTSENAT","upsert":"upsertOneusuariosSESTSENAT","aggregate":"aggregateusuariosSESTSENAT","groupBy":"groupByusuariosSESTSENAT"},{"model":"UsuariosSESTSENATDocumentoDTO","plural":"usuariosSESTSENATDocumentoDTOS","findUnique":"findUniqueUsuariosSESTSENATDocumentoDTO","findUniqueOrThrow":"findUniqueUsuariosSESTSENATDocumentoDTOOrThrow","findFirst":"findFirstUsuariosSESTSENATDocumentoDTO","findFirstOrThrow":"findFirstUsuariosSESTSENATDocumentoDTOOrThrow","findMany":"findManyUsuariosSESTSENATDocumentoDTO","create":"createOneUsuariosSESTSENATDocumentoDTO","createMany":"createManyUsuariosSESTSENATDocumentoDTO","delete":"deleteOneUsuariosSESTSENATDocumentoDTO","update":"updateOneUsuariosSESTSENATDocumentoDTO","deleteMany":"deleteManyUsuariosSESTSENATDocumentoDTO","updateMany":"updateManyUsuariosSESTSENATDocumentoDTO","upsert":"upsertOneUsuariosSESTSENATDocumentoDTO","aggregate":"aggregateUsuariosSESTSENATDocumentoDTO","groupBy":"groupByUsuariosSESTSENATDocumentoDTO"}],"otherOperations":{"read":[],"write":["executeRaw","queryRaw"]}}}';
+    var dmmfString = '{"datamodel":{"enums":[],"models":[{"name":"usuariosSESTSENAT","dbName":null,"fields":[{"name":"idUsuario_SCOND","kind":"scalar","isList":false,"isRequired":true,"isUnique":false,"isId":true,"isReadOnly":false,"hasDefaultValue":false,"type":"Int","isGenerated":false,"isUpdatedAt":false},{"name":"criarUsuario","kind":"scalar","isList":false,"isRequired":true,"isUnique":false,"isId":false,"isReadOnly":false,"hasDefaultValue":true,"type":"Boolean","default":false,"isGenerated":false,"isUpdatedAt":false},{"name":"nome","kind":"scalar","isList":false,"isRequired":true,"isUnique":false,"isId":false,"isReadOnly":false,"hasDefaultValue":false,"type":"String","isGenerated":false,"isUpdatedAt":false},{"name":"sobrenome","kind":"scalar","isList":false,"isRequired":true,"isUnique":true,"isId":false,"isReadOnly":false,"hasDefaultValue":false,"type":"Int","isGenerated":false,"isUpdatedAt":false},{"name":"matricula","kind":"scalar","isList":false,"isRequired":true,"isUnique":false,"isId":false,"isReadOnly":false,"hasDefaultValue":false,"type":"Int","isGenerated":false,"isUpdatedAt":false},{"name":"dataNascimento","kind":"scalar","isList":false,"isRequired":true,"isUnique":false,"isId":false,"isReadOnly":false,"hasDefaultValue":false,"type":"String","isGenerated":false,"isUpdatedAt":false},{"name":"sociedade","kind":"scalar","isList":false,"isRequired":true,"isUnique":false,"isId":false,"isReadOnly":false,"hasDefaultValue":false,"type":"String","isGenerated":false,"isUpdatedAt":false},{"name":"email","kind":"scalar","isList":false,"isRequired":false,"isUnique":false,"isId":false,"isReadOnly":false,"hasDefaultValue":false,"type":"String","isGenerated":false,"isUpdatedAt":false},{"name":"nomeTratamento","kind":"scalar","isList":false,"isRequired":true,"isUnique":false,"isId":false,"isReadOnly":false,"hasDefaultValue":false,"type":"String","isGenerated":false,"isUpdatedAt":false},{"name":"telefone","kind":"scalar","isList":false,"isRequired":true,"isUnique":false,"isId":false,"isReadOnly":false,"hasDefaultValue":false,"type":"String","isGenerated":false,"isUpdatedAt":false},{"name":"telefone2","kind":"scalar","isList":false,"isRequired":true,"isUnique":false,"isId":false,"isReadOnly":false,"hasDefaultValue":false,"type":"String","isGenerated":false,"isUpdatedAt":false},{"name":"profissao","kind":"scalar","isList":false,"isRequired":true,"isUnique":false,"isId":false,"isReadOnly":false,"hasDefaultValue":true,"type":"String","default":"Aluno","isGenerated":false,"isUpdatedAt":false},{"name":"grupoPessoa","kind":"scalar","isList":false,"isRequired":true,"isUnique":false,"isId":false,"isReadOnly":false,"hasDefaultValue":true,"type":"String","default":"Aluno","isGenerated":false,"isUpdatedAt":false},{"name":"fotoFacial","kind":"scalar","isList":false,"isRequired":true,"isUnique":false,"isId":false,"isReadOnly":false,"hasDefaultValue":false,"type":"String","isGenerated":false,"isUpdatedAt":false},{"name":"situacao","kind":"scalar","isList":false,"isRequired":false,"isUnique":false,"isId":false,"isReadOnly":false,"hasDefaultValue":true,"type":"String","default":"AGUARDANDO","isGenerated":false,"isUpdatedAt":false},{"name":"created_at","kind":"scalar","isList":false,"isRequired":true,"isUnique":false,"isId":false,"isReadOnly":false,"hasDefaultValue":true,"type":"DateTime","default":{"name":"now","args":[]},"isGenerated":false,"isUpdatedAt":false},{"name":"updated_at","kind":"scalar","isList":false,"isRequired":true,"isUnique":false,"isId":false,"isReadOnly":false,"hasDefaultValue":false,"type":"DateTime","isGenerated":false,"isUpdatedAt":true},{"name":"documentosDTO","kind":"object","isList":true,"isRequired":true,"isUnique":false,"isId":false,"isReadOnly":false,"hasDefaultValue":false,"type":"UsuariosSESTSENATDocumentoDTO","relationName":"UsuariosSESTSENATDocumentoDTOTousuariosSESTSENAT","relationFromFields":[],"relationToFields":[],"isGenerated":false,"isUpdatedAt":false}],"primaryKey":null,"uniqueFields":[],"uniqueIndexes":[],"isGenerated":false},{"name":"UsuariosSESTSENATDocumentoDTO","dbName":null,"fields":[{"name":"idDocumentoDTO","kind":"scalar","isList":false,"isRequired":true,"isUnique":false,"isId":true,"isReadOnly":false,"hasDefaultValue":true,"type":"Int","default":{"name":"autoincrement","args":[]},"isGenerated":false,"isUpdatedAt":false},{"name":"tipoDocumento","kind":"scalar","isList":false,"isRequired":true,"isUnique":false,"isId":false,"isReadOnly":false,"hasDefaultValue":false,"type":"String","isGenerated":false,"isUpdatedAt":false},{"name":"documento","kind":"scalar","isList":false,"isRequired":true,"isUnique":false,"isId":false,"isReadOnly":false,"hasDefaultValue":false,"type":"String","isGenerated":false,"isUpdatedAt":false},{"name":"usuariosSESTSENAT","kind":"object","isList":false,"isRequired":false,"isUnique":false,"isId":false,"isReadOnly":false,"hasDefaultValue":false,"type":"usuariosSESTSENAT","relationName":"UsuariosSESTSENATDocumentoDTOTousuariosSESTSENAT","relationFromFields":["usuariosSESTSENATidUsuario_SCOND"],"relationToFields":["idUsuario_SCOND"],"isGenerated":false,"isUpdatedAt":false},{"name":"usuariosSESTSENATidUsuario_SCOND","kind":"scalar","isList":false,"isRequired":false,"isUnique":false,"isId":false,"isReadOnly":true,"hasDefaultValue":false,"type":"Int","isGenerated":false,"isUpdatedAt":false}],"primaryKey":null,"uniqueFields":[],"uniqueIndexes":[],"isGenerated":false}],"types":[]},"mappings":{"modelOperations":[{"model":"usuariosSESTSENAT","plural":"usuariosSESTSENATS","findUnique":"findUniqueusuariosSESTSENAT","findUniqueOrThrow":"findUniqueusuariosSESTSENATOrThrow","findFirst":"findFirstusuariosSESTSENAT","findFirstOrThrow":"findFirstusuariosSESTSENATOrThrow","findMany":"findManyusuariosSESTSENAT","create":"createOneusuariosSESTSENAT","createMany":"createManyusuariosSESTSENAT","delete":"deleteOneusuariosSESTSENAT","update":"updateOneusuariosSESTSENAT","deleteMany":"deleteManyusuariosSESTSENAT","updateMany":"updateManyusuariosSESTSENAT","upsert":"upsertOneusuariosSESTSENAT","aggregate":"aggregateusuariosSESTSENAT","groupBy":"groupByusuariosSESTSENAT"},{"model":"UsuariosSESTSENATDocumentoDTO","plural":"usuariosSESTSENATDocumentoDTOS","findUnique":"findUniqueUsuariosSESTSENATDocumentoDTO","findUniqueOrThrow":"findUniqueUsuariosSESTSENATDocumentoDTOOrThrow","findFirst":"findFirstUsuariosSESTSENATDocumentoDTO","findFirstOrThrow":"findFirstUsuariosSESTSENATDocumentoDTOOrThrow","findMany":"findManyUsuariosSESTSENATDocumentoDTO","create":"createOneUsuariosSESTSENATDocumentoDTO","createMany":"createManyUsuariosSESTSENATDocumentoDTO","delete":"deleteOneUsuariosSESTSENATDocumentoDTO","update":"updateOneUsuariosSESTSENATDocumentoDTO","deleteMany":"deleteManyUsuariosSESTSENATDocumentoDTO","updateMany":"updateManyUsuariosSESTSENATDocumentoDTO","upsert":"upsertOneUsuariosSESTSENATDocumentoDTO","aggregate":"aggregateUsuariosSESTSENATDocumentoDTO","groupBy":"groupByUsuariosSESTSENATDocumentoDTO"}],"otherOperations":{"read":[],"write":["executeRaw","queryRaw"]}}}';
     var dmmf = JSON.parse(dmmfString);
     exports2.Prisma.dmmf = JSON.parse(dmmfString);
     var config3 = {
@@ -8703,12 +8703,7 @@ var require_client = __commonJS({
         "config": {
           "engineType": "library"
         },
-        "binaryTargets": [
-          {
-            "fromEnvVar": null,
-            "value": "windows"
-          }
-        ],
+        "binaryTargets": [],
         "previewFeatures": []
       },
       "relativeEnvPaths": {
@@ -8879,6 +8874,9 @@ var prisma = new import_client.PrismaClient();
 var mainRoute = async (req, res) => {
   const dataJson = await req.body;
   const userId = Number(dataJson.matricula);
+  if (dataJson.criarUsuario == false) {
+    return res.status(200).json({ response: dataJson });
+  }
   try {
     const user = await prisma.usuariosSESTSENAT.findFirst({
       where: {
@@ -8891,196 +8889,13 @@ var mainRoute = async (req, res) => {
     if (!user) {
       console.log("User not found");
       logger2.info("User not found");
-      postUser(req, res, dataJson);
     } else {
-      putUser(req, res, dataJson, user);
       console.log("User exists");
       logger2.info("User exists");
     }
   } catch (e) {
     console.log(e);
     logger2.info(e);
-  }
-};
-var postUser = async (req, res, dataJson) => {
-  const ApiService = await loggerApiService(req, res);
-  if (ApiService == void 0 || ApiService == null) {
-    return res.status(404).json({ response: "error" });
-  }
-  let jsonUsuario = {
-    criarUsuario: true,
-    nome: "",
-    sobrenome: 0,
-    matricula: 0,
-    dataNascimento: "",
-    sociedade: "PESSOA_FISICA",
-    documentosDTO: [],
-    email: "",
-    nomeTratamento: "",
-    telefone: "",
-    telefone2: "",
-    profissao: "Aluno",
-    grupoPessoa: "Aluno",
-    fotoFacial: ""
-  };
-  jsonUsuario.criarUsuario = dataJson.criarUsuario;
-  jsonUsuario.nome = dataJson.nome;
-  jsonUsuario.sobrenome = Number(dataJson.matricula);
-  jsonUsuario.matricula = Number(dataJson.matricula);
-  jsonUsuario.dataNascimento = dataJson.dataNascimento;
-  for (let doc of dataJson.documentosDTO) {
-    jsonUsuario.documentosDTO.push(doc);
-  }
-  jsonUsuario.email = dataJson.email;
-  jsonUsuario.nomeTratamento = dataJson.nomeTratamento;
-  jsonUsuario.telefone = dataJson.telefone;
-  jsonUsuario.telefone2 = dataJson.telefone2;
-  jsonUsuario.fotoFacial = dataJson.fotoFacial;
-  console.log("---------->post", jsonUsuario);
-  try {
-    const resPost = await import_axios2.default.post(process.env.API_URL_POST, jsonUsuario, {
-      headers: {
-        "Content-Type": "application/json",
-        "Authorization": `bearer ${ApiService.newAccess_token}`,
-        "tenant": process.env.LOGIN_TENANT,
-        "Accept": "application/json"
-      }
-    }).then(async (resPost2) => {
-      await prisma.usuariosSESTSENAT.create({
-        data: {
-          criarUsuario: jsonUsuario.criarUsuario,
-          nome: jsonUsuario.nome,
-          idUsuario_SCOND: resPost2.data.id,
-          sobrenome: Number(jsonUsuario.sobrenome),
-          matricula: Number(jsonUsuario.sobrenome),
-          dataNascimento: jsonUsuario.dataNascimento,
-          documentosDTO: {
-            createMany: {
-              data: jsonUsuario.documentosDTO
-            }
-          },
-          sociedade: jsonUsuario.sociedade,
-          email: jsonUsuario.email,
-          nomeTratamento: jsonUsuario.nomeTratamento,
-          telefone: jsonUsuario.telefone,
-          telefone2: jsonUsuario.telefone2,
-          fotoFacial: jsonUsuario.fotoFacial
-        },
-        include: { documentosDTO: true }
-      });
-      console.log("Post response:", resPost2.data.id);
-      res.status(200).json({ response: resPost2.data });
-    }).catch(async (err) => {
-      var _a2;
-      if (import_axios2.default.isAxiosError(err)) {
-        console.error("Error during API call inside:", err);
-        const errorResponse = ((_a2 = err.response) == null ? void 0 : _a2.data) || err.message;
-        return res.status(404).json({ response: errorResponse });
-      } else {
-        console.error("Unknown error inside:", err);
-        return res.status(404).json({ response: err });
-      }
-    });
-  } catch (err) {
-    console.error("Error during API call outside:", err);
-    return res.status(404).json({ response: err });
-  }
-};
-var putUser = async (req, res, dataJson, user) => {
-  const ApiService = await loggerApiService(req, res);
-  if (ApiService == void 0 || ApiService == null) {
-    return res.status(404).json({ response: "error" });
-  }
-  let jsonUsuario = {
-    id: 0,
-    nome: "",
-    sobrenome: 0,
-    matricula: 0,
-    dataNascimento: "",
-    sociedade: "PESSOA_FISICA",
-    // documentosDTO: [],
-    email: "",
-    nomeTratamento: "",
-    telefone: "",
-    telefone2: "",
-    profissao: "Aluno",
-    grupoPessoa: "Aluno",
-    fotoFacial: ""
-  };
-  jsonUsuario.nome = user.nome;
-  jsonUsuario.sobrenome = Number(user.matricula);
-  jsonUsuario.matricula = Number(user.matricula);
-  jsonUsuario.dataNascimento = user.dataNascimento;
-  jsonUsuario.documentosDTO = [];
-  for (let doc of user.documentosDTO) {
-    jsonUsuario.documentosDTO.push(doc);
-  }
-  jsonUsuario.email = user.email;
-  jsonUsuario.nomeTratamento = user.nomeTratamento;
-  jsonUsuario.telefone = user.telefone;
-  jsonUsuario.telefone2 = user.telefone2;
-  jsonUsuario.fotoFacial = user.fotoFacial;
-  jsonUsuario.id = user.idUsuario_SCOND;
-  jsonUsuario.nome = dataJson.nome;
-  jsonUsuario.sobrenome = Number(user.matricula);
-  jsonUsuario.matricula = Number(user.matricula);
-  jsonUsuario.nomeTratamento = dataJson.nomeTratamento;
-  jsonUsuario.telefone = dataJson.telefone;
-  jsonUsuario.telefone2 = dataJson.telefone2;
-  jsonUsuario.fotoFacial = dataJson.fotoFacial;
-  const newJsonUsuario = {
-    ...jsonUsuario,
-    documentosDTO: jsonUsuario.documentosDTO.map(({ idDocumentoDTO, usuariosSESTSENATIdUsuario, ...resto }) => resto)
-  };
-  console.log("user DB", user);
-  console.log("user PUT", dataJson);
-  console.log("--->", jsonUsuario);
-  console.log("---------->put", newJsonUsuario);
-  try {
-    const resPut = await import_axios2.default.put(`${process.env.API_URL_PUT}${user.idUsuario_SCOND}`, newJsonUsuario, {
-      headers: {
-        "Content-Type": "application/json",
-        "Authorization": `bearer ${ApiService.newAccess_token}`,
-        "tenant": process.env.LOGIN_TENANT
-      }
-    }).then(async (resPut2) => {
-      const updateUser = await prisma.usuariosSESTSENAT.update({
-        where: {
-          sobrenome: Number(newJsonUsuario.matricula)
-        },
-        data: {
-          // idUsuario_SCOND: user.idUsuario_SCOND,
-          nome: newJsonUsuario.nome,
-          sobrenome: Number(newJsonUsuario.matricula),
-          matricula: Number(newJsonUsuario.matricula),
-          // dataNascimento: newJsonUsuario.dataNascimento,
-          sociedade: newJsonUsuario.sociedade,
-          // email: newJsonUsuario.email,
-          nomeTratamento: newJsonUsuario.nomeTratamento,
-          telefone: newJsonUsuario.telefone,
-          telefone2: newJsonUsuario.telefone2,
-          profissao: "Aluno",
-          grupoPessoa: "Aluno",
-          fotoFacial: newJsonUsuario.fotoFacial,
-          situacao: "Atualizado"
-        }
-      });
-      console.log("Post response:", resPut2.data);
-      res.status(200).json({ response: resPut2.data });
-    }).catch(async (err) => {
-      var _a2;
-      if (import_axios2.default.isAxiosError(err)) {
-        console.error("Error during API call inside:", err);
-        const errorResponse = ((_a2 = err.response) == null ? void 0 : _a2.data) || err.message;
-        return res.status(404).json({ response: errorResponse });
-      } else {
-        console.error("Unknown error inside:", err);
-        return res.status(404).json({ response: err });
-      }
-    });
-  } catch (err) {
-    console.error("Error during API call outside:", err);
-    return res.status(404).json({ response: err });
   }
 };
 var getUsers = async (req, res) => {
