@@ -21,18 +21,9 @@ export const mainRoute = async (req: Request, res: Response) => {
                 documentosDTO: true
             }
         })
-        if (dataJson.criarUsuario == false) {
+        if(dataJson.criarUsuario == false){
             return res.status(200).json({ data: dataJson })
         }
-        if (dataJson.email == null || dataJson.email == undefined || dataJson.email == '') {
-            console.log("Error: Please provide a valid email address.")
-            return res.status(400).json({ error: "Please provide a valid email address." })
-        }
-        if (dataJson.matricula == null || dataJson.matricula == undefined || dataJson.matricula == '') {
-            console.log("Error: Please provide a valid matricula.")
-            return res.status(400).json({ error: "Please provide a valid matricula." })
-        }
-
         if (!user) {
             console.log('User not found')
             logger.info('User not found')
@@ -96,76 +87,33 @@ export const postUser = async (req: Request, res: Response, dataJson: any) => {
                 "tenant": process.env.LOGIN_TENANT,
                 "Accept": "application/json"
             }
-        }).then(async (resPost: AxiosResponse) => {
-            await prisma.usuariosSESTSENAT.create({
-                data: {
-                    criarUsuario: jsonUsuario.criarUsuario,
-                    nome: jsonUsuario.nome,
-                    idUsuario_SCOND: resPost.data.id,
-                    sobrenome: Number(jsonUsuario.sobrenome),
-                    matricula: Number(jsonUsuario.sobrenome),
-                    dataNascimento: jsonUsuario.dataNascimento,
-                    documentosDTO: {
-                        createMany: {
-                            data: jsonUsuario.documentosDTO
-                        },
-                    },
-                    sociedade: jsonUsuario.sociedade,
-                    email: jsonUsuario.email,
-                    nomeTratamento: jsonUsuario.nomeTratamento,
-                    telefone: jsonUsuario.telefone,
-                    telefone2: jsonUsuario.telefone2,
-                    fotoFacial: jsonUsuario.fotoFacial,
-                },
-                include: { documentosDTO: true },
-            })
-            if (resPost.data.hasOwnProperty("PessoaUnidades")) {
-                //@ts-ignore
-                delete resPost.data?.PessoaUnidades
-            }
-            if (resPost.data.hasOwnProperty("grupos")) {
-                //@ts-ignore
-                delete resPost.data?.grupos
-            }
-            if (resPost.data.hasOwnProperty("primeiroAcesso")) {
-                //@ts-ignore
-                delete resPost.data?.primeiroAcesso
-            }
-            if (resPost.data.hasOwnProperty("documentosDTO")) {
-                //@ts-ignore
-                delete resPost.data?.documentosDTO
-            }
-            if (resPost.data.hasOwnProperty("habilitarCampoCriarUsuario")) {
-                //@ts-ignore
-                delete resPost.data?.habilitarCampoCriarUsuario
-            }
-            if (resPost.data.hasOwnProperty("administrador")) {
-                //@ts-ignore
-                delete resPost.data?.administrador
-            }
-            if (resPost.data.hasOwnProperty("pessoaUnidadesAtivas")) {
-                //@ts-ignore
-                delete resPost.data?.pessoaUnidadesAtivas
-            }
-            if (resPost.data.hasOwnProperty("nomeCompleto")) {
-                //@ts-ignore
-                delete resPost.data?.nomeCompleto
-            }
-            if (resPost.data.hasOwnProperty("gruposAtivos")) {
-                //@ts-ignore
-                delete resPost.data?.gruposAtivos
-            }
-            if (resPost.data.hasOwnProperty("primeiroNome")) {
-                //@ts-ignore
-                delete resPost.data?.primeiroNome
-            }
-            if (resPost.data.hasOwnProperty("hibernateLazyInitializer")) {
-                //@ts-ignore
-                delete resPost.data?.hibernateLazyInitializer
-            }
-            console.log('Post response:', resPost.data)
-            res.status(200).json({ response: resPost.data })
         })
+            .then(async (resPost: AxiosResponse) => {
+                await prisma.usuariosSESTSENAT.create({
+                    data: {
+                        criarUsuario: jsonUsuario.criarUsuario,
+                        nome: jsonUsuario.nome,
+                        idUsuario_SCOND: resPost.data.id,
+                        sobrenome: Number(jsonUsuario.sobrenome),
+                        matricula: Number(jsonUsuario.sobrenome),
+                        dataNascimento: jsonUsuario.dataNascimento,
+                        documentosDTO: {
+                            createMany: {
+                                data: jsonUsuario.documentosDTO
+                            },
+                        },
+                        sociedade: jsonUsuario.sociedade,
+                        email: jsonUsuario.email,
+                        nomeTratamento: jsonUsuario.nomeTratamento,
+                        telefone: jsonUsuario.telefone,
+                        telefone2: jsonUsuario.telefone2,
+                        fotoFacial: jsonUsuario.fotoFacial,
+                    },
+                    include: { documentosDTO: true },
+                })
+                console.log('Post response:', resPost.data.id)
+                res.status(200).json({ response: resPost.data })
+            })
             .catch(async (err: unknown) => {
                 if (axios.isAxiosError(err)) {
                     console.error('Error during API call inside:', err)
@@ -176,7 +124,7 @@ export const postUser = async (req: Request, res: Response, dataJson: any) => {
                     return res.status(404).json({ response: err })
                 }
             })
-
+   
 
     } catch (err: unknown) {
         console.error('Error during API call outside:', err)
@@ -229,7 +177,7 @@ export const putUser = async (req: Request, res: Response, dataJson: any, user: 
     //     jsonUsuario.documentosDTO.push(doc);
     // }
     // jsonUsuario.documentosDTO
-    jsonUsuario.email = dataJson.email
+    // jsonUsuario.email = dataJson.email
     jsonUsuario.nomeTratamento = dataJson.nomeTratamento
     jsonUsuario.telefone = dataJson.telefone
     jsonUsuario.telefone2 = dataJson.telefone2
@@ -251,95 +199,35 @@ export const putUser = async (req: Request, res: Response, dataJson: any, user: 
                 "Authorization": `bearer ${ApiService.newAccess_token}`,
                 "tenant": process.env.LOGIN_TENANT,
             }
-        }).then(async (resPut: AxiosResponse) => {
-
-            const updateUser = await prisma.usuariosSESTSENAT.update({
-                where: {
-                    sobrenome: Number(newJsonUsuario.matricula),
-                },
-                data: {
-                    // idUsuario_SCOND: user.idUsuario_SCOND,
-                    nome: newJsonUsuario.nome,
-                    sobrenome: Number(newJsonUsuario.matricula),
-                    matricula: Number(newJsonUsuario.matricula),
-                    // dataNascimento: newJsonUsuario.dataNascimento,
-                    sociedade: newJsonUsuario.sociedade,
-                    email: newJsonUsuario.email,
-                    nomeTratamento: newJsonUsuario.nomeTratamento,
-                    telefone: newJsonUsuario.telefone,
-                    telefone2: newJsonUsuario.telefone2,
-                    profissao: 'Aluno',
-                    grupoPessoa: 'Aluno',
-                    fotoFacial: newJsonUsuario.fotoFacial,
-                    situacao: 'Atualizado',
-                },
-
-            })
-
-
-
-            if (resPut.data.hasOwnProperty("idUsuario_SCOND")) {
-                //@ts-ignore
-                delete resPut.data?.idUsuario_SCOND
-            }
-            if (resPut.data.hasOwnProperty("PessoaUnidades")) {
-                //@ts-ignore
-                delete resPut.data?.PessoaUnidades
-            }
-            if (resPut.data.hasOwnProperty("grupos")) {
-                //@ts-ignore
-                delete resPut.data?.grupos
-            }
-            if (resPut.data.hasOwnProperty("primeiroAcesso")) {
-                //@ts-ignore
-                delete resPut.data?.primeiroAcesso
-            }
-            if (resPut.data.hasOwnProperty("documentosDTO")) {
-                //@ts-ignore
-                delete resPut.data?.documentosDTO
-            }
-            if (resPut.data.hasOwnProperty("habilitarCampoCriarUsuario")) {
-                //@ts-ignore
-                delete resPut.data?.habilitarCampoCriarUsuario
-            }
-            if (resPut.data.hasOwnProperty("administrador")) {
-                //@ts-ignore
-                delete resPut.data?.administrador
-            }
-            if (resPut.data.hasOwnProperty("pessoaUnidadesAtivas")) {
-                //@ts-ignore
-                delete resPut.data?.pessoaUnidadesAtivas
-            }
-            if (resPut.data.hasOwnProperty("nomeCompleto")) {
-                //@ts-ignore
-                delete resPut.data?.nomeCompleto
-            }
-            if (resPut.data.hasOwnProperty("gruposAtivos")) {
-                //@ts-ignore
-                delete resPut.data?.gruposAtivos
-            }
-            if (resPut.data.hasOwnProperty("primeiroNome")) {
-                //@ts-ignore
-                delete resPut.data?.primeiroNome
-            }
-            if (resPut.data.hasOwnProperty("hibernateLazyInitializer")) {
-                //@ts-ignore
-                delete resPut.data?.hibernateLazyInitializer
-            }
-            if (resPut.data.hasOwnProperty("hibernateLazyInitializer")) {
-                //@ts-ignore
-                delete resPut.data?.hibernateLazyInitializer
-            } if (resPut.data.hasOwnProperty("pessoaUnidades")) {
-                //@ts-ignore
-                delete resPut.data?.pessoaUnidades
-            }
-            if (resPut.data.hasOwnProperty("criarUsuario")) {
-                //@ts-ignore
-                delete resPut.data?.criarUsuario
-            }
-            console.log('Post response:', resPut.data)
-            res.status(200).json({ response: resPut.data })
         })
+            .then(async (resPut: AxiosResponse) => {
+
+                const updateUser = await prisma.usuariosSESTSENAT.update({
+                    where: {
+                        sobrenome: Number(newJsonUsuario.matricula),
+                    },
+                    data: {
+                        // idUsuario_SCOND: user.idUsuario_SCOND,
+                        nome: newJsonUsuario.nome,
+                        sobrenome: Number(newJsonUsuario.matricula),
+                        matricula: Number(newJsonUsuario.matricula),
+                        // dataNascimento: newJsonUsuario.dataNascimento,
+                        sociedade: newJsonUsuario.sociedade,
+                        // email: newJsonUsuario.email,
+                        nomeTratamento: newJsonUsuario.nomeTratamento,
+                        telefone: newJsonUsuario.telefone,
+                        telefone2: newJsonUsuario.telefone2,
+                        profissao: 'Aluno',
+                        grupoPessoa: 'Aluno',
+                        fotoFacial: newJsonUsuario.fotoFacial,
+                        situacao: 'Atualizado',
+                    },
+
+                })
+
+                console.log('Post response:', resPut.data)
+                res.status(200).json({ response: resPut.data })
+            })
             .catch(async (err: unknown) => {
                 if (axios.isAxiosError(err)) {
                     console.error('Error during API call inside:', err)
@@ -357,6 +245,7 @@ export const putUser = async (req: Request, res: Response, dataJson: any, user: 
 }
 export const getUsers = async (req: Request, res: Response) => {
     const userId = Number(req.params.id)
+
     try {
         const getUser = await prisma.usuariosSESTSENAT.findFirst({
             where: {

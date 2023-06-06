@@ -1,5 +1,5 @@
 export interface IUsuarioCREATEProps {
-    criarUsuario?: true,
+    criarUsuario?: boolean,
     nome: string,
     sobrenome?: number,
     matricula?: number,

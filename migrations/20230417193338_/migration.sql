@@ -7,7 +7,7 @@ CREATE TABLE `usuariosSESTSENAT` (
     `matricula` INTEGER NOT NULL,
     `dataNascimento` VARCHAR(255) NOT NULL,
     `sociedade` VARCHAR(255) NOT NULL,
-    `email` VARCHAR(255) NULL,
+    `email` VARCHAR(255) NOT NULL,
     `nomeTratamento` VARCHAR(255) NOT NULL,
     `telefone` VARCHAR(255) NOT NULL,
     `telefone2` VARCHAR(255) NOT NULL,
